@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Puppy Schedule</title>
+<style>
+  :root {
+    --bg: #fdf9f3;
+    --card: #ffffff;
+    --ink: #2b2233;
+    --muted: #7a6f80;
+    --border: #ece4d9;
+    --accent: #ff7a59;
+    --accent-soft: #ffe7df;
+    --today: #fff4ec;
+    --shadow: 0 8px 24px rgba(40, 30, 50, 0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+  }
+  header {
+    padding: 28px 20px 12px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    letter-spacing: -0.01em;
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: var(--card);
+    padding: 6px;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    margin: 18px auto 22px;
+    width: fit-content;
+  }
+  .tab {
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tab.active {
+    background: var(--accent);
+    color: white;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Calendar */
+  .cal-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 10px;
+  }
+  .cal-controls h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .cal-controls .nav { display: flex; gap: 8px; }
+  .nav button, .today-btn {
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .nav button:hover, .today-btn:hover { background: var(--accent-soft); }
+  .grid {
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px solid var(--border);
+  }
+  .dow {
+    text-align: center;
+    padding: 10px 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: #faf6f0;
+    border-bottom: 1px solid var(--border);
+  }
+  .day {
+    min-height: 110px;
+    padding: 6px 6px 8px;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    background: var(--card);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .day:nth-child(7n + 8) { border-left: 0; }
+  .day.muted { background: #fbf7f1; color: #b9aebd; }
+  .day.today { background: var(--today); }
+  .day .dnum {
+    font-weight: 700;
+    font-size: 13px;
+    align-self: flex-end;
+    padding: 2px 7px;
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .day.today .dnum {
+    background: var(--accent);
+    color: white;
+  }
+  .chip {
+    font-size: 11px;
+    line-height: 1.25;
+    padding: 4px 6px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: default;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .chip .t { font-weight: 500; opacity: 0.85; margin-right: 4px; }
+
+  /* Events list */
+  .section-title {
+    margin: 18px 0 10px;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .ev {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    margin-top: 6px;
+    flex: 0 0 auto;
+  }
+  .ev h3 {
+    margin: 0 0 4px;
+    font-size: 17px;
+  }
+  .ev .meta {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 2px 0;
+  }
+  .ev .meta strong { color: var(--ink); font-weight: 600; }
+  .empty {
+    color: var(--muted);
+    font-style: italic;
+    padding: 8px 4px;
+  }
+
+  @media (max-width: 640px) {
+    .day { min-height: 78px; padding: 4px; }
+    .day .dnum { font-size: 12px; padding: 1px 5px; }
+    .chip { font-size: 10px; padding: 2px 4px; }
+    header h1 { font-size: 22px; }
+    .cal-controls h2 { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🐾 Happy Puppy Schedule</h1>
+  <p>Recurring activities &amp; one-off events</p>
+</header>
+
+<div class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="calendar" role="tab">📅 Calendar</button>
+    <button class="tab" data-tab="list" role="tab">📋 Events</button>
+  </div>
+
+  <section class="panel active" id="panel-calendar" role="tabpanel">
+    <div class="cal-controls">
+      <div class="nav">
+        <button id="prev" aria-label="Previous month">‹</button>
+        <button class="today-btn" id="today">Today</button>
+        <button id="next" aria-label="Next month">›</button>
+      </div>
+      <h2 id="month-label"></h2>
+      <div style="width:1px"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="panel" id="panel-list" role="tabpanel">
+    <div class="section-title">Recurring</div>
+    <div id="recurring"></div>
+    <div class="section-title">One-off events</div>
+    <div id="oneoff"></div>
+  </section>
+</div>
+
+<script>
+  // --- Data -----------------------------------------------------------------
+  // daysOfWeek: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+  // ranges: each entry is { start, end } as YYYY-MM-DD strings; null = open-ended
+  const events = [
+    {
+      id: "private-swim",
+      title: "Private Swimming",
+      color: "#3b82f6",
+      location: "JCC — with Mishelle",
+      daysOfWeek: [3],
+      time: "9:00 AM",
+      ranges: [{ start: "2026-06-03", end: null }],
+      note: "Starts Wed, Jun 3, 2026"
+    },
+    {
+      id: "group-swim",
+      title: "Group Swimming",
+      color: "#06b6d4",
+      location: "Lakewood Country Club",
+      daysOfWeek: [2, 3, 4],
+      time: "12:00 PM",
+      ranges: [
+        { start: "2026-06-02", end: "2026-06-12" },
+        { start: "2026-06-16", end: "2026-06-26" },
+        { start: "2026-08-04", end: "2026-08-14" }
+      ],
+      note: "Tue / Wed / Thu during three sessions in summer"
+    },
+    {
+      id: "tumbling",
+      title: "Tumbling",
+      color: "#f59e0b",
+      location: "Tiny Tumblers",
+      daysOfWeek: [1],
+      time: "4:00 PM",
+      ranges: [{ start: "2026-06-08", end: null }],
+      note: "Starts Mon, Jun 8, 2026 — no end date"
+    },
+    {
+      id: "music",
+      title: "Music Class",
+      color: "#a855f7",
+      location: "Wash Park (Outside)",
+      daysOfWeek: [2],
+      time: "10:00 – 10:45 AM",
+      ranges: [{ start: "2026-05-26", end: "2026-07-09" }],
+      note: "Tuesdays, May 26 – Jul 9, 2026"
+    },
+    {
+      id: "dance",
+      title: "Dance Class",
+      color: "#ec4899",
+      location: "",
+      daysOfWeek: [4],
+      time: "4:30 PM",
+      ranges: [{ start: null, end: null }],
+      note: "Thursdays — no end date"
+    }
+  ];
+
+  const oneOffEvents = []; // add { title, color, location, date, time, note } here later
+
+  // --- Helpers --------------------------------------------------------------
+  const ymd = d =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const parseYmd = s => {
+    if (!s) return null;
+    const [y, m, d] = s.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  };
+
+  const sameDay = (a, b) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  const occursOn = (ev, day) => {
+    if (!ev.daysOfWeek.includes(day.getDay())) return false;
+    return ev.ranges.some(r => {
+      const start = parseYmd(r.start);
+      const end = parseYmd(r.end);
+      if (start && day < start) return false;
+      if (end && day > end) return false;
+      return true;
+    });
+  };
+
+  // --- Calendar render ------------------------------------------------------
+  const monthLabel = document.getElementById("month-label");
+  const grid = document.getElementById("grid");
+  const today = new Date();
+  let cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+
+  const monthNames = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+  ];
+  const dowShort = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+  function renderCalendar() {
+    monthLabel.textContent = `${monthNames[cursor.getMonth()]} ${cursor.getFullYear()}`;
+    grid.innerHTML = "";
+
+    dowShort.forEach(d => {
+      const el = document.createElement("div");
+      el.className = "dow";
+      el.textContent = d;
+      grid.appendChild(el);
+    });
+
+    const firstDow = new Date(cursor.getFullYear(), cursor.getMonth(), 1).getDay();
+    const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
+    const daysInPrev = new Date(cursor.getFullYear(), cursor.getMonth(), 0).getDate();
+
+    // leading days from previous month
+    for (let i = firstDow - 1; i >= 0; i--) {
+      const dnum = daysInPrev - i;
+      const day = new Date(cursor.getFullYear(), cursor.getMonth() - 1, dnum);
+      grid.appendChild(buildDay(day, true));
+    }
+    // current month
+    for (let i = 1; i <= daysInMonth; i++) {
+      const day = new Date(cursor.getFullYear(), cursor.getMonth(), i);
+      grid.appendChild(buildDay(day, false));
+    }
+    // trailing days to fill grid (6 rows × 7 = 42)
+    const filled = firstDow + daysInMonth;
+    const trailing = (Math.ceil(filled / 7) * 7) - filled;
+    for (let i = 1; i <= trailing; i++) {
+      const day = new Date(cursor.getFullYear(), cursor.getMonth() + 1, i);
+      grid.appendChild(buildDay(day, true));
+    }
+  }
+
+  function buildDay(date, muted) {
+    const cell = document.createElement("div");
+    cell.className = "day" + (muted ? " muted" : "") + (sameDay(date, today) ? " today" : "");
+    const num = document.createElement("div");
+    num.className = "dnum";
+    num.textContent = date.getDate();
+    cell.appendChild(num);
+
+    events.forEach(ev => {
+      if (occursOn(ev, date)) {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.style.background = ev.color;
+        chip.title = `${ev.title} • ${ev.time}${ev.location ? " • " + ev.location : ""}`;
+        chip.innerHTML = `<span class="t">${ev.time.replace(/:00 /, " ")}</span>${ev.title}`;
+        cell.appendChild(chip);
+      }
+    });
+
+    oneOffEvents.forEach(ev => {
+      if (sameDay(date, parseYmd(ev.date))) {
+        const chip = document.createElement("div");
+        chip.className = "chip";
+        chip.style.background = ev.color || "#475569";
+        chip.title = `${ev.title}${ev.time ? " • " + ev.time : ""}${ev.location ? " • " + ev.location : ""}`;
+        chip.textContent = (ev.time ? ev.time + " " : "") + ev.title;
+        cell.appendChild(chip);
+      }
+    });
+
+    return cell;
+  }
+
+  document.getElementById("prev").addEventListener("click", () => {
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("next").addEventListener("click", () => {
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("today").addEventListener("click", () => {
+    cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+    renderCalendar();
+  });
+
+  // --- List render ----------------------------------------------------------
+  const fullDow = ["Sundays","Mondays","Tuesdays","Wednesdays","Thursdays","Fridays","Saturdays"];
+
+  function renderList() {
+    const recurringEl = document.getElementById("recurring");
+    const oneoffEl = document.getElementById("oneoff");
+
+    recurringEl.innerHTML = "";
+    events.forEach(ev => {
+      const days = ev.daysOfWeek.map(d => fullDow[d]).join(", ");
+      const card = document.createElement("div");
+      card.className = "ev";
+      card.innerHTML = `
+        <div class="swatch" style="background:${ev.color}"></div>
+        <div>
+          <h3>${ev.title}</h3>
+          <div class="meta"><strong>${days}</strong> at <strong>${ev.time}</strong></div>
+          ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
+          ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
+        </div>`;
+      recurringEl.appendChild(card);
+    });
+
+    oneoffEl.innerHTML = "";
+    if (oneOffEvents.length === 0) {
+      oneoffEl.innerHTML = `<div class="empty">No one-off events yet.</div>`;
+    } else {
+      oneOffEvents.forEach(ev => {
+        const date = parseYmd(ev.date);
+        const human = date.toLocaleDateString(undefined, {
+          weekday: "long", month: "long", day: "numeric", year: "numeric"
+        });
+        const card = document.createElement("div");
+        card.className = "ev";
+        card.innerHTML = `
+          <div class="swatch" style="background:${ev.color || "#475569"}"></div>
+          <div>
+            <h3>${ev.title}</h3>
+            <div class="meta"><strong>${human}</strong>${ev.time ? " at <strong>" + ev.time + "</strong>" : ""}</div>
+            ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
+            ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
+          </div>`;
+        oneoffEl.appendChild(card);
+      });
+    }
+  }
+
+  // --- Tabs -----------------------------------------------------------------
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  renderCalendar();
+  renderList();
+</script>
+</body>
+</html>
