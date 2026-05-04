@@ -113,6 +113,45 @@
       margin-left: 5px;
     }
 
+    /* ── Level toggle (Little / Big words) ── */
+    .level-tabs {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-label {
+      font-size: 0.95rem;
+      color: #868e96;
+      margin-right: 4px;
+    }
+
+    .level-btn {
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      border: 2px solid transparent;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      background: white;
+      color: #868e96;
+      box-shadow: 0 3px 0 #dee2e6;
+    }
+
+    .level-btn.easy.active { background: #ffe8a3; color: #7c5800; border-color: #ffc94d; box-shadow: 0 4px 0 #e0a800; }
+    .level-btn.hard.active { background: #c4e7ff; color: #003d6b; border-color: #4dabff; box-shadow: 0 4px 0 #1971c2; }
+
+    .level-btn:hover  { transform: translateY(-2px); }
+    .level-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.15) !important; }
+
+    .level-tabs.hidden { display: none; }
+
     /* ── Game card ── */
     #game-area {
       background: white;
@@ -365,6 +404,12 @@
   </button>
 </div>
 
+<div class="level-tabs" id="level-tabs">
+  <span class="level-label">Level:</span>
+  <button class="level-btn easy active" onclick="switchLevel('easy')">🐣 Little Words</button>
+  <button class="level-btn hard"        onclick="switchLevel('hard')">🦁 Big Words</button>
+</div>
+
 <div id="game-area">
   <div class="inner" id="content"></div>
 </div>
@@ -494,6 +539,14 @@ const COMFORT = ["Good try! 💪","Almost there! 🤗","You can do it! 🌸","Ke
 const MASCOT  = { idle: "🐰", happy: "🥰", sad: "🥺" };
 
 let mode = 'quiz', current = null, lastWord = null, score = 0, answered = false;
+let level = localStorage.getItem('toddler_level') || 'easy';   // 'easy' = 2-4 letters, 'hard' = 5+
+
+/* Words filtered by the active level. Practice-card mode ignores level. */
+function levelPool() {
+  return level === 'easy'
+    ? WORDS.filter(w => w.word.length <= 4)
+    : WORDS.filter(w => w.word.length >= 5);
+}
 
 /* ── localStorage ── */
 function getFC()     { return JSON.parse(localStorage.getItem('toddler_fc') || '[]'); }
@@ -530,6 +583,17 @@ function switchMode(m) {
   mode = m; score = 0; answered = false;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelector('.tab-btn.' + m).classList.add('active');
+  /* Level toggle is only meaningful during the quiz. */
+  document.getElementById('level-tabs').classList.toggle('hidden', m !== 'quiz');
+  render();
+}
+
+function switchLevel(lvl) {
+  level = lvl;
+  localStorage.setItem('toddler_level', lvl);
+  score = 0; answered = false;
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.level-btn.' + lvl).classList.add('active');
   render();
 }
 
@@ -565,9 +629,10 @@ function cardHTML(word, choices, topLabel) {
 
 function render() {
   if (mode === 'quiz') {
-    current = pickWord(WORDS); lastWord = current;
+    const pool = levelPool();
+    current = pickWord(pool); lastWord = current;
     document.getElementById('content').innerHTML = cardHTML(
-      current, buildChoices(current, WORDS), starBar(score)
+      current, buildChoices(current, pool), starBar(score)
     );
   } else {
     const fc = getFC();
@@ -665,6 +730,8 @@ function confettiRain() {
 }
 
 /* ── Boot ── */
+document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+document.querySelector('.level-btn.' + level).classList.add('active');
 refreshUI();
 render();
 </script>
