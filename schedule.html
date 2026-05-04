@@ -69,6 +69,52 @@
     background: var(--accent);
     color: white;
   }
+  .person-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 14px auto 20px;
+    max-width: 980px;
+  }
+  .person-pill {
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--ink);
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+  }
+  .person-pill.active {
+    color: white;
+    transform: translateY(-1px);
+  }
+  .person-pill.matt { background: #3b82f6; border-color: #3b82f6; }
+  .person-pill.wren { background: #ec4899; border-color: #ec4899; }
+  .person-pill.chelsea { background: #c4b5fd; border-color: #c4b5fd; }
+  .person-pill.all { background: var(--accent); border-color: var(--accent); color: white; }
+  .person-pill:hover { background: var(--accent-soft); }
+  .ribbon-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+  }
+  .ribbon {
+    flex: 1 1 100%;
+    padding: 3px 6px;
+    border-radius: 999px;
+    font-size: 10px;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .panel { display: none; }
   .panel.active { display: block; }
 
@@ -216,9 +262,11 @@
 
 <div class="wrap">
   <div class="tabs" role="tablist">
-    <button class="tab active" data-tab="calendar" role="tab">Calendar Calendar</button>
-    <button class="tab" data-tab="list" role="tab">Events Events</button>
+    <button class="tab active" data-tab="calendar" role="tab">Calendar</button>
+    <button class="tab" data-tab="list" role="tab">Events</button>
   </div>
+
+  <div class="person-filters" id="person-filters"></div>
 
   <section class="panel active" id="panel-calendar" role="tabpanel">
     <div class="cal-controls">
@@ -236,6 +284,8 @@
   <section class="panel" id="panel-list" role="tabpanel">
     <div class="section-title">Recurring</div>
     <div id="recurring"></div>
+    <div class="section-title">Travel</div>
+    <div id="travel"></div>
     <div class="section-title">One-off events</div>
     <div id="oneoff"></div>
   </section>
@@ -250,7 +300,7 @@
       id: "private-swim",
       title: "Private Swimming",
       color: "#3b82f6",
-      location: "JCC ΓÇö with Mishelle",
+      location: "JCC – with Mishelle",
       daysOfWeek: [3],
       time: "9:00 AM",
       ranges: [{ start: "2026-06-03", end: null }],
@@ -278,7 +328,7 @@
       daysOfWeek: [1],
       time: "4:00 PM",
       ranges: [{ start: "2026-06-08", end: null }],
-      note: "Starts Mon, Jun 8, 2026 ΓÇö no end date"
+      note: "Starts Mon, Jun 8, 2026 – no end date"
     },
     {
       id: "music",
@@ -298,11 +348,25 @@
       daysOfWeek: [4],
       time: "4:30 PM",
       ranges: [{ start: null, end: null }],
-      note: "Thursdays ΓÇö no end date"
+      note: "Thursdays – no end date"
     }
   ];
 
-  const oneOffEvents = []; // add { title, color, location, date, time, note } here later
+  const people = [
+    { id: "matt", name: "Matt", color: "#3b82f6" },
+    { id: "wren", name: "Wren", color: "#ec4899" },
+    { id: "chelsea", name: "Chelsea", color: "#c4b5fd" }
+  ];
+
+  let selectedPerson = "all";
+
+  const personRanges = [
+    { person: "matt", start: "2026-06-10", end: "2026-06-18", note: "Travel dates" },
+    { person: "wren", start: "2026-06-22", end: "2026-06-25", note: "Travel dates" },
+    { person: "chelsea", start: "2026-07-01", end: "2026-07-05", note: "Travel dates" }
+  ];
+
+  const oneOffEvents = []; // add { title, color, location, date, time, note, owner } here later
 
   // --- Helpers --------------------------------------------------------------
   const ymd = d =>
@@ -318,6 +382,43 @@
     a.getFullYear() === b.getFullYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
+
+  const rangeIncludes = (date, range) => {
+    const start = parseYmd(range.start);
+    const end = parseYmd(range.end);
+    if (start && date < start) return false;
+    if (end && date > end) return false;
+    return true;
+  };
+
+  const personRangesForDate = date =>
+    personRanges.filter(r =>
+      (selectedPerson === "all" || r.person === selectedPerson) &&
+      rangeIncludes(date, r)
+    );
+
+  const setPersonFilter = personId => {
+    selectedPerson = personId;
+    renderPersonFilters();
+    renderCalendar();
+    renderList();
+  };
+
+  const renderPersonFilters = () => {
+    const container = document.getElementById("person-filters");
+    container.innerHTML = "";
+    [
+      { id: "all", name: "All", style: "all" },
+      ...people
+    ].forEach(person => {
+      const btn = document.createElement("button");
+      btn.className = `person-pill ${person.id}`;
+      btn.textContent = person.name;
+      if (selectedPerson === person.id) btn.classList.add("active");
+      btn.addEventListener("click", () => setPersonFilter(person.id));
+      container.appendChild(btn);
+    });
+  };
 
   const occursOn = (ev, day) => {
     if (!ev.daysOfWeek.includes(day.getDay())) return false;
@@ -385,6 +486,22 @@
     num.textContent = date.getDate();
     cell.appendChild(num);
 
+    const ribbons = personRangesForDate(date);
+    if (ribbons.length) {
+      const row = document.createElement("div");
+      row.className = "ribbon-row";
+      ribbons.forEach(r => {
+        const person = people.find(p => p.id === r.person) || { name: r.person, color: "#777" };
+        const chip = document.createElement("div");
+        chip.className = "ribbon";
+        chip.style.background = person.color;
+        chip.title = `${person.name}: ${r.note}`;
+        chip.textContent = person.name;
+        row.appendChild(chip);
+      });
+      cell.appendChild(row);
+    }
+
     events.forEach(ev => {
       if (occursOn(ev, date)) {
         const chip = document.createElement("div");
@@ -446,6 +563,36 @@
       recurringEl.appendChild(card);
     });
 
+    const travelEl = document.getElementById("travel");
+    const visibleRanges = personRanges.filter(r => selectedPerson === "all" || r.person === selectedPerson);
+    travelEl.innerHTML = "";
+    if (visibleRanges.length === 0) {
+      travelEl.innerHTML = `<div class="empty">No travel ranges configured for this person.</div>`;
+    } else {
+      visibleRanges.forEach(r => {
+        const person = people.find(p => p.id === r.person) || { name: r.person, color: "#777" };
+        const start = parseYmd(r.start);
+        const end = parseYmd(r.end);
+        const dateText = start && end
+          ? `${start.toLocaleDateString()} – ${end.toLocaleDateString()}`
+          : start
+            ? `${start.toLocaleDateString()} onward`
+            : end
+              ? `Until ${end.toLocaleDateString()}`
+              : `Open range`;
+        const card = document.createElement("div");
+        card.className = "ev";
+        card.innerHTML = `
+          <div class="swatch" style="background:${person.color}"></div>
+          <div>
+            <h3>${person.name}</h3>
+            <div class="meta"><strong>${dateText}</strong></div>
+            ${r.note ? `<div class="meta">${r.note}</div>` : ""}
+          </div>`;
+        travelEl.appendChild(card);
+      });
+    }
+
     oneoffEl.innerHTML = "";
     if (oneOffEvents.length === 0) {
       oneoffEl.innerHTML = `<div class="empty">No one-off events yet.</div>`;
@@ -480,6 +627,7 @@
     });
   });
 
+  renderPersonFilters();
   renderCalendar();
   renderList();
 </script>
