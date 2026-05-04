@@ -377,27 +377,116 @@
 <div id="fx-wrap"></div>
 
 <script>
+/* Concrete words drawn from Fry's First 500 Sight Words +
+   a handful of extra kid-friendly nouns. Each word has a
+   distinct emoji so there's no ambiguity in the quiz. */
 const WORDS = [
-  { word: "cat",  emoji: "🐱" },
-  { word: "dog",  emoji: "🐶" },
-  { word: "sun",  emoji: "☀️" },
-  { word: "hat",  emoji: "🎩" },
-  { word: "cup",  emoji: "🥤" },
-  { word: "pig",  emoji: "🐷" },
-  { word: "bee",  emoji: "🐝" },
-  { word: "owl",  emoji: "🦉" },
-  { word: "fox",  emoji: "🦊" },
-  { word: "duck", emoji: "🦆" },
-  { word: "fish", emoji: "🐟" },
-  { word: "star", emoji: "⭐" },
-  { word: "frog", emoji: "🐸" },
-  { word: "cake", emoji: "🎂" },
-  { word: "book", emoji: "📚" },
-  { word: "rain", emoji: "🌧️" },
-  { word: "tree", emoji: "🌳" },
-  { word: "ball", emoji: "⚽" },
-  { word: "shoe", emoji: "👟" },
-  { word: "bug",  emoji: "🐛" },
+  // animals
+  { word: "cat",   emoji: "🐱" },
+  { word: "dog",   emoji: "🐶" },
+  { word: "pig",   emoji: "🐷" },
+  { word: "bee",   emoji: "🐝" },
+  { word: "owl",   emoji: "🦉" },
+  { word: "fox",   emoji: "🦊" },
+  { word: "duck",  emoji: "🦆" },
+  { word: "fish",  emoji: "🐟" },
+  { word: "frog",  emoji: "🐸" },
+  { word: "bug",   emoji: "🐛" },
+  { word: "horse", emoji: "🐴" },
+  { word: "bird",  emoji: "🐦" },
+
+  // people
+  { word: "man",    emoji: "👨" },
+  { word: "boy",    emoji: "👦" },
+  { word: "girl",   emoji: "👧" },
+  { word: "mother", emoji: "👩" },
+  { word: "father", emoji: "🧔" },
+  { word: "king",   emoji: "👑" },
+  { word: "people", emoji: "👥" },
+
+  // body
+  { word: "eye",  emoji: "👁️" },
+  { word: "hand", emoji: "✋" },
+  { word: "feet", emoji: "👣" },
+  { word: "face", emoji: "😀" },
+
+  // nature & weather
+  { word: "sun",      emoji: "☀️" },
+  { word: "rain",     emoji: "🌧️" },
+  { word: "tree",     emoji: "🌳" },
+  { word: "star",     emoji: "⭐" },
+  { word: "water",    emoji: "💧" },
+  { word: "sea",      emoji: "🌊" },
+  { word: "river",    emoji: "🏞️" },
+  { word: "mountain", emoji: "⛰️" },
+  { word: "plant",    emoji: "🌱" },
+  { word: "fire",     emoji: "🔥" },
+  { word: "rock",     emoji: "🪨" },
+  { word: "night",    emoji: "🌙" },
+  { word: "world",    emoji: "🌍" },
+
+  // things you wear / eat / use
+  { word: "hat",     emoji: "🎩" },
+  { word: "shoe",    emoji: "👟" },
+  { word: "cup",     emoji: "🥤" },
+  { word: "cake",    emoji: "🎂" },
+  { word: "book",    emoji: "📚" },
+  { word: "ball",    emoji: "⚽" },
+  { word: "letter",  emoji: "✉️" },
+  { word: "picture", emoji: "🖼️" },
+  { word: "paper",   emoji: "📄" },
+  { word: "money",   emoji: "💰" },
+  { word: "map",     emoji: "🗺️" },
+  { word: "box",     emoji: "📦" },
+  { word: "watch",   emoji: "⌚" },
+  { word: "light",   emoji: "💡" },
+
+  // places & buildings
+  { word: "house",    emoji: "🏠" },
+  { word: "school",   emoji: "🏫" },
+  { word: "farm",     emoji: "🚜" },
+  { word: "town",     emoji: "🏘️" },
+  { word: "island",   emoji: "🏝️" },
+  { word: "road",     emoji: "🛣️" },
+  { word: "building", emoji: "🏢" },
+  { word: "field",    emoji: "🌾" },
+  { word: "door",     emoji: "🚪" },
+  { word: "table",    emoji: "🪑" },
+
+  // vehicles
+  { word: "car",   emoji: "🚗" },
+  { word: "ship",  emoji: "🚢" },
+  { word: "boat",  emoji: "⛵" },
+  { word: "plane", emoji: "✈️" },
+
+  // colors
+  { word: "red",   emoji: "🔴" },
+  { word: "black", emoji: "⬛" },
+  { word: "white", emoji: "⬜" },
+  { word: "green", emoji: "🟢" },
+
+  // numbers
+  { word: "three", emoji: "3️⃣" },
+  { word: "four",  emoji: "4️⃣" },
+  { word: "five",  emoji: "5️⃣" },
+  { word: "six",   emoji: "6️⃣" },
+  { word: "ten",   emoji: "🔟" },
+
+  // actions & fun
+  { word: "walk",  emoji: "🚶" },
+  { word: "game",  emoji: "🎮" },
+  { word: "music", emoji: "🎼" },
+  { word: "song",  emoji: "🎵" },
+  { word: "color", emoji: "🎨" },
+
+  // descriptors with clear visuals
+  { word: "circle", emoji: "⭕" },
+  { word: "heavy",  emoji: "🏋️" },
+  { word: "cold",   emoji: "🥶" },
+  { word: "dark",   emoji: "🌑" },
+  { word: "space",  emoji: "🚀" },
+  { word: "voice",  emoji: "🗣️" },
+  { word: "animal", emoji: "🐾" },
 ];
 
 const PRAISE  = ["Amazing! 🌟","You got it! 🎉","Super star! ⭐","Wonderful! 🌈","So smart! 💫","Hooray! 🥳","Brilliant! 🌺","Perfect! 💖"];
