@@ -3,29 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Princess Memory Match!</title>
+  <title>Emoji & Word Match!</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e8eaf6 100%);
+      background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 50%, #e1f5fe 100%);
       min-height: 100vh;
       overflow-x: hidden;
     }
 
     h1 {
       text-align: center;
-      font-size: clamp(1.6rem, 5vw, 2.8rem);
-      color: #880e4f;
+      font-size: clamp(1.5rem, 5vw, 2.6rem);
+      color: #6a1b9a;
       padding: 18px 10px 4px;
-      text-shadow: 3px 3px 0 #f8bbd0;
-      letter-spacing: 2px;
+      text-shadow: 3px 3px 0 #fff9c4;
+      letter-spacing: 1px;
     }
 
-    /* sparkle stars in header */
-    h1::before { content: '✨ '; }
-    h1::after  { content: ' ✨'; }
+    .tagline {
+      text-align: center;
+      color: #e65100;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      margin-bottom: 8px;
+    }
 
     /* ── Mode picker ── */
     #mode-screen {
@@ -33,12 +36,12 @@
       flex-direction: column;
       align-items: center;
       gap: 20px;
-      padding: 24px 20px;
+      padding: 20px;
     }
 
     #mode-screen p {
       font-size: clamp(1.1rem, 3vw, 1.6rem);
-      color: #6a1b9a;
+      color: #1565c0;
       text-align: center;
     }
 
@@ -58,11 +61,11 @@
       text-align: center;
     }
     .mode-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 rgba(0,0,0,0.22); }
-    .mode-btn.easy { background: linear-gradient(135deg, #f06292, #c2185b); }
-    .mode-btn.hard { background: linear-gradient(135deg, #ab47bc, #6a1b9a); }
+    .mode-btn.easy { background: linear-gradient(135deg, #66bb6a, #2e7d32); }
+    .mode-btn.hard { background: linear-gradient(135deg, #ef5350, #c62828); }
     .mode-btn small { display: block; font-size: 0.55em; opacity: 0.9; margin-top: 2px; }
 
-    /* ── Game ── */
+    /* ── Game area ── */
     #game-screen { display: none; }
 
     #top-bar {
@@ -76,7 +79,7 @@
 
     #score-box {
       font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-      color: #6a1b9a;
+      color: #4a148c;
       font-weight: bold;
     }
 
@@ -92,8 +95,8 @@
       transition: transform 0.1s, box-shadow 0.1s;
     }
     #back-btn:active, #restart-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.18); }
-    #back-btn    { background: #fce4ec; color: #c2185b; }
-    #restart-btn { background: #f3e5f5; color: #6a1b9a; }
+    #back-btn    { background: #fff3e0; color: #e65100; }
+    #restart-btn { background: #e8f5e9; color: #2e7d32; }
 
     /* ── Grid ── */
     #grid {
@@ -109,7 +112,7 @@
 
     .card {
       width: 100%;
-      aspect-ratio: 0.85;
+      aspect-ratio: 1;
       position: relative;
       cursor: pointer;
       transform-style: preserve-3d;
@@ -127,72 +130,58 @@
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 8px;
     }
 
-    /* Card back — pink sparkle */
+    /* Card back — two tones so kids can see a pattern, not strictly needed for play */
     .card-back {
-      background: linear-gradient(135deg, #e91e8c, #9c27b0);
-      border: 4px solid rgba(255,255,255,0.55);
+      background: linear-gradient(135deg, #7c4dff, #e040fb);
+      border: 4px solid rgba(255,255,255,0.5);
       box-shadow: 3px 5px 0 rgba(0,0,0,0.18);
       font-size: clamp(1.8rem, 5vw, 3rem);
+      color: white;
     }
-    .card-back::before { content: '👑'; }
+    .card-back::before { content: '❔'; }
 
-    /* Card front */
+    /* Emoji card front */
     .card-front {
       transform: rotateY(180deg);
-      border: 4px solid rgba(255,255,255,0.6);
+      border: 4px solid #ddd;
       box-shadow: 3px 5px 0 rgba(0,0,0,0.12);
-      padding: 6px 4px;
-      gap: 3px;
-      overflow: hidden;
     }
-
-    /* Disney Emoji Blitz portraits — already face-focused,
-       so we just fit them inside the card. */
-    .card-front .princess-img {
-      width: 100%;
-      object-fit: contain;
-      border-radius: 14px;
-      background: white;
-      flex: 1 1 auto;
-      min-height: 0;
+    .card-front.emoji {
+      background: linear-gradient(135deg, #fff9c4, #ffe082);
+      border-color: #ffb300;
+      font-size: clamp(2.2rem, 8vw, 4.5rem);
     }
-
-    .card-front .princess-emoji {
-      font-size: clamp(2.2rem, 6.5vw, 4rem);
-      line-height: 1;
-      display: none;  /* shown only if image fails */
-    }
-
-    .card-front .princess-name {
-      font-size: clamp(0.65rem, 1.9vw, 0.95rem);
+    .card-front.word {
+      background: linear-gradient(135deg, #b3e5fc, #81d4fa);
+      border-color: #0288d1;
+      font-size: clamp(1rem, 3.8vw, 1.9rem);
       font-weight: bold;
-      color: white;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-      text-align: center;
-      letter-spacing: 0.5px;
-      flex: 0 0 auto;
-      padding: 0 0 2px;
+      color: #0d47a1;
+      text-transform: lowercase;
+      letter-spacing: 2px;
     }
 
     /* Matched state */
     .card.matched .card-front {
-      border-color: #ffd700;
-      box-shadow: 0 0 0 4px #ffd700, 3px 5px 0 rgba(0,0,0,0.1);
+      background: linear-gradient(135deg, #c8e6c9, #81c784) !important;
+      border-color: #2e7d32 !important;
+      box-shadow: 0 0 0 4px #66bb6a, 3px 5px 0 rgba(0,0,0,0.1);
       animation: matchPop 0.35s ease;
     }
     @keyframes matchPop {
       0%   { transform: rotateY(180deg) scale(1); }
-      50%  { transform: rotateY(180deg) scale(1.16); }
+      50%  { transform: rotateY(180deg) scale(1.18); }
       100% { transform: rotateY(180deg) scale(1); }
     }
 
     .card.wrong .card-front {
       animation: wrongShake 0.42s ease;
+      border-color: #ef5350 !important;
     }
     @keyframes wrongShake {
       0%,100% { transform: rotateY(180deg) translateX(0); }
@@ -212,7 +201,7 @@
     #win-screen {
       display: none;
       position: fixed; inset: 0;
-      background: rgba(255,240,250,0.93);
+      background: rgba(255,255,255,0.93);
       z-index: 200;
       flex-direction: column;
       align-items: center;
@@ -226,12 +215,12 @@
 
     #win-text {
       font-size: clamp(1.8rem, 5.5vw, 3.2rem);
-      color: #880e4f;
+      color: #4a148c;
       text-align: center;
-      text-shadow: 3px 3px 0 #f8bbd0;
+      text-shadow: 3px 3px 0 #fff9c4;
     }
 
-    #win-moves { font-size: clamp(1rem, 3vw, 1.5rem); color: #6a1b9a; }
+    #win-moves { font-size: clamp(1rem, 3vw, 1.5rem); color: #1b5e20; }
 
     .win-btn {
       font-family: inherit;
@@ -246,12 +235,12 @@
       transition: transform 0.1s, box-shadow 0.1s;
     }
     .win-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-    #again-btn { background: linear-gradient(135deg, #f06292, #c2185b); }
-    #menu-btn  { background: linear-gradient(135deg, #ab47bc, #6a1b9a); }
+    #again-btn { background: linear-gradient(135deg, #66bb6a, #2e7d32); }
+    #menu-btn  { background: linear-gradient(135deg, #42a5f5, #1565c0); }
 
     .match-flash {
       position: fixed; inset: 0;
-      background: rgba(255, 215, 0, 0.28);
+      background: rgba(255, 230, 0, 0.3);
       pointer-events: none; z-index: 99;
       animation: flash 0.4s ease forwards;
     }
@@ -260,18 +249,19 @@
 </head>
 <body>
 
-<h1>Princess Memory!</h1>
+<h1>🧠 Emoji & Word Match!</h1>
+<div class="tagline">Flip a picture. Flip the word that matches. 💛💙</div>
 
 <!-- Mode picker -->
 <div id="mode-screen">
-  <p>Choose your level, little princess!</p>
-  <button class="mode-btn easy" onclick="startGame(10)">
-    👑 Easy
-    <small>10 cards · 5 princesses</small>
+  <p>Choose your level:</p>
+  <button class="mode-btn easy" onclick="startGame(5)">
+    ⭐ Easy
+    <small>10 cards · 5 pairs</small>
   </button>
-  <button class="mode-btn hard" onclick="startGame(20)">
-    ✨ Hard
-    <small>20 cards · 10 princesses</small>
+  <button class="mode-btn hard" onclick="startGame(10)">
+    🔥 Hard
+    <small>20 cards · 10 pairs</small>
   </button>
 </div>
 
@@ -291,45 +281,42 @@
 <canvas id="confetti-canvas"></canvas>
 
 <div id="win-screen">
-  <div id="win-emoji">👑</div>
-  <div id="win-text">You found them all!<br>You're a princess! 💖</div>
+  <div id="win-emoji">🎉</div>
+  <div id="win-text">You did it!<br>Amazing reader! 🌟</div>
   <div id="win-moves"></div>
   <button class="win-btn" id="again-btn" onclick="restartGame()">Play Again!</button>
   <button class="win-btn" id="menu-btn"  onclick="showMenu()">Change Level</button>
 </div>
 
 <script>
-  /* Official Disney Emoji Blitz portraits (512×512 PNGs) hosted on
-     the Fandom wiki CDN. Emoji fallback if the image fails. */
-  const ALL_PRINCESSES = [
-    { id: 'cinderella', emoji: '👠', label: 'Cinderella', bg: 'linear-gradient(135deg,#90caf9,#1565c0)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/7/72/EmojiBlitzCinderella1.png/revision/latest/scale-to-width-down/300?cb=20230606143201' },
-    { id: 'ariel',      emoji: '🧜‍♀️', label: 'Ariel',      bg: 'linear-gradient(135deg,#80cbc4,#00695c)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/8/8c/EmojiBlitzAriel1.png/revision/latest/scale-to-width-down/300?cb=20230428134650' },
-    { id: 'belle',      emoji: '🌹', label: 'Belle',      bg: 'linear-gradient(135deg,#fff176,#f9a825)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/f/fe/EmojiBlitzBelle1.png/revision/latest/scale-to-width-down/300?cb=20230426183843' },
-    { id: 'elsa',       emoji: '❄️', label: 'Elsa',       bg: 'linear-gradient(135deg,#b3e5fc,#0288d1)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/9/91/EmojiBlitzElsa1.png/revision/latest/scale-to-width-down/300?cb=20230705132549' },
-    { id: 'moana',      emoji: '🌊', label: 'Moana',      bg: 'linear-gradient(135deg,#80deea,#00838f)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/a/a6/EmojiBlitzMoana1.png/revision/latest/scale-to-width-down/300?cb=20230502180446' },
-    { id: 'rapunzel',   emoji: '🌻', label: 'Rapunzel',   bg: 'linear-gradient(135deg,#ce93d8,#7b1fa2)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/7/70/EmojiBlitzRapunzel1.png/revision/latest/scale-to-width-down/300?cb=20231011184354' },
-    { id: 'tiana',      emoji: '🐸', label: 'Tiana',      bg: 'linear-gradient(135deg,#a5d6a7,#2e7d32)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/b/bd/EmojiBlitzTiana1.png/revision/latest/scale-to-width-down/300?cb=20231024141205' },
-    { id: 'snowwhite',  emoji: '🍎', label: 'Snow White', bg: 'linear-gradient(135deg,#ef9a9a,#c62828)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/f/fc/EmojiBlitzSnowWhite1.png/revision/latest/scale-to-width-down/300?cb=20231020130957' },
-    { id: 'jasmine',    emoji: '🌙', label: 'Jasmine',    bg: 'linear-gradient(135deg,#80cbc4,#6a1b9a)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/c/c2/EmojiBlitzJasmine1.png/revision/latest/scale-to-width-down/300?cb=20230812122651' },
-    { id: 'aurora',     emoji: '🌸', label: 'Aurora',     bg: 'linear-gradient(135deg,#f48fb1,#ad1457)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/1/1a/EmojiBlitzYoungAurora-Happy.png/revision/latest?cb=20240508124723' },
+  /* Each item becomes TWO cards: one emoji, one word. The match
+     succeeds when the two flipped cards share the same id. */
+  const ALL_ITEMS = [
+    { id: 'apple',      emoji: '🍎', word: 'apple' },
+    { id: 'banana',     emoji: '🍌', word: 'banana' },
+    { id: 'grapes',     emoji: '🍇', word: 'grapes' },
+    { id: 'orange',     emoji: '🍊', word: 'orange' },
+    { id: 'watermelon', emoji: '🍉', word: 'melon' },
+    { id: 'cat',        emoji: '🐱', word: 'cat' },
+    { id: 'dog',        emoji: '🐶', word: 'dog' },
+    { id: 'fish',       emoji: '🐟', word: 'fish' },
+    { id: 'frog',       emoji: '🐸', word: 'frog' },
+    { id: 'bee',        emoji: '🐝', word: 'bee' },
+    { id: 'sun',        emoji: '☀️', word: 'sun' },
+    { id: 'star',       emoji: '⭐', word: 'star' },
+    { id: 'tree',       emoji: '🌳', word: 'tree' },
+    { id: 'flower',     emoji: '🌸', word: 'flower' },
+    { id: 'cake',       emoji: '🎂', word: 'cake' },
+    { id: 'ball',       emoji: '⚽', word: 'ball' },
+    { id: 'hat',        emoji: '🎩', word: 'hat' },
+    { id: 'book',       emoji: '📚', word: 'book' },
   ];
 
-  let currentMode  = 10;
+  let pairCount    = 5;
   let flipped      = [];
   let locked       = false;
   let matchedPairs = 0;
   let moves        = 0;
-  let totalPairs   = 0;
 
   function shuffle(arr) {
     const a = [...arr];
@@ -347,8 +334,8 @@
     document.getElementById('game-screen').style.display = 'none';
   }
 
-  function startGame(cardCount) {
-    currentMode = cardCount;
+  function startGame(pairs) {
+    pairCount = pairs;
     document.getElementById('mode-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
     buildGrid();
@@ -365,39 +352,34 @@
     locked       = false;
     matchedPairs = 0;
     moves        = 0;
-    totalPairs   = currentMode / 2;
 
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
-
-    // 5 columns always — looks great on most screens
     grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
 
-    const chosen = shuffle(ALL_PRINCESSES).slice(0, totalPairs);
-    const cards  = shuffle([...chosen, ...chosen].map((p, i) => ({ ...p, uid: i })));
+    const chosen = shuffle(ALL_ITEMS).slice(0, pairCount);
+    /* For each item we make one emoji card and one word card. */
+    const cards = shuffle(chosen.flatMap(item => [
+      { ...item, kind: 'emoji' },
+      { ...item, kind: 'word'  },
+    ]));
 
-    document.getElementById('pairs-total').textContent = totalPairs;
+    document.getElementById('pairs-total').textContent = pairCount;
     document.getElementById('pairs-count').textContent = 0;
     document.getElementById('moves-count').textContent = 0;
 
-    cards.forEach(p => {
+    cards.forEach(c => {
       const wrapper = document.createElement('div');
       wrapper.className = 'card-wrapper';
 
       const card = document.createElement('div');
       card.className = 'card';
-      card.dataset.id = p.id;
+      card.dataset.id = c.id;
 
-      /* Name sits on top, portrait below. If the image fails,
-         show the themed emoji as a fallback. */
+      const content = c.kind === 'emoji' ? c.emoji : c.word;
       card.innerHTML = `
         <div class="card-face card-back"></div>
-        <div class="card-face card-front" style="background:${p.bg}">
-          <span class="princess-name">${p.label}</span>
-          <img class="princess-img" src="${p.img}" alt="${p.label}" loading="lazy"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-          <span class="princess-emoji">${p.emoji}</span>
-        </div>
+        <div class="card-face card-front ${c.kind}">${content}</div>
       `;
 
       card.addEventListener('click', () => onCardClick(card));
@@ -432,7 +414,7 @@
         document.getElementById('pairs-count').textContent = matchedPairs;
         flashScreen();
 
-        if (matchedPairs === totalPairs) {
+        if (matchedPairs === pairCount) {
           setTimeout(() => {
             document.getElementById('win-moves').textContent = `You used ${moves} moves! 💕`;
             document.getElementById('win-screen').classList.add('show');
@@ -459,25 +441,24 @@
     setTimeout(() => el.remove(), 450);
   }
 
-  // ── Confetti (pink/gold palette) ──
+  /* ── Confetti ── */
   const canvas = document.getElementById('confetti-canvas');
   const ctx    = canvas.getContext('2d');
   let particles = [], animFrame = null, running = false;
-  const COLORS  = ['#f06292','#ce93d8','#ffd700','#ff80ab','#b39ddb','#f8bbd0','#fff176','#e040fb'];
+  const COLORS  = ['#e53935','#fdd835','#3949ab','#fb8c00','#8e24aa','#43a047','#ff4081','#00bcd4'];
 
   function startConfetti() {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
-    particles = Array.from({ length: 160 }, () => ({
+    particles = Array.from({ length: 150 }, () => ({
       x: Math.random() * canvas.width,
-      y: -20 - Math.random() * 140,
-      r: 5 + Math.random() * 8,
+      y: -20 - Math.random() * 120,
+      r: 6 + Math.random() * 8,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       dx: (Math.random() - 0.5) * 5,
-      dy: 2.5 + Math.random() * 4,
+      dy: 3 + Math.random() * 4,
       angle: Math.random() * 360,
       spin: (Math.random() - 0.5) * 9,
-      heart: Math.random() < 0.3,
     }));
     running = true;
     draw();
@@ -491,16 +472,10 @@
       ctx.translate(p.x, p.y);
       ctx.rotate(p.angle * Math.PI / 180);
       ctx.fillStyle = p.color;
-      if (p.heart) {
-        // draw a tiny heart
-        ctx.font = `${p.r * 2}px serif`;
-        ctx.fillText('♥', -p.r, p.r * 0.5);
-      } else {
-        ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.55);
-      }
+      ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 0.55);
       ctx.restore();
       p.x += p.dx; p.y += p.dy; p.angle += p.spin;
-      if (p.y > canvas.height + 30) { p.y = -20; p.x = Math.random() * canvas.width; }
+      if (p.y > canvas.height + 20) { p.y = -20; p.x = Math.random() * canvas.width; }
     });
     animFrame = requestAnimationFrame(draw);
   }
