@@ -147,8 +147,14 @@
     @media (min-width: 760px) {
       #grid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
     }
-    /* Hard mode (20 cards) feels best at 5 cols on phone if user rotates,
-       but stays 4×5 in portrait — still readable. */
+
+    /* Hard mode is always 4×5 — vertical, no matter the screen size.
+       Cap the grid width on big screens so cards don't get cartoonishly large. */
+    #grid.mode-hard,
+    #grid.mode-hard:not(_) {
+      grid-template-columns: repeat(4, 1fr);
+      max-width: 520px;
+    }
 
     .card-wrapper { perspective: 600px; }
 
@@ -400,6 +406,8 @@
 
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
+    grid.classList.toggle('mode-hard', currentMode === 20);
+    grid.classList.toggle('mode-easy', currentMode === 10);
 
     const chosen = shuffle(ALL_PRINCESSES).slice(0, totalPairs);
     const cards  = shuffle([...chosen, ...chosen].map((p, i) => ({ ...p, uid: i })));
