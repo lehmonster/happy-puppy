@@ -130,30 +130,18 @@
     #back-btn    { background: #fce4ec; color: #c2185b; }
     #restart-btn { background: #f3e5f5; color: #6a1b9a; }
 
-    /* ── Grid ──
-       Phone-first: 4 columns. Tablets/desktops scale up. */
+    /* ── Grid ── Always 5 columns: easy = 5×2, hard = 5×4. */
     #grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 8px;
-      padding: 10px 10px 28px;
+      padding: 10px 8px 28px;
       width: 100%;
-      max-width: 860px;
+      max-width: 640px;
       margin: 0 auto;
     }
     @media (min-width: 540px) {
-      #grid { grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 12px 14px 30px; }
-    }
-    @media (min-width: 760px) {
-      #grid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
-    }
-
-    /* Hard mode is always 4×5 — vertical, no matter the screen size.
-       Cap the grid width on big screens so cards don't get cartoonishly large. */
-    #grid.mode-hard,
-    #grid.mode-hard:not(_) {
-      grid-template-columns: repeat(4, 1fr);
-      max-width: 520px;
+      #grid { gap: 12px; padding: 12px 14px 30px; }
     }
 
     .card-wrapper { perspective: 600px; }
@@ -406,8 +394,6 @@
 
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
-    grid.classList.toggle('mode-hard', currentMode === 20);
-    grid.classList.toggle('mode-easy', currentMode === 10);
 
     const chosen = shuffle(ALL_PRINCESSES).slice(0, totalPairs);
     const cards  = shuffle([...chosen, ...chosen].map((p, i) => ({ ...p, uid: i })));
