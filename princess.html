@@ -182,20 +182,25 @@
     }
     .card-back::before { content: '👑'; }
 
-    /* Card front — princess portrait on top, NAME label on bottom */
+    /* Card front — princess portrait on top, NAME label on bottom.
+       Grid is predictable here: row 1 takes the leftover space for the
+       portrait, row 2 is exactly the height of the name strip. */
     .card-front {
       transform: rotateY(180deg);
       background: white;
       border: 4px solid rgba(255,255,255,0.6);
       box-shadow: 3px 5px 0 rgba(0,0,0,0.12);
       padding: 0;
-      flex-direction: column;
-      justify-content: stretch;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      grid-template-columns: 1fr;
+      align-items: stretch;
+      justify-items: stretch;
     }
 
     .card-front .princess-img {
       width: 100%;
-      flex: 1 1 auto;
+      height: 100%;
       min-height: 0;
       object-fit: contain;
       object-position: center;
@@ -208,23 +213,21 @@
     }
 
     .card-front .princess-name {
-      flex-shrink: 0;
       width: 100%;
       background: linear-gradient(135deg, #f06292, #c2185b);
       color: white;
       font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
       font-weight: 700;
-      letter-spacing: 0.6px;
       text-align: center;
-      padding: 5px 4px 6px;
-      font-size: clamp(0.55rem, 1.6vw, 0.95rem);
+      padding: 6px 3px 7px;
+      font-size: clamp(0.62rem, 1.9vw, 1.05rem);
       line-height: 1.05;
       text-transform: uppercase;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.18);
       letter-spacing: 0.5px;
-      word-break: keep-all;
-      overflow: hidden;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.22);
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
     }
 
     /* Matched state */
