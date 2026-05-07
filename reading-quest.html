@@ -2,46 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reading Quest - Learn to Read!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#c8f0e4">
+  <title>Reading Quest — Phonics Adventure!</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; overscroll-behavior: none; }
 
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Poppins', 'Comic Sans MS', sans-serif;
       background: linear-gradient(160deg, #c8f0e4, #b3e5fc, #b2dfdb, #c8f0e4);
       background-size: 400% 400%;
       animation: bg-breathe 10s ease-in-out infinite alternate;
       min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 16px 12px 60px;
       overflow-x: hidden;
       position: relative;
+      -webkit-user-select: none;
+      user-select: none;
     }
+    @media (min-width: 600px) { body { padding: 24px 20px 80px; } }
+    @keyframes bg-breathe { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 
-    @media (min-width: 600px) {
-      body {
-        padding: 24px 20px 80px;
-      }
-    }
-
-    @keyframes bg-breathe {
-      0%   { background-position: 0% 0%; }
-      100% { background-position: 100% 100%; }
-    }
-
-    /* Floating background decorations */
-    .bg-deco {
-      position: fixed;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.12;
-      animation: float-up linear infinite;
-    }
-
+    /* Floating decorations */
+    .bg-deco { position: fixed; pointer-events: none; z-index: 0; opacity: 0.12; animation: float-up linear infinite; }
     @keyframes float-up {
       0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
       8%   { opacity: 0.12; }
@@ -49,7 +41,6 @@
       100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Header */
     h1 {
       font-size: clamp(2rem, 6vw, 3.2rem);
       background: linear-gradient(90deg, #00897b, #0097a7, #00838f, #00897b);
@@ -59,360 +50,350 @@
       background-clip: text;
       animation: title-shift 4s linear infinite;
       text-align: center;
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.05));
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
-
     @keyframes title-shift { to { background-position: 200% center; } }
 
-    .tagline {
-      text-align: center;
-      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
-      color: #00695c;
-      margin-bottom: 24px;
-      position: relative;
-      z-index: 1;
-    }
+    .tagline { text-align: center; font-size: clamp(0.9rem, 2.4vw, 1.15rem); color: #00695c; margin-bottom: 22px; position: relative; z-index: 1; }
 
     /* Back button */
     .back-btn {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      background: white;
-      border: 3px solid #4fb995;
-      border-radius: 50%;
-      width: 52px;
-      height: 52px;
-      font-size: 1.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 12px; left: 12px;
+      background: white; border: 3px solid #4fb995;
+      border-radius: 50%; width: 48px; height: 48px;
+      font-size: 1.6rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       z-index: 100;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
+      touch-action: manipulation;
+      padding-bottom: 4px;
     }
+    .back-btn:active { transform: scale(0.92); }
 
-    .back-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
+    /* Screens */
+    .screen { display: none; width: 100%; max-width: 520px; position: relative; z-index: 2; }
+    .screen.active { display: flex; flex-direction: column; align-items: center; }
 
-    .back-btn:active {
-      transform: scale(0.95);
-    }
+    /* ── Mode / level path screen ── */
+    #mode-screen { gap: 14px; }
+    .path-intro { text-align: center; margin-bottom: 4px; color: #00695c; font-size: clamp(0.95rem, 2.5vw, 1.15rem); }
 
-    /* Mode selection screen */
-    .screen {
-      display: none;
+    .level-card {
       width: 100%;
-      max-width: 500px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .screen.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #mode-screen {
-      gap: 20px;
-    }
-
-    .mode-section {
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .mode-title {
-      font-size: clamp(1.3rem, 3vw, 1.6rem);
-      color: #00695c;
-      margin-bottom: 12px;
-    }
-
-    .mode-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      width: 100%;
-    }
-
-    .mode-btn {
-      padding: 18px 24px;
-      font-size: clamp(1.15rem, 2.8vw, 1.4rem);
-      font-family: inherit;
-      border: none;
-      border-radius: 24px;
-      cursor: pointer;
       background: white;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 6px 0 rgba(0,0,0,0.12);
-      transition: transform 0.15s, box-shadow 0.15s;
       border: 4px solid;
-      letter-spacing: 0.5px;
+      border-radius: 22px;
+      padding: 14px 18px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 6px 0 rgba(0,0,0,0.10);
+      transition: transform 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+      text-align: left;
     }
+    .level-card:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.10); }
+    .level-card .lvl-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: white;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .level-card .lvl-emoji { font-size: 2.2rem; flex-shrink: 0; }
+    .level-card .lvl-text { flex: 1; min-width: 0; }
+    .level-card .lvl-name { font-size: clamp(1.1rem, 2.8vw, 1.35rem); font-weight: 700; color: #00695c; line-height: 1.15; }
+    .level-card .lvl-desc { font-size: clamp(0.8rem, 2.1vw, 0.95rem); color: #4a7a72; margin-top: 2px; }
 
-    .mode-btn.letters {
-      background: linear-gradient(135deg, #4fb995, #2d7a5c);
-      border-color: #1b4d3e;
-    }
+    .level-card.l1 { border-color: #4fb995; } .level-card.l1 .lvl-num { background: #4fb995; }
+    .level-card.l2 { border-color: #45b7aa; } .level-card.l2 .lvl-num { background: #45b7aa; }
+    .level-card.l3 { border-color: #39a89f; } .level-card.l3 .lvl-num { background: #39a89f; }
+    .level-card.l4 { border-color: #2d8a90; } .level-card.l4 .lvl-num { background: #2d8a90; }
+    .level-card.l5 { border-color: #1f6d80; } .level-card.l5 .lvl-num { background: #1f6d80; }
 
-    .mode-btn.sounds {
-      background: linear-gradient(135deg, #45b7aa, #2a7f73);
-      border-color: #1a5d52;
-    }
+    /* ── Game screen ── */
+    #game-screen { gap: 18px; }
 
-    .mode-btn.words {
-      background: linear-gradient(135deg, #39a89f, #1f6d61);
-      border-color: #164a3d;
-    }
-
-    .mode-btn:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 0 rgba(0,0,0,0.15);
-    }
-
-    .mode-btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    }
-
-    /* Game screen */
-    #game-screen {
-      gap: 24px;
-      width: 100%;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 12px;
-      background: rgba(255,255,255,0.6);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #4fb995, #2d7a5c);
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+    .progress-bar { width: 100%; height: 12px; background: rgba(255,255,255,0.6); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #4fb995, #2d7a5c); width: 0%; transition: width 0.3s ease; }
 
     .question-box {
-      background: white;
-      border-radius: 28px;
-      padding: 32px 24px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      text-align: center;
-      width: 100%;
+      background: white; border-radius: 26px;
+      padding: 24px 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      text-align: center; width: 100%;
+    }
+    .prompt { font-size: clamp(1rem, 2.5vw, 1.25rem); color: #00695c; font-weight: 600; margin-bottom: 16px; line-height: 1.3; }
+
+    /* Big sound button — the audio anchor of every question */
+    .sound-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #ffd54f, #ff9800);
+      color: white; font-family: inherit; font-weight: 700;
+      border: 4px solid #f57c00; border-radius: 50px;
+      padding: 14px 28px; font-size: clamp(1.1rem, 2.8vw, 1.4rem);
+      cursor: pointer;
+      box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+      transition: transform 0.1s, box-shadow 0.1s;
+      touch-action: manipulation;
+      min-height: 56px;
+    }
+    .sound-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+    .sound-btn.playing { animation: pulse 0.6s ease-in-out infinite; }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.05); box-shadow: 0 5px 0 rgba(0,0,0,0.15), 0 0 0 8px rgba(255,213,79,0.35); }
     }
 
-    .question-text {
-      font-size: clamp(1.1rem, 2.6vw, 1.4rem);
-      color: #00695c;
-      margin-bottom: 28px;
-      line-height: 1.4;
-    }
-
-    .letter-display {
-      font-size: clamp(3.5rem, 12vw, 5rem);
-      font-weight: 700;
-      color: #4fb995;
-      margin-bottom: 20px;
+    /* Big letter / word display */
+    .big-letter {
+      font-size: clamp(4rem, 16vw, 7rem);
+      font-weight: 700; color: #00695c;
+      line-height: 1;
+      margin: 8px 0 14px;
       animation: bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
+    @keyframes bounce-in { 0% { transform: scale(0.5) rotate(-10deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
-    @keyframes bounce-in {
-      0% { transform: scale(0.5) rotateZ(-10deg); opacity: 0; }
-      100% { transform: scale(1) rotateZ(0deg); opacity: 1; }
+    /* Blending display: 3 letters with individual sound buttons */
+    .blend-row {
+      display: flex; justify-content: center; gap: 8px;
+      margin: 10px 0 18px;
+    }
+    .blend-tile {
+      flex: 0 0 auto;
+      background: linear-gradient(135deg, #fff9c4, #ffe082);
+      border: 4px solid #ffb300; border-radius: 16px;
+      padding: 12px 6px 8px;
+      width: clamp(58px, 18vw, 84px);
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.1s;
+      touch-action: manipulation;
+    }
+    .blend-tile:active { transform: scale(0.94); }
+    .blend-tile .b-letter {
+      font-size: clamp(2rem, 7vw, 3rem); font-weight: 700;
+      color: #00695c; line-height: 1;
+    }
+    .blend-tile .b-speaker { font-size: 0.85rem; color: #f57c00; margin-top: 2px; }
+    .blend-tile.heard {
+      background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+      border-color: #4caf50;
     }
 
-    /* Answer buttons */
-    .answer-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%;
+    /* Word-family display: __ + ending, with picture hint */
+    .family-display {
+      display: flex; justify-content: center; align-items: baseline;
+      gap: 6px;
+      font-size: clamp(2.6rem, 9vw, 4rem);
+      font-weight: 700;
+      color: #00695c;
+      margin: 10px 0 8px;
+      min-height: clamp(3rem, 11vw, 5rem);
     }
+    .family-blank {
+      display: inline-block;
+      min-width: clamp(2.4rem, 8vw, 3.6rem);
+      border-bottom: 4px solid #4fb995;
+      color: #4fb995;
+    }
+    .family-blank.filled { color: #00695c; border-bottom-color: #00695c; animation: bounce-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .family-picture { font-size: clamp(2.5rem, 9vw, 4rem); margin-bottom: 12px; }
 
-    .answer-grid.single {
-      grid-template-columns: 1fr;
+    /* Sight word & sentence display */
+    .sight-word {
+      font-size: clamp(2.4rem, 9vw, 3.6rem);
+      font-weight: 700; color: #00695c;
+      letter-spacing: 2px;
+      margin: 10px 0 16px;
     }
+    .sentence-display {
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      font-weight: 700; color: #00695c;
+      line-height: 1.4;
+      margin: 12px 0 16px;
+      letter-spacing: 1px;
+    }
+    .sentence-display .sent-word {
+      display: inline-block;
+      padding: 2px 6px;
+      margin: 2px 1px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      touch-action: manipulation;
+    }
+    .sentence-display .sent-word:active { transform: scale(0.95); background: #fff59d; }
+
+    /* Answer grid */
+    .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+    .answer-grid.three { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .answer-grid.four  { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .answer-grid.single { grid-template-columns: 1fr; }
 
     .answer-btn {
-      padding: 20px 16px;
-      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-      font-family: inherit;
-      border: none;
-      border-radius: 18px;
+      padding: 16px 12px;
+      font-size: clamp(1.05rem, 2.7vw, 1.35rem);
+      font-family: inherit; font-weight: 700;
+      border: 3px solid transparent; border-radius: 18px;
       cursor: pointer;
       background: linear-gradient(135deg, #b3e5fc, #81d4fa);
       color: #00695c;
-      font-weight: 600;
       box-shadow: 0 5px 0 rgba(0,0,0,0.08);
-      transition: transform 0.15s, box-shadow 0.15s;
-      border: 3px solid transparent;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
       letter-spacing: 0.5px;
+      touch-action: manipulation;
+      min-height: 56px;
+      line-height: 1.15;
     }
-
-    .answer-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 7px 0 rgba(0,0,0,0.12);
-    }
-
-    .answer-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 rgba(0,0,0,0.08);
-    }
-
+    .answer-btn .ans-emoji { display: block; font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 4px; }
+    .answer-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.08); }
     .answer-btn.correct {
-      background: #4fc366;
-      color: white;
-      border-color: #2d8a43;
-      animation: correct-pulse 0.4s ease-out;
+      background: linear-gradient(135deg, #81c784, #4caf50); color: white;
+      border-color: #2e7d32; animation: correct-pulse 0.4s ease-out;
     }
-
-    @keyframes correct-pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.08); }
-      100% { transform: scale(1); }
-    }
-
     .answer-btn.incorrect {
-      background: #ef5350;
-      color: white;
-      border-color: #c62828;
-      animation: shake 0.4s ease;
+      background: linear-gradient(135deg, #ef9a9a, #ef5350); color: white;
+      border-color: #c62828; animation: shake 0.4s ease;
     }
+    @keyframes correct-pulse { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+    @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-8px); }
-      75% { transform: translateX(8px); }
+    .answer-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+    /* Family letter buttons (square tiles) */
+    .letter-tile-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+    .letter-tile {
+      aspect-ratio: 1; font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700;
+      font-family: inherit; color: white;
+      background: linear-gradient(135deg, #4fb995, #2d7a5c);
+      border: 4px solid #1b4d3e; border-radius: 18px;
+      cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,0.12);
+      transition: transform 0.1s, box-shadow 0.1s;
+      touch-action: manipulation;
+      min-height: 56px;
     }
+    .letter-tile:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
+    .letter-tile.correct { background: linear-gradient(135deg, #66bb6a, #388e3c); border-color: #1b5e20; animation: correct-pulse 0.4s ease-out; }
+    .letter-tile.incorrect { background: linear-gradient(135deg, #ef5350, #c62828); border-color: #b71c1c; animation: shake 0.4s ease; }
 
-    /* Celebration screen */
-    #celebration-screen {
-      gap: 20px;
-      text-align: center;
-    }
-
-    .celebration-emoji {
-      font-size: clamp(4rem, 15vw, 6rem);
-      animation: float-bounce 1.5s ease-in-out infinite;
-    }
-
-    @keyframes float-bounce {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-20px) scale(1.1); }
-    }
-
-    .celebration-text {
-      font-size: clamp(1.4rem, 3.5vw, 2rem);
-      color: #00695c;
-      font-weight: 700;
-    }
-
-    .star-row {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      font-size: clamp(2rem, 8vw, 3.5rem);
-    }
-
-    .star {
-      animation: star-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-    }
-
+    /* Celebration */
+    #celebration-screen { gap: 18px; text-align: center; }
+    .celebration-emoji { font-size: clamp(4rem, 15vw, 6rem); animation: float-bounce 1.5s ease-in-out infinite; }
+    @keyframes float-bounce { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-18px) scale(1.08); } }
+    .celebration-text { font-size: clamp(1.4rem, 4vw, 2rem); color: #00695c; font-weight: 700; }
+    .star-row { display: flex; justify-content: center; gap: 12px; font-size: clamp(2.4rem, 9vw, 3.6rem); margin-top: 4px; }
+    .star { animation: star-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
     .star:nth-child(1) { animation-delay: 0.1s; }
     .star:nth-child(2) { animation-delay: 0.25s; }
     .star:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes star-pop { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
 
-    @keyframes star-pop {
-      0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-      100% { transform: scale(1) rotate(0deg); opacity: 1; }
-    }
-
-    .again-btn {
-      padding: 16px 40px;
-      font-size: clamp(1.2rem, 2.8vw, 1.5rem);
-      font-family: inherit;
-      border: none;
-      border-radius: 24px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #4fb995, #2d7a5c);
-      color: white;
-      font-weight: 600;
+    .again-btn, .menu-btn {
+      padding: 14px 32px; font-size: clamp(1.1rem, 2.7vw, 1.35rem);
+      font-family: inherit; font-weight: 700;
+      border-radius: 22px; cursor: pointer;
       box-shadow: 0 6px 0 rgba(0,0,0,0.12);
       transition: transform 0.15s, box-shadow 0.15s;
-      border: 3px solid #1b4d3e;
       letter-spacing: 0.5px;
+      touch-action: manipulation;
+      min-height: 50px;
     }
-
-    .again-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 9px 0 rgba(0,0,0,0.15);
-    }
-
-    .again-btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    }
-
-    .menu-btn {
-      padding: 12px 32px;
-      font-size: clamp(1rem, 2.4vw, 1.2rem);
-      font-family: inherit;
-      border: 3px solid #4fb995;
-      border-radius: 20px;
-      cursor: pointer;
-      background: white;
-      color: #2d7a5c;
-      font-weight: 600;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.08);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .menu-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 rgba(0,0,0,0.12);
-    }
-
-    .menu-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 2px 0 rgba(0,0,0,0.08);
-    }
-
-    /* Responsive adjustments */
-    @media (max-height: 700px) {
-      .question-box {
-        padding: 20px 16px;
-      }
-
-      .letter-display {
-        margin-bottom: 12px;
-      }
-
-      .question-text {
-        margin-bottom: 16px;
-      }
-    }
+    .again-btn { background: linear-gradient(135deg, #4fb995, #2d7a5c); color: white; border: 3px solid #1b4d3e; }
+    .menu-btn  { background: white; color: #2d7a5c; border: 3px solid #4fb995; }
+    .again-btn:active, .menu-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.12); }
   </style>
 </head>
 <body>
 
-<button class="back-btn" onclick="goHome()">←</button>
+<button class="back-btn" onclick="goHome()" aria-label="Back home">←</button>
+
+<h1>📖 Reading Quest</h1>
+<div class="tagline">Phonics adventure — listen, sound it out, read! 🎵</div>
+
+<!-- ── LEVEL SELECT ── -->
+<div id="mode-screen" class="screen active">
+  <div class="path-intro">Pick a level. Each one builds on the last!</div>
+
+  <button class="level-card l1" onclick="startLevel('sounds')">
+    <div class="lvl-num">1</div>
+    <div class="lvl-emoji">🔤</div>
+    <div class="lvl-text">
+      <div class="lvl-name">Letter Sounds</div>
+      <div class="lvl-desc">Listen. Tap the letter that matches.</div>
+    </div>
+  </button>
+
+  <button class="level-card l2" onclick="startLevel('blending')">
+    <div class="lvl-num">2</div>
+    <div class="lvl-emoji">🎵</div>
+    <div class="lvl-text">
+      <div class="lvl-name">Sound It Out</div>
+      <div class="lvl-desc">C… A… T… CAT! Blend the sounds.</div>
+    </div>
+  </button>
+
+  <button class="level-card l3" onclick="startLevel('families')">
+    <div class="lvl-num">3</div>
+    <div class="lvl-emoji">🏠</div>
+    <div class="lvl-text">
+      <div class="lvl-name">Word Families</div>
+      <div class="lvl-desc">CAT, HAT, MAT, BAT — same ending!</div>
+    </div>
+  </button>
+
+  <button class="level-card l4" onclick="startLevel('sight')">
+    <div class="lvl-num">4</div>
+    <div class="lvl-emoji">⭐</div>
+    <div class="lvl-text">
+      <div class="lvl-name">Sight Words</div>
+      <div class="lvl-desc">Words to know by heart.</div>
+    </div>
+  </button>
+
+  <button class="level-card l5" onclick="startLevel('sentences')">
+    <div class="lvl-num">5</div>
+    <div class="lvl-emoji">📖</div>
+    <div class="lvl-text">
+      <div class="lvl-name">Read a Story</div>
+      <div class="lvl-desc">Put it all together — read a sentence!</div>
+    </div>
+  </button>
+</div>
+
+<!-- ── GAME SCREEN ── -->
+<div id="game-screen" class="screen">
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+  <div class="question-box" id="question-box"></div>
+  <div class="answer-grid" id="answer-grid"></div>
+</div>
+
+<!-- ── CELEBRATION ── -->
+<div id="celebration-screen" class="screen">
+  <div class="celebration-emoji">🎊</div>
+  <div class="celebration-text" id="celebration-text">Great Job!</div>
+  <div class="star-row" id="star-row"></div>
+  <button class="again-btn" onclick="playAgain()">Try Again</button>
+  <button class="menu-btn"  onclick="goMenu()">Choose Another Level</button>
+</div>
 
 <script>
+  /* ─────────────────────────────────────────────────────────────────────────
+     READING QUEST — Phonics Adventure
+     5-level progression inspired by Hooked on Phonics:
+       1. Letter Sounds (phonemic awareness)
+       2. Sound It Out (phonics — blending)
+       3. Word Families (phonics — pattern consolidation)
+       4. Sight Words (fluency)
+       5. Read a Sentence (comprehension)
+     Speech synthesis is the audio backbone — every prompt and answer
+     can be heard, because phonics is auditory at its core.
+     ───────────────────────────────────────────────────────────────────────── */
+
   /* Background decorations */
-  const decos = ['✨', '🌟', '⭐', '🌈', '💚', '🎯', '📚', '🎨'];
+  const decos = ['✨','🌟','⭐','🌈','💚','📚','🎵','🔤'];
   for (let i = 0; i < 12; i++) {
     const el = document.createElement('span');
     el.className = 'bg-deco';
@@ -424,166 +405,418 @@
     document.body.appendChild(el);
   }
 
-  /* Game state */
-  let currentMode = null;
-  let currentQuestion = 0;
-  let score = 0;
-  let answered = false;
-
-  /* Learning data based on evidence-based reading progression */
-  const learningModules = {
-    letters: {
-      name: 'Letter Recognition',
-      emoji: '🔤',
-      questions: [
-        { item: 'A', options: ['A', 'B'], correct: 0 },
-        { item: 'B', options: ['B', 'D'], correct: 0 },
-        { item: 'C', options: ['C', 'G'], correct: 0 },
-        { item: 'D', options: ['D', 'B'], correct: 0 },
-        { item: 'E', options: ['E', 'F'], correct: 0 },
-        { item: 'M', options: ['M', 'W'], correct: 0 },
-        { item: 'S', options: ['S', '5'], correct: 0 },
-        { item: 'T', options: ['T', 'L'], correct: 0 }
-      ]
-    },
-    sounds: {
-      name: 'Letter Sounds',
-      emoji: '🔊',
-      questions: [
-        { text: 'What sound does A make?', options: ['/ă/ (apple)', '/o/ (octopus)'], correct: 0 },
-        { text: 'What sound does B make?', options: ['/b/ (ball)', '/d/ (dog)'], correct: 0 },
-        { text: 'What sound does C make?', options: ['/k/ (cat)', '/t/ (ten)'], correct: 0 },
-        { text: 'What sound does M make?', options: ['/m/ (mom)', '/n/ (nose)'], correct: 0 },
-        { text: 'What sound does S make?', options: ['/s/ (sun)', '/z/ (zoo)'], correct: 0 },
-        { text: 'What sound does T make?', options: ['/t/ (top)', '/d/ (doll)'], correct: 0 },
-        { text: 'What sound does P make?', options: ['/p/ (pig)', '/b/ (ball)'], correct: 0 },
-        { text: 'What sound does R make?', options: ['/r/ (run)', '/l/ (leaf)'], correct: 0 }
-      ]
-    },
-    words: {
-      name: 'Sight Words',
-      emoji: '📖',
-      questions: [
-        { text: 'Find the word: THE', options: ['THE', 'THN'], correct: 0 },
-        { text: 'Find the word: AND', options: ['AND', 'ANB'], correct: 0 },
-        { text: 'Find the word: IS', options: ['IS', 'IT'], correct: 0 },
-        { text: 'Find the word: CAT', options: ['CAT', 'CAN'], correct: 0 },
-        { text: 'Find the word: DOG', options: ['DOG', 'DAD'], correct: 0 },
-        { text: 'Find the word: RAN', options: ['RAN', 'MAN'], correct: 0 },
-        { text: 'Find the word: SIT', options: ['SIT', 'SAT'], correct: 0 },
-        { text: 'Find the word: PAN', options: ['PAN', 'PEN'], correct: 0 }
-      ]
-    }
+  /* ── Speech synthesis helper ──
+     Phonemes are written as plain English approximations the synth voice
+     handles well ("buh" for /b/, "mmm" for /m/). For full words and
+     sentences we let the synth speak normally. */
+  const PHONEMES = {
+    A: 'aah', B: 'buh', C: 'kuh', D: 'duh', E: 'eh',
+    F: 'fff', G: 'guh', H: 'huh', I: 'ih',  J: 'juh',
+    K: 'kuh', L: 'lll', M: 'mmm', N: 'nnn', O: 'aah',
+    P: 'puh', Q: 'kwuh', R: 'rrr', S: 'sss', T: 'tuh',
+    U: 'uh',  V: 'vvv', W: 'wuh', X: 'ks',  Y: 'yuh',
+    Z: 'zzz'
   };
 
-  function startMode(mode) {
-    currentMode = mode;
-    currentQuestion = 0;
-    score = 0;
-    answered = false;
+  let preferredVoice = null;
+  function pickVoice() {
+    if (!window.speechSynthesis) return;
+    const voices = window.speechSynthesis.getVoices();
+    /* Prefer a clear US English female voice for kids; fall back gracefully. */
+    preferredVoice =
+      voices.find(v => /en-US/i.test(v.lang) && /female|samantha|zira|google.*us/i.test(v.name)) ||
+      voices.find(v => /en-US/i.test(v.lang)) ||
+      voices.find(v => /^en/i.test(v.lang)) ||
+      voices[0] || null;
+  }
+  if (window.speechSynthesis) {
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+  }
+
+  function speak(text, opts = {}) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate  = opts.rate  ?? 0.85;
+    u.pitch = opts.pitch ?? 1.1;
+    u.lang  = 'en-US';
+    if (preferredVoice) u.voice = preferredVoice;
+    if (opts.onend) u.onend = opts.onend;
+    window.speechSynthesis.speak(u);
+  }
+
+  /* Speak a letter's *sound* (not its name). */
+  function speakSound(letter) {
+    const ph = PHONEMES[letter.toUpperCase()] || letter;
+    speak(ph, { rate: 0.7, pitch: 1.15 });
+  }
+
+  /* Speak a CVC word by sounding it out, then saying the whole word. */
+  function speakBlend(word) {
+    if (!window.speechSynthesis) return;
+    const letters = word.toUpperCase().split('');
+    let i = 0;
+    function next() {
+      if (i < letters.length) {
+        const ph = PHONEMES[letters[i]] || letters[i];
+        const u = new SpeechSynthesisUtterance(ph);
+        u.rate = 0.65; u.pitch = 1.15; u.lang = 'en-US';
+        if (preferredVoice) u.voice = preferredVoice;
+        u.onend = () => { i++; setTimeout(next, 220); };
+        window.speechSynthesis.speak(u);
+      } else {
+        setTimeout(() => speak(word, { rate: 0.85, pitch: 1.15 }), 200);
+      }
+    }
+    window.speechSynthesis.cancel();
+    next();
+  }
+
+  /* ── DATA ─────────────────────────────────────────────────────────────── */
+
+  const LEVEL_1_SOUNDS = [
+    { letter: 'M', distractors: ['N', 'S'] },
+    { letter: 'S', distractors: ['Z', 'C'] },
+    { letter: 'T', distractors: ['D', 'P'] },
+    { letter: 'A', distractors: ['E', 'O'] },
+    { letter: 'P', distractors: ['B', 'D'] },
+    { letter: 'C', distractors: ['G', 'K'] },
+    { letter: 'B', distractors: ['D', 'P'] },
+    { letter: 'F', distractors: ['V', 'H'] },
+  ];
+
+  const LEVEL_2_BLENDING = [
+    { word: 'CAT', emoji: '🐱', wrong: { word: 'DOG', emoji: '🐶' } },
+    { word: 'BUG', emoji: '🐛', wrong: { word: 'BEE', emoji: '🐝' } },
+    { word: 'SUN', emoji: '☀️', wrong: { word: 'BUN', emoji: '🍞' } },
+    { word: 'PIG', emoji: '🐷', wrong: { word: 'COW', emoji: '🐮' } },
+    { word: 'HAT', emoji: '🎩', wrong: { word: 'CAP', emoji: '🧢' } },
+    { word: 'MAP', emoji: '🗺️', wrong: { word: 'BOX', emoji: '📦' } },
+  ];
+
+  const LEVEL_3_FAMILIES = [
+    { ending: 'AT', target: 'C', emoji: '🐱', word: 'CAT', distractors: ['B','H','M'] },
+    { ending: 'AT', target: 'H', emoji: '🎩', word: 'HAT', distractors: ['C','B','R'] },
+    { ending: 'AT', target: 'B', emoji: '🦇', word: 'BAT', distractors: ['C','H','M'] },
+    { ending: 'UG', target: 'B', emoji: '🐛', word: 'BUG', distractors: ['H','M','R'] },
+    { ending: 'UG', target: 'M', emoji: '☕', word: 'MUG', distractors: ['B','H','R'] },
+    { ending: 'OG', target: 'D', emoji: '🐶', word: 'DOG', distractors: ['L','F','H'] },
+    { ending: 'EN', target: 'H', emoji: '🐔', word: 'HEN', distractors: ['P','T','M'] },
+    { ending: 'EN', target: 'T', emoji: '🔟', word: 'TEN', distractors: ['H','P','B'] },
+  ];
+
+  const LEVEL_4_SIGHT = [
+    { word: 'THE',  options: ['THE',  'THEN', 'TEN']  },
+    { word: 'AND',  options: ['END',  'AND',  'ANT']  },
+    { word: 'IS',   options: ['IT',   'IS',   'IN']   },
+    { word: 'YOU',  options: ['YOU',  'YES',  'YET']  },
+    { word: 'WAS',  options: ['WAY',  'WAS',  'WAR']  },
+    { word: 'SAID', options: ['SAID', 'SAND', 'SEND'] },
+    { word: 'MY',   options: ['BY',   'TRY',  'MY']   },
+    { word: 'ARE',  options: ['ARE',  'ATE',  'AGE']  },
+  ];
+
+  const LEVEL_5_SENTENCES = [
+    { sentence: 'THE CAT SAT.',     prompt: 'Where is the cat?',      options: [{emoji:'🐱', label:'sitting', correct:true},{emoji:'🐶', label:'a dog', correct:false}] },
+    { sentence: 'A DOG RAN.',       prompt: 'What did the dog do?',   options: [{emoji:'🐶', label:'ran',    correct:true},{emoji:'😴', label:'slept',  correct:false}] },
+    { sentence: 'I SEE A BUG.',     prompt: 'What do you see?',       options: [{emoji:'🐛', label:'a bug',  correct:true},{emoji:'🐝', label:'a bee',  correct:false}] },
+    { sentence: 'THE SUN IS UP.',   prompt: 'What is up?',            options: [{emoji:'☀️', label:'the sun', correct:true},{emoji:'🌙', label:'the moon', correct:false}] },
+    { sentence: 'MY HAT IS RED.',   prompt: 'What color is the hat?', options: [{emoji:'🟥', label:'red',    correct:true},{emoji:'🟦', label:'blue',   correct:false}] },
+  ];
+
+  /* ── STATE & ROUTING ──────────────────────────────────────────────────── */
+
+  let currentLevel = null;
+  let currentIdx   = 0;
+  let score        = 0;
+  let answered     = false;
+
+  const LEVEL_HANDLERS = {
+    sounds:    { data: LEVEL_1_SOUNDS,    render: renderSoundsQ    },
+    blending:  { data: LEVEL_2_BLENDING,  render: renderBlendingQ  },
+    families:  { data: LEVEL_3_FAMILIES,  render: renderFamiliesQ  },
+    sight:     { data: LEVEL_4_SIGHT,     render: renderSightQ     },
+    sentences: { data: LEVEL_5_SENTENCES, render: renderSentenceQ  },
+  };
+
+  function startLevel(id) {
+    currentLevel = id;
+    currentIdx   = 0;
+    score        = 0;
+    answered     = false;
     document.getElementById('mode-screen').classList.remove('active');
     document.getElementById('game-screen').classList.add('active');
     showQuestion();
   }
 
   function showQuestion() {
-    const module = learningModules[currentMode];
-    const q = module.questions[currentQuestion];
-    
-    const gameScreen = document.getElementById('game-screen');
-    
-    // Update progress
-    const progress = ((currentQuestion) / module.questions.length) * 100;
-    document.querySelector('.progress-fill').style.width = progress + '%';
-
-    const questionBox = document.querySelector('.question-box');
-    
-    if (currentMode === 'letters') {
-      questionBox.innerHTML = `
-        <div class="question-text">Find the letter:</div>
-        <div class="letter-display">${q.item}</div>
-      `;
-      document.querySelector('.answer-grid').className = 'answer-grid';
-    } else if (currentMode === 'sounds') {
-      questionBox.innerHTML = `
-        <div class="question-text">${q.text}</div>
-      `;
-      document.querySelector('.answer-grid').className = 'answer-grid single';
-    } else if (currentMode === 'words') {
-      questionBox.innerHTML = `
-        <div class="question-text">${q.text}</div>
-      `;
-      document.querySelector('.answer-grid').className = 'answer-grid';
-    }
-
-    renderAnswers(q.options, q.correct);
     answered = false;
+    const handler = LEVEL_HANDLERS[currentLevel];
+    const q = handler.data[currentIdx];
+    document.querySelector('.progress-fill').style.width =
+      ((currentIdx) / handler.data.length * 100) + '%';
+    handler.render(q);
   }
 
-  function renderAnswers(options, correctIdx) {
-    const grid = document.querySelector('.answer-grid');
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ── LEVEL 1: LETTER SOUNDS ─────────────────────────────────────────────
+     "Tap the letter that says ___"  — sound plays automatically + on demand. */
+  function renderSoundsQ(q) {
+    const box = document.getElementById('question-box');
+    box.innerHTML = `
+      <div class="prompt">Listen, then tap the letter that makes this sound:</div>
+      <button class="sound-btn" id="play-sound">🔊 Play sound</button>
+    `;
+    document.getElementById('play-sound').onclick = () => {
+      flashPlaying('play-sound');
+      speakSound(q.letter);
+    };
+    /* Auto-play once on render so the child hears the sound first. */
+    setTimeout(() => { flashPlaying('play-sound'); speakSound(q.letter); }, 350);
+
+    const choices = shuffle([q.letter, ...q.distractors]);
+    const grid = document.getElementById('answer-grid');
+    grid.className = 'answer-grid three';
     grid.innerHTML = '';
-    
-    options.forEach((opt, idx) => {
+    choices.forEach(letter => {
       const btn = document.createElement('button');
       btn.className = 'answer-btn';
-      btn.textContent = opt;
-      btn.onclick = () => checkAnswer(idx, correctIdx);
+      btn.style.fontSize = 'clamp(2rem, 8vw, 3rem)';
+      btn.style.fontWeight = '700';
+      btn.textContent = letter;
+      btn.onclick = () => {
+        const correct = letter === q.letter;
+        if (correct) speakSound(letter);
+        markAnswer(btn, correct, q.letter, '.answer-btn');
+      };
       grid.appendChild(btn);
     });
   }
 
-  function checkAnswer(selected, correct) {
+  /* ── LEVEL 2: BLENDING ────────────────────────────────────────────────── */
+  function renderBlendingQ(q) {
+    const box = document.getElementById('question-box');
+    const letters = q.word.split('');
+    box.innerHTML = `
+      <div class="prompt">Sound it out! Tap each letter, then blend them.</div>
+      <div class="blend-row">
+        ${letters.map((l, i) => `
+          <button class="blend-tile" data-i="${i}" data-letter="${l}">
+            <div class="b-letter">${l}</div>
+            <div class="b-speaker">🔊</div>
+          </button>
+        `).join('')}
+      </div>
+      <button class="sound-btn" id="play-blend">🎵 Blend it!</button>
+    `;
+    box.querySelectorAll('.blend-tile').forEach(t => {
+      t.onclick = () => {
+        t.classList.add('heard');
+        speakSound(t.dataset.letter);
+      };
+    });
+    document.getElementById('play-blend').onclick = () => {
+      flashPlaying('play-blend');
+      speakBlend(q.word);
+    };
+
+    const opts = shuffle([
+      { word: q.word,       emoji: q.emoji,       correct: true  },
+      { word: q.wrong.word, emoji: q.wrong.emoji, correct: false },
+    ]);
+    const grid = document.getElementById('answer-grid');
+    grid.className = 'answer-grid';
+    grid.innerHTML = '';
+    opts.forEach(o => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.innerHTML = `<span class="ans-emoji">${o.emoji}</span>${o.word}`;
+      btn.onclick = () => {
+        if (o.correct) speak(o.word);
+        markAnswer(btn, o.correct, q.word, '.answer-btn');
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ── LEVEL 3: WORD FAMILIES ─────────────────────────────────────────────
+     Shown: __AT  + 🐱  →  child taps C to make CAT. */
+  function renderFamiliesQ(q) {
+    const box = document.getElementById('question-box');
+    box.innerHTML = `
+      <div class="prompt">Make the word! Tap the right letter to start.</div>
+      <div class="family-picture">${q.emoji}</div>
+      <div class="family-display">
+        <span class="family-blank" id="fam-blank">___</span>
+        <span>${q.ending}</span>
+      </div>
+      <button class="sound-btn" id="play-fam">🔊 Hear "${q.word}"</button>
+    `;
+    document.getElementById('play-fam').onclick = () => {
+      flashPlaying('play-fam');
+      speakBlend(q.word);
+    };
+    setTimeout(() => { flashPlaying('play-fam'); speakBlend(q.word); }, 350);
+
+    const choices = shuffle([q.target, ...q.distractors]);
+    const grid = document.getElementById('answer-grid');
+    grid.className = 'letter-tile-row';
+    grid.innerHTML = '';
+    choices.forEach(letter => {
+      const btn = document.createElement('button');
+      btn.className = 'letter-tile';
+      btn.textContent = letter;
+      btn.onclick = () => {
+        if (answered) return;
+        const correct = letter === q.target;
+        if (correct) {
+          const blank = document.getElementById('fam-blank');
+          blank.textContent = q.target;
+          blank.classList.add('filled');
+          setTimeout(() => speakBlend(q.word), 250);
+        }
+        markAnswer(btn, correct, q.target, '.letter-tile');
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ── LEVEL 4: SIGHT WORDS ──────────────────────────────────────────────── */
+  function renderSightQ(q) {
+    const box = document.getElementById('question-box');
+    box.innerHTML = `
+      <div class="prompt">Find this word:</div>
+      <div class="sight-word">${q.word}</div>
+      <button class="sound-btn" id="play-sight">🔊 Say it</button>
+    `;
+    document.getElementById('play-sight').onclick = () => {
+      flashPlaying('play-sight');
+      speak(q.word);
+    };
+    setTimeout(() => { flashPlaying('play-sight'); speak(q.word); }, 350);
+
+    const choices = shuffle(q.options);
+    const grid = document.getElementById('answer-grid');
+    grid.className = 'answer-grid three';
+    grid.innerHTML = '';
+    choices.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.style.fontWeight = '700';
+      btn.style.fontSize = 'clamp(1.1rem, 3vw, 1.4rem)';
+      btn.textContent = opt;
+      btn.onclick = () => {
+        const correct = opt === q.word;
+        if (correct) speak(opt);
+        markAnswer(btn, correct, q.word, '.answer-btn');
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ── LEVEL 5: READ A SENTENCE ──────────────────────────────────────────── */
+  function renderSentenceQ(q) {
+    const box = document.getElementById('question-box');
+    const words = q.sentence.replace(/\.$/, '').split(' ');
+    box.innerHTML = `
+      <div class="prompt">Read the sentence (tap a word to hear it):</div>
+      <div class="sentence-display">
+        ${words.map(w => `<span class="sent-word" data-w="${w.replace(/[.,]/g,'')}">${w}</span>`).join(' ')}.
+      </div>
+      <button class="sound-btn" id="play-sentence">🔊 Read sentence</button>
+      <div class="prompt" style="margin-top: 14px;">${q.prompt}</div>
+    `;
+    box.querySelectorAll('.sent-word').forEach(w => {
+      w.onclick = () => speak(w.dataset.w);
+    });
+    document.getElementById('play-sentence').onclick = () => {
+      flashPlaying('play-sentence');
+      speak(q.sentence, { rate: 0.75 });
+    };
+    setTimeout(() => { flashPlaying('play-sentence'); speak(q.sentence, { rate: 0.75 }); }, 350);
+
+    const opts = shuffle(q.options);
+    const grid = document.getElementById('answer-grid');
+    grid.className = 'answer-grid';
+    grid.innerHTML = '';
+    opts.forEach(o => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.innerHTML = `<span class="ans-emoji">${o.emoji}</span>${o.label}`;
+      btn.onclick = () => {
+        if (o.correct) speak(o.label);
+        markAnswer(btn, o.correct, null, '.answer-btn');
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  /* ── ANSWER FEEDBACK ───────────────────────────────────────────────────── */
+  function markAnswer(btn, correct, targetValue, btnSelector) {
     if (answered) return;
     answered = true;
-
-    const btns = document.querySelectorAll('.answer-btn');
-    if (selected === correct) {
+    const allBtns = document.querySelectorAll(btnSelector);
+    if (correct) {
+      btn.classList.add('correct');
       score++;
-      btns[selected].classList.add('correct');
-      setTimeout(nextQuestion, 1200);
+      setTimeout(nextQuestion, 1400);
     } else {
-      btns[selected].classList.add('incorrect');
-      btns[correct].classList.add('correct');
-      setTimeout(nextQuestion, 1500);
+      btn.classList.add('incorrect');
+      /* Highlight the right answer too, so the child sees what was correct. */
+      if (targetValue !== null && targetValue !== undefined) {
+        allBtns.forEach(b => { if (b.textContent.trim() === targetValue) b.classList.add('correct'); });
+      } else {
+        allBtns.forEach(b => { if (b.dataset.correct === 'true') b.classList.add('correct'); });
+      }
+      setTimeout(nextQuestion, 1900);
     }
   }
 
   function nextQuestion() {
-    currentQuestion++;
-    const module = learningModules[currentMode];
-    if (currentQuestion < module.questions.length) {
+    currentIdx++;
+    const handler = LEVEL_HANDLERS[currentLevel];
+    if (currentIdx < handler.data.length) {
       showQuestion();
     } else {
       showCelebration();
     }
   }
 
+  /* ── HELPERS ───────────────────────────────────────────────────────────── */
+  function flashPlaying(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('playing');
+    setTimeout(() => el.classList.remove('playing'), 1200);
+  }
+
+  /* ── CELEBRATION & NAV ─────────────────────────────────────────────────── */
   function showCelebration() {
     document.getElementById('game-screen').classList.remove('active');
     document.getElementById('celebration-screen').classList.add('active');
-
-    const module = learningModules[currentMode];
-    const percent = Math.round((score / module.questions.length) * 100);
-    
-    let message = percent === 100 ? '🌟 Perfect!' : percent >= 75 ? '🎉 Great Job!' : '👏 Good Try!';
-    
-    document.querySelector('.celebration-text').textContent = `${message} ${score}/${module.questions.length}`;
-    
-    const starCount = percent === 100 ? 3 : percent >= 75 ? 2 : 1;
-    let stars = '';
-    for (let i = 0; i < starCount; i++) {
-      stars += `<span class="star">⭐</span>`;
-    }
-    document.querySelector('.star-row').innerHTML = stars;
+    const handler = LEVEL_HANDLERS[currentLevel];
+    const total = handler.data.length;
+    const pct = Math.round((score / total) * 100);
+    const stars = pct === 100 ? 3 : pct >= 75 ? 2 : 1;
+    const message = pct === 100 ? '🌟 Perfect Reader!' : pct >= 75 ? '🎉 Great Job!' : '👏 Keep Going!';
+    document.getElementById('celebration-text').textContent = `${message}  ${score}/${total}`;
+    document.getElementById('star-row').innerHTML = '⭐'.repeat(stars).split('').map(s => `<span class="star">${s}</span>`).join('');
+    speak(message.replace(/[^a-zA-Z ]/g, ''), { rate: 0.95 });
   }
 
   function playAgain() {
     document.getElementById('celebration-screen').classList.remove('active');
     document.getElementById('game-screen').classList.add('active');
-    currentQuestion = 0;
-    score = 0;
-    answered = false;
+    currentIdx = 0; score = 0; answered = false;
     showQuestion();
   }
 
@@ -591,49 +824,14 @@
     document.getElementById('celebration-screen').classList.remove('active');
     document.getElementById('game-screen').classList.remove('active');
     document.getElementById('mode-screen').classList.add('active');
-    currentMode = null;
+    currentLevel = null;
   }
 
   function goHome() {
-    window.location.href = 'index.html';
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    window.location.href = 'games.html';
   }
 </script>
-
-<h1>📖 Reading Quest</h1>
-<div class="tagline">Learn to read the fun way!</div>
-
-<!-- Mode Selection Screen -->
-<div id="mode-screen" class="screen active">
-  <div class="mode-section">
-    <div class="mode-title">What would you like to learn?</div>
-    <div class="mode-grid">
-      <button class="mode-btn letters" onclick="startMode('letters')">🔤 Letters</button>
-      <button class="mode-btn sounds" onclick="startMode('sounds')">🔊 Letter Sounds</button>
-      <button class="mode-btn words" onclick="startMode('words')">📖 Sight Words</button>
-    </div>
-  </div>
-</div>
-
-<!-- Game Screen -->
-<div id="game-screen" class="screen">
-  <div class="progress-bar">
-    <div class="progress-fill"></div>
-  </div>
-  <div class="question-box">
-    <div class="question-text">Ready?</div>
-    <div class="letter-display">A</div>
-  </div>
-  <div class="answer-grid"></div>
-</div>
-
-<!-- Celebration Screen -->
-<div id="celebration-screen" class="screen">
-  <div class="celebration-emoji">🎊</div>
-  <div class="celebration-text">Great Job! 8/8</div>
-  <div class="star-row"></div>
-  <button class="again-btn" onclick="playAgain()">Play Again</button>
-  <button class="menu-btn" onclick="goMenu()">Choose Another</button>
-</div>
 
 </body>
 </html>
