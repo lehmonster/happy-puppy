@@ -208,7 +208,7 @@
       font-size: clamp(0.85rem, 3.5vw, 1.7rem);
       font-weight: bold;
       color: #0d47a1;
-      text-transform: lowercase;
+      text-transform: uppercase;
       letter-spacing: 1px;
       word-break: break-word;
     }
@@ -346,25 +346,36 @@
 <script>
   /* Each item becomes TWO cards: one emoji, one word. The match
      succeeds when the two flipped cards share the same id. */
+  /* All words 4 letters or less — beginner-reader friendly. */
   const ALL_ITEMS = [
-    { id: 'apple',      emoji: '🍎', word: 'apple' },
-    { id: 'banana',     emoji: '🍌', word: 'banana' },
-    { id: 'grapes',     emoji: '🍇', word: 'grapes' },
-    { id: 'orange',     emoji: '🍊', word: 'orange' },
-    { id: 'watermelon', emoji: '🍉', word: 'melon' },
-    { id: 'cat',        emoji: '🐱', word: 'cat' },
-    { id: 'dog',        emoji: '🐶', word: 'dog' },
-    { id: 'fish',       emoji: '🐟', word: 'fish' },
-    { id: 'frog',       emoji: '🐸', word: 'frog' },
-    { id: 'bee',        emoji: '🐝', word: 'bee' },
-    { id: 'sun',        emoji: '☀️', word: 'sun' },
-    { id: 'star',       emoji: '⭐', word: 'star' },
-    { id: 'tree',       emoji: '🌳', word: 'tree' },
-    { id: 'flower',     emoji: '🌸', word: 'flower' },
-    { id: 'cake',       emoji: '🎂', word: 'cake' },
-    { id: 'ball',       emoji: '⚽', word: 'ball' },
-    { id: 'hat',        emoji: '🎩', word: 'hat' },
-    { id: 'book',       emoji: '📚', word: 'book' },
+    { id: 'cat',  emoji: '🐱', word: 'cat'  },
+    { id: 'dog',  emoji: '🐶', word: 'dog'  },
+    { id: 'pig',  emoji: '🐷', word: 'pig'  },
+    { id: 'cow',  emoji: '🐮', word: 'cow'  },
+    { id: 'fox',  emoji: '🦊', word: 'fox'  },
+    { id: 'bee',  emoji: '🐝', word: 'bee'  },
+    { id: 'bug',  emoji: '🐛', word: 'bug'  },
+    { id: 'fish', emoji: '🐟', word: 'fish' },
+    { id: 'frog', emoji: '🐸', word: 'frog' },
+    { id: 'duck', emoji: '🦆', word: 'duck' },
+    { id: 'bird', emoji: '🐦', word: 'bird' },
+    { id: 'bear', emoji: '🐻', word: 'bear' },
+    { id: 'lion', emoji: '🦁', word: 'lion' },
+    { id: 'sun',  emoji: '☀️', word: 'sun'  },
+    { id: 'moon', emoji: '🌙', word: 'moon' },
+    { id: 'star', emoji: '⭐', word: 'star' },
+    { id: 'tree', emoji: '🌳', word: 'tree' },
+    { id: 'cake', emoji: '🎂', word: 'cake' },
+    { id: 'pie',  emoji: '🥧', word: 'pie'  },
+    { id: 'egg',  emoji: '🥚', word: 'egg'  },
+    { id: 'cup',  emoji: '🥤', word: 'cup'  },
+    { id: 'ball', emoji: '⚽', word: 'ball' },
+    { id: 'hat',  emoji: '🎩', word: 'hat'  },
+    { id: 'book', emoji: '📚', word: 'book' },
+    { id: 'car',  emoji: '🚗', word: 'car'  },
+    { id: 'bus',  emoji: '🚌', word: 'bus'  },
+    { id: 'key',  emoji: '🔑', word: 'key'  },
+    { id: 'bed',  emoji: '🛏️', word: 'bed'  },
   ];
 
   let pairCount    = 5;
@@ -458,6 +469,9 @@
 
     const [a, b] = flipped;
 
+    /* Hold both cards face-up for 3s so a beginner reader can study them. */
+    const HOLD_MS = 3000;
+
     if (a.dataset.id === b.dataset.id) {
       setTimeout(() => {
         a.classList.add('matched');
@@ -475,7 +489,7 @@
             startConfetti();
           }, 550);
         }
-      }, 500);
+      }, HOLD_MS);
     } else {
       a.classList.add('wrong');
       b.classList.add('wrong');
@@ -484,7 +498,7 @@
         b.classList.remove('flipped', 'wrong');
         flipped = [];
         locked  = false;
-      }, 950);
+      }, HOLD_MS);
     }
   }
 
