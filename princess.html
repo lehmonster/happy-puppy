@@ -2,28 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#fce4ec">
   <title>Princess Memory Match!</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      overscroll-behavior: none;
+    }
 
     body {
       font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
       background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e8eaf6 100%);
       min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
     h1 {
       text-align: center;
       font-size: clamp(1.6rem, 5vw, 2.8rem);
       color: #880e4f;
-      padding: 18px 10px 4px;
+      padding: 14px 10px 4px;
       text-shadow: 3px 3px 0 #f8bbd0;
       letter-spacing: 2px;
     }
-
-    /* sparkle stars in header */
     h1::before { content: '✨ '; }
     h1::after  { content: ' ✨'; }
 
@@ -32,20 +49,20 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
-      padding: 24px 20px;
+      gap: 18px;
+      padding: 18px 20px 28px;
     }
 
     #mode-screen p {
-      font-size: clamp(1.1rem, 3vw, 1.6rem);
+      font-size: clamp(1.05rem, 3vw, 1.6rem);
       color: #6a1b9a;
       text-align: center;
     }
 
     .mode-btn {
       font-family: inherit;
-      font-size: clamp(1.1rem, 3.5vw, 1.8rem);
-      padding: 18px 44px;
+      font-size: clamp(1.05rem, 3.5vw, 1.7rem);
+      padding: 16px 36px;
       border: none;
       border-radius: 50px;
       cursor: pointer;
@@ -54,8 +71,12 @@
       box-shadow: 0 7px 0 rgba(0,0,0,0.22);
       transition: transform 0.1s, box-shadow 0.1s;
       letter-spacing: 1px;
-      width: clamp(240px, 60vw, 340px);
+      width: clamp(240px, 70vw, 340px);
       text-align: center;
+      touch-action: manipulation;
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 56px;
     }
     .mode-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 rgba(0,0,0,0.22); }
     .mode-btn.easy { background: linear-gradient(135deg, #f06292, #c2185b); }
@@ -69,52 +90,78 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 16px 10px;
+      padding: 8px 12px 8px;
       flex-wrap: wrap;
       gap: 8px;
+      position: sticky;
+      top: 0;
+      background: rgba(252, 228, 236, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10;
     }
 
     #score-box {
-      font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+      font-size: clamp(0.85rem, 2.4vw, 1.25rem);
       color: #6a1b9a;
       font-weight: bold;
+      flex: 1;
+      text-align: center;
+      min-width: 0;
     }
 
     #back-btn, #restart-btn {
       font-family: inherit;
       font-size: clamp(0.85rem, 2.2vw, 1.1rem);
-      padding: 8px 18px;
+      padding: 10px 16px;
       border: none;
       border-radius: 30px;
       cursor: pointer;
       font-weight: bold;
       box-shadow: 0 4px 0 rgba(0,0,0,0.18);
       transition: transform 0.1s, box-shadow 0.1s;
+      touch-action: manipulation;
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 40px;
+      white-space: nowrap;
     }
     #back-btn:active, #restart-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.18); }
     #back-btn    { background: #fce4ec; color: #c2185b; }
     #restart-btn { background: #f3e5f5; color: #6a1b9a; }
 
-    /* ── Grid ── */
+    /* ── Grid ──
+       Phone-first: 4 columns. Tablets/desktops scale up. */
     #grid {
       display: grid;
-      gap: clamp(8px, 2vw, 12px);
-      padding: 0 14px 30px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px 10px 28px;
       width: 100%;
       max-width: 860px;
       margin: 0 auto;
     }
+    @media (min-width: 540px) {
+      #grid { grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 12px 14px 30px; }
+    }
+    @media (min-width: 760px) {
+      #grid { grid-template-columns: repeat(6, 1fr); gap: 12px; }
+    }
+    /* Hard mode (20 cards) feels best at 5 cols on phone if user rotates,
+       but stays 4×5 in portrait — still readable. */
 
     .card-wrapper { perspective: 600px; }
 
     .card {
       width: 100%;
-      aspect-ratio: 0.85;
+      aspect-ratio: 1 / 1;
       position: relative;
       cursor: pointer;
       transform-style: preserve-3d;
+      -webkit-transform-style: preserve-3d;
       transition: transform 0.45s cubic-bezier(0.4,0,0.2,1);
-      border-radius: 18px;
+      border-radius: 16px;
+      touch-action: manipulation;
     }
 
     .card.flipped { transform: rotateY(180deg); }
@@ -123,60 +170,42 @@
     .card-face {
       position: absolute;
       inset: 0;
-      border-radius: 18px;
+      border-radius: 16px;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
     }
 
-    /* Card back — pink sparkle */
+    /* Card back — pink sparkle with 👑 */
     .card-back {
       background: linear-gradient(135deg, #e91e8c, #9c27b0);
       border: 4px solid rgba(255,255,255,0.55);
       box-shadow: 3px 5px 0 rgba(0,0,0,0.18);
-      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-size: clamp(1.6rem, 5vw, 3rem);
     }
     .card-back::before { content: '👑'; }
 
-    /* Card front */
+    /* Card front — full-bleed princess portrait */
     .card-front {
       transform: rotateY(180deg);
+      background: white;
       border: 4px solid rgba(255,255,255,0.6);
       box-shadow: 3px 5px 0 rgba(0,0,0,0.12);
-      padding: 6px 4px;
-      gap: 3px;
-      overflow: hidden;
+      padding: 0;
+      flex-direction: column;
     }
 
-    /* Disney Emoji Blitz portraits — already face-focused,
-       so we just fit them inside the card. */
     .card-front .princess-img {
       width: 100%;
-      object-fit: contain;
-      border-radius: 14px;
-      background: white;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    .card-front .princess-emoji {
-      font-size: clamp(2.2rem, 6.5vw, 4rem);
-      line-height: 1;
-      display: none;  /* shown only if image fails */
-    }
-
-    .card-front .princess-name {
-      font-size: clamp(0.65rem, 1.9vw, 0.95rem);
-      font-weight: bold;
-      color: white;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-      text-align: center;
-      letter-spacing: 0.5px;
-      flex: 0 0 auto;
-      padding: 0 0 2px;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+      user-select: none;
     }
 
     /* Matched state */
@@ -217,7 +246,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
+      padding: 20px;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom));
     }
     #win-screen.show { display: flex; }
 
@@ -225,18 +256,19 @@
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
 
     #win-text {
-      font-size: clamp(1.8rem, 5.5vw, 3.2rem);
+      font-size: clamp(1.6rem, 5.5vw, 3.2rem);
       color: #880e4f;
       text-align: center;
       text-shadow: 3px 3px 0 #f8bbd0;
+      line-height: 1.2;
     }
 
-    #win-moves { font-size: clamp(1rem, 3vw, 1.5rem); color: #6a1b9a; }
+    #win-moves { font-size: clamp(1rem, 3vw, 1.5rem); color: #6a1b9a; text-align: center; }
 
     .win-btn {
       font-family: inherit;
       font-size: clamp(1rem, 3vw, 1.6rem);
-      padding: 14px 34px;
+      padding: 14px 30px;
       border: none;
       border-radius: 50px;
       cursor: pointer;
@@ -244,6 +276,11 @@
       font-weight: bold;
       box-shadow: 0 6px 0 rgba(0,0,0,0.2);
       transition: transform 0.1s, box-shadow 0.1s;
+      touch-action: manipulation;
+      -webkit-appearance: none;
+      appearance: none;
+      min-height: 54px;
+      width: clamp(220px, 70vw, 320px);
     }
     .win-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
     #again-btn { background: linear-gradient(135deg, #f06292, #c2185b); }
@@ -299,30 +336,24 @@
 </div>
 
 <script>
-  /* Official Disney Emoji Blitz portraits (512×512 PNGs) hosted on
-     the Fandom wiki CDN. Emoji fallback if the image fails. */
+  /* Local princess portraits — sliced from the Disney Emoji Blitz collage. */
   const ALL_PRINCESSES = [
-    { id: 'cinderella', emoji: '👠', label: 'Cinderella', bg: 'linear-gradient(135deg,#90caf9,#1565c0)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/7/72/EmojiBlitzCinderella1.png/revision/latest/scale-to-width-down/300?cb=20230606143201' },
-    { id: 'ariel',      emoji: '🧜‍♀️', label: 'Ariel',      bg: 'linear-gradient(135deg,#80cbc4,#00695c)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/8/8c/EmojiBlitzAriel1.png/revision/latest/scale-to-width-down/300?cb=20230428134650' },
-    { id: 'belle',      emoji: '🌹', label: 'Belle',      bg: 'linear-gradient(135deg,#fff176,#f9a825)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/f/fe/EmojiBlitzBelle1.png/revision/latest/scale-to-width-down/300?cb=20230426183843' },
-    { id: 'elsa',       emoji: '❄️', label: 'Elsa',       bg: 'linear-gradient(135deg,#b3e5fc,#0288d1)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/9/91/EmojiBlitzElsa1.png/revision/latest/scale-to-width-down/300?cb=20230705132549' },
-    { id: 'moana',      emoji: '🌊', label: 'Moana',      bg: 'linear-gradient(135deg,#80deea,#00838f)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/a/a6/EmojiBlitzMoana1.png/revision/latest/scale-to-width-down/300?cb=20230502180446' },
-    { id: 'rapunzel',   emoji: '🌻', label: 'Rapunzel',   bg: 'linear-gradient(135deg,#ce93d8,#7b1fa2)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/7/70/EmojiBlitzRapunzel1.png/revision/latest/scale-to-width-down/300?cb=20231011184354' },
-    { id: 'tiana',      emoji: '🐸', label: 'Tiana',      bg: 'linear-gradient(135deg,#a5d6a7,#2e7d32)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/b/bd/EmojiBlitzTiana1.png/revision/latest/scale-to-width-down/300?cb=20231024141205' },
-    { id: 'snowwhite',  emoji: '🍎', label: 'Snow White', bg: 'linear-gradient(135deg,#ef9a9a,#c62828)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/f/fc/EmojiBlitzSnowWhite1.png/revision/latest/scale-to-width-down/300?cb=20231020130957' },
-    { id: 'jasmine',    emoji: '🌙', label: 'Jasmine',    bg: 'linear-gradient(135deg,#80cbc4,#6a1b9a)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/c/c2/EmojiBlitzJasmine1.png/revision/latest/scale-to-width-down/300?cb=20230812122651' },
-    { id: 'aurora',     emoji: '🌸', label: 'Aurora',     bg: 'linear-gradient(135deg,#f48fb1,#ad1457)',
-      img: 'https://static.wikia.nocookie.net/disneyemojiblitz/images/1/1a/EmojiBlitzYoungAurora-Happy.png/revision/latest?cb=20240508124723' },
+    { id: 'cinderella', label: 'Cinderella', img: 'princesses/cinderella.jpg' },
+    { id: 'ariel',      label: 'Ariel',      img: 'princesses/ariel.jpg' },
+    { id: 'belle',      label: 'Belle',      img: 'princesses/belle.jpg' },
+    { id: 'jasmine',    label: 'Jasmine',    img: 'princesses/jasmine.jpg' },
+    { id: 'aurora',     label: 'Aurora',     img: 'princesses/aurora.jpg' },
+    { id: 'snowwhite',  label: 'Snow White', img: 'princesses/snowwhite.jpg' },
+    { id: 'rapunzel',   label: 'Rapunzel',   img: 'princesses/rapunzel.jpg' },
+    { id: 'tiana',      label: 'Tiana',      img: 'princesses/tiana.jpg' },
+    { id: 'moana',      label: 'Moana',      img: 'princesses/moana.jpg' },
+    { id: 'merida',     label: 'Merida',     img: 'princesses/merida.jpg' },
+    { id: 'pocahontas', label: 'Pocahontas', img: 'princesses/pocahontas.jpg' },
+    { id: 'mulan',      label: 'Mulan',      img: 'princesses/mulan.jpg' },
   ];
+
+  /* Preload images so the first flip is instant on iPhone */
+  ALL_PRINCESSES.forEach(p => { const i = new Image(); i.src = p.img; });
 
   let currentMode  = 10;
   let flipped      = [];
@@ -370,9 +401,6 @@
     const grid = document.getElementById('grid');
     grid.innerHTML = '';
 
-    // 5 columns always — looks great on most screens
-    grid.style.gridTemplateColumns = 'repeat(5, 1fr)';
-
     const chosen = shuffle(ALL_PRINCESSES).slice(0, totalPairs);
     const cards  = shuffle([...chosen, ...chosen].map((p, i) => ({ ...p, uid: i })));
 
@@ -388,15 +416,10 @@
       card.className = 'card';
       card.dataset.id = p.id;
 
-      /* Name sits on top, portrait below. If the image fails,
-         show the themed emoji as a fallback. */
       card.innerHTML = `
         <div class="card-face card-back"></div>
-        <div class="card-face card-front" style="background:${p.bg}">
-          <span class="princess-name">${p.label}</span>
-          <img class="princess-img" src="${p.img}" alt="${p.label}" loading="lazy"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-          <span class="princess-emoji">${p.emoji}</span>
+        <div class="card-face card-front">
+          <img class="princess-img" src="${p.img}" alt="${p.label}" loading="eager" draggable="false">
         </div>
       `;
 
@@ -465,11 +488,20 @@
   let particles = [], animFrame = null, running = false;
   const COLORS  = ['#f06292','#ce93d8','#ffd700','#ff80ab','#b39ddb','#f8bbd0','#fff176','#e040fb'];
 
+  function sizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width  = window.innerWidth  * dpr;
+    canvas.height = window.innerHeight * dpr;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
   function startConfetti() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    particles = Array.from({ length: 160 }, () => ({
-      x: Math.random() * canvas.width,
+    sizeCanvas();
+    const w = window.innerWidth, h = window.innerHeight;
+    particles = Array.from({ length: 140 }, () => ({
+      x: Math.random() * w,
       y: -20 - Math.random() * 140,
       r: 5 + Math.random() * 8,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
@@ -485,14 +517,14 @@
 
   function draw() {
     if (!running) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const w = window.innerWidth, h = window.innerHeight;
+    ctx.clearRect(0, 0, w, h);
     particles.forEach(p => {
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(p.angle * Math.PI / 180);
       ctx.fillStyle = p.color;
       if (p.heart) {
-        // draw a tiny heart
         ctx.font = `${p.r * 2}px serif`;
         ctx.fillText('♥', -p.r, p.r * 0.5);
       } else {
@@ -500,7 +532,7 @@
       }
       ctx.restore();
       p.x += p.dx; p.y += p.dy; p.angle += p.spin;
-      if (p.y > canvas.height + 30) { p.y = -20; p.x = Math.random() * canvas.width; }
+      if (p.y > h + 30) { p.y = -20; p.x = Math.random() * w; }
     });
     animFrame = requestAnimationFrame(draw);
   }
@@ -510,6 +542,8 @@
     cancelAnimationFrame(animFrame);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+
+  window.addEventListener('resize', () => { if (running) sizeCanvas(); });
 
   document.getElementById('mode-screen').style.display = 'flex';
   document.getElementById('game-screen').style.display = 'none';
