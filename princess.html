@@ -182,7 +182,7 @@
     }
     .card-back::before { content: '👑'; }
 
-    /* Card front — full-bleed princess portrait */
+    /* Card front — princess portrait on top, NAME label on bottom */
     .card-front {
       transform: rotateY(180deg);
       background: white;
@@ -190,16 +190,41 @@
       box-shadow: 3px 5px 0 rgba(0,0,0,0.12);
       padding: 0;
       flex-direction: column;
+      justify-content: stretch;
     }
 
     .card-front .princess-img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      flex: 1 1 auto;
+      min-height: 0;
+      object-fit: contain;
+      object-position: center;
+      background: white;
       display: block;
       pointer-events: none;
       -webkit-user-drag: none;
       user-select: none;
+      padding: 4px 4px 0;
+    }
+
+    .card-front .princess-name {
+      flex-shrink: 0;
+      width: 100%;
+      background: linear-gradient(135deg, #f06292, #c2185b);
+      color: white;
+      font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-align: center;
+      padding: 5px 4px 6px;
+      font-size: clamp(0.55rem, 1.6vw, 0.95rem);
+      line-height: 1.05;
+      text-transform: uppercase;
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.18);
+      letter-spacing: 0.5px;
+      word-break: keep-all;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     /* Matched state */
@@ -330,20 +355,21 @@
 </div>
 
 <script>
-  /* Local princess portraits — sliced from the Disney Emoji Blitz collage. */
+  /* Princess key — Disney Emoji Blitz portraits matching the printed key.
+     Labels are shown UPPERCASE under each card via .princess-name CSS. */
   const ALL_PRINCESSES = [
+    { id: 'snowwhite',  label: 'Snow White', img: 'princesses/snowwhite.jpg' },
     { id: 'cinderella', label: 'Cinderella', img: 'princesses/cinderella.jpg' },
+    { id: 'elsa',       label: 'Elsa',       img: 'princesses/elsa.jpg' },
+    { id: 'tinkerbell', label: 'Tinkerbell', img: 'princesses/tinkerbell.jpg' },
     { id: 'ariel',      label: 'Ariel',      img: 'princesses/ariel.jpg' },
     { id: 'belle',      label: 'Belle',      img: 'princesses/belle.jpg' },
     { id: 'jasmine',    label: 'Jasmine',    img: 'princesses/jasmine.jpg' },
-    { id: 'aurora',     label: 'Aurora',     img: 'princesses/aurora.jpg' },
-    { id: 'snowwhite',  label: 'Snow White', img: 'princesses/snowwhite.jpg' },
-    { id: 'rapunzel',   label: 'Rapunzel',   img: 'princesses/rapunzel.jpg' },
-    { id: 'tiana',      label: 'Tiana',      img: 'princesses/tiana.jpg' },
-    { id: 'moana',      label: 'Moana',      img: 'princesses/moana.jpg' },
-    { id: 'merida',     label: 'Merida',     img: 'princesses/merida.jpg' },
-    { id: 'pocahontas', label: 'Pocahontas', img: 'princesses/pocahontas.jpg' },
     { id: 'mulan',      label: 'Mulan',      img: 'princesses/mulan.jpg' },
+    { id: 'tiana',      label: 'Tiana',      img: 'princesses/tiana.jpg' },
+    { id: 'rapunzel',   label: 'Rapunzel',   img: 'princesses/rapunzel.jpg' },
+    { id: 'merida',     label: 'Brave',      img: 'princesses/merida.jpg' },
+    { id: 'moana',      label: 'Moana',      img: 'princesses/moana.jpg' },
   ];
 
   /* Preload images so the first flip is instant on iPhone */
@@ -414,6 +440,7 @@
         <div class="card-face card-back"></div>
         <div class="card-face card-front">
           <img class="princess-img" src="${p.img}" alt="${p.label}" loading="eager" draggable="false">
+          <div class="princess-name">${p.label}</div>
         </div>
       `;
 
