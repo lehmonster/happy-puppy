@@ -246,7 +246,28 @@
   }
 
   /* Collapsible future-month sections */
-  .future-months { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .months-header {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .jump-controls { display: flex; gap: 8px; }
+  .jump-btn {
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .jump-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .future-months { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
   details.month-section {
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -326,6 +347,13 @@
       </div>
     </div>
     <div class="grid" id="grid"></div>
+    <div class="months-header">
+      <div class="section-title" style="margin:0">Browse other months</div>
+      <div class="jump-controls">
+        <button class="jump-btn" data-jump="2026">Jump to 2026</button>
+        <button class="jump-btn" data-jump="2027">Jump to 2027</button>
+      </div>
+    </div>
     <div class="future-months" id="future-months"></div>
   </section>
 
@@ -771,6 +799,19 @@
   document.getElementById("today").addEventListener("click", () => {
     cursor = new Date(today.getFullYear(), today.getMonth(), 1);
     renderCalendar();
+  });
+
+  document.querySelectorAll(".jump-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const year = Number(btn.dataset.jump);
+      const targetMonth = year === today.getFullYear() ? 0 : 0;
+      const key = `${year}-${targetMonth}`;
+      const target = futureMonthsEl.querySelector(`details.month-section[data-key="${key}"]`);
+      if (target) {
+        target.open = true;
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
   });
 
   // --- List render ----------------------------------------------------------
