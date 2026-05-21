@@ -314,8 +314,16 @@
   <div class="person-filters" id="person-filters"></div>
 
   <section class="panel active" id="panel-calendar" role="tabpanel">
-    <div class="cal-controls" style="justify-content:center">
+    <div class="cal-controls">
+      <div class="nav">
+        <button id="prev" aria-label="Previous month">‹</button>
+        <button id="today">Today</button>
+        <button id="next" aria-label="Next month">›</button>
+      </div>
       <h2 id="month-label"></h2>
+      <div class="nav" aria-hidden="true" style="visibility:hidden">
+        <button>‹</button><button>Today</button><button>›</button>
+      </div>
     </div>
     <div class="grid" id="grid"></div>
     <div class="future-months" id="future-months"></div>
@@ -381,14 +389,23 @@
       note: "Tuesdays, May 26 – Jul 9, 2026"
     },
     {
-      id: "dance",
-      title: "Dance Class",
-      color: "#ec4899",
+      id: "church-may",
+      title: "Church",
+      color: "#0ea5e9",
       location: "",
-      daysOfWeek: [4],
-      time: "4:30 PM",
-      ranges: [{ start: null, end: null }],
-      note: "Thursdays – no end date"
+      daysOfWeek: [0],
+      time: "8:30 AM",
+      ranges: [{ start: "2026-05-24", end: "2026-05-24" }]
+    },
+    {
+      id: "church-summer",
+      title: "Church",
+      color: "#0ea5e9",
+      location: "",
+      daysOfWeek: [0],
+      time: "9:30 AM",
+      ranges: [{ start: "2026-06-01", end: "2026-08-31" }],
+      note: "Sundays, June – August 2026"
     },
     {
       id: "soccer",
@@ -547,7 +564,7 @@
     selectedPerson = personId;
     renderPersonFilters();
     renderCalendar();
-    renderFutureMonths();
+    renderOtherMonths();
     renderList();
   };
 
@@ -583,6 +600,8 @@
   const grid = document.getElementById("grid");
   const futureMonthsEl = document.getElementById("future-months");
   const today = new Date();
+  let cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+  const PAST_MONTH_COUNT = 1;
   const FUTURE_MONTH_COUNT = 17;
 
   const monthNames = [
@@ -641,18 +660,19 @@
   }
 
   function renderCalendar() {
-    monthLabel.textContent = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
-    renderMonthGrid(grid, today);
+    monthLabel.textContent = `${monthNames[cursor.getMonth()]} ${cursor.getFullYear()}`;
+    renderMonthGrid(grid, cursor);
   }
 
-  function renderFutureMonths() {
+  function renderOtherMonths() {
     const openSet = new Set();
     futureMonthsEl.querySelectorAll("details.month-section[open]").forEach(d => {
       openSet.add(d.dataset.key);
     });
     futureMonthsEl.innerHTML = "";
 
-    for (let i = 1; i <= FUTURE_MONTH_COUNT; i++) {
+    for (let i = -PAST_MONTH_COUNT; i <= FUTURE_MONTH_COUNT; i++) {
+      if (i === 0) continue;
       const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
       const key = `${monthDate.getFullYear()}-${monthDate.getMonth()}`;
 
@@ -739,6 +759,19 @@
 
     return cell;
   }
+
+  document.getElementById("prev").addEventListener("click", () => {
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("next").addEventListener("click", () => {
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
+    renderCalendar();
+  });
+  document.getElementById("today").addEventListener("click", () => {
+    cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+    renderCalendar();
+  });
 
   // --- List render ----------------------------------------------------------
   const fullDow = ["Sundays","Mondays","Tuesdays","Wednesdays","Thursdays","Fridays","Saturdays"];
@@ -833,7 +866,7 @@
 
   renderPersonFilters();
   renderCalendar();
-  renderFutureMonths();
+  renderOtherMonths();
   renderList();
 </script>
 </body>
