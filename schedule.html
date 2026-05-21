@@ -821,24 +821,35 @@
     const recurringEl = document.getElementById("recurring");
     const oneoffEl = document.getElementById("oneoff");
 
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const stillActive = endStr => {
+      if (!endStr) return true;
+      const end = parseYmd(endStr);
+      return end >= todayStart;
+    };
+
     recurringEl.innerHTML = "";
-    events.forEach(ev => {
-      const days = ev.daysOfWeek.map(d => fullDow[d]).join(", ");
-      const card = document.createElement("div");
-      card.className = "ev";
-      card.innerHTML = `
-        <div class="swatch" style="background:${ev.color}"></div>
-        <div>
-          <h3>${ev.title}</h3>
-          <div class="meta"><strong>${days}</strong> at <strong>${ev.time}</strong></div>
-          ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
-          ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
-        </div>`;
-      recurringEl.appendChild(card);
-    });
+    events
+      .filter(ev => ev.ranges.some(r => stillActive(r.end)))
+      .forEach(ev => {
+        const days = ev.daysOfWeek.map(d => fullDow[d]).join(", ");
+        const card = document.createElement("div");
+        card.className = "ev";
+        card.innerHTML = `
+          <div class="swatch" style="background:${ev.color}"></div>
+          <div>
+            <h3>${ev.title}</h3>
+            <div class="meta"><strong>${days}</strong> at <strong>${ev.time}</strong></div>
+            ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
+            ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
+          </div>`;
+        recurringEl.appendChild(card);
+      });
 
     const travelEl = document.getElementById("travel");
-    const visibleRanges = personRanges.filter(r => selectedPerson === "all" || r.person === selectedPerson);
+    const visibleRanges = personRanges.filter(r =>
+      (selectedPerson === "all" || r.person === selectedPerson) && stillActive(r.end)
+    );
     travelEl.innerHTML = "";
     if (visibleRanges.length === 0) {
       travelEl.innerHTML = `<div class="empty">No travel ranges configured for this person.</div>`;
@@ -870,6 +881,7 @@
     oneoffEl.innerHTML = "";
     const visibleOneOffs = oneOffEvents
       .filter(oneOffVisible)
+      .filter(ev => parseYmd(ev.date) >= todayStart)
       .slice()
       .sort((a, b) => a.date.localeCompare(b.date));
     if (visibleOneOffs.length === 0) {
