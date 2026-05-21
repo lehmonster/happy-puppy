@@ -245,12 +245,57 @@
     padding: 8px 4px;
   }
 
+  /* Collapsible future-month sections */
+  .future-months { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  details.month-section {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  details.month-section summary {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    list-style: none;
+    background: linear-gradient(180deg, #fff, #fbf6ee);
+  }
+  details.month-section summary::-webkit-details-marker { display: none; }
+  details.month-section summary::before {
+    content: "▸";
+    font-size: 12px;
+    color: var(--accent);
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  details.month-section[open] summary::before { transform: rotate(90deg); }
+  details.month-section summary:hover { background: var(--accent-soft); }
+  details.month-section .grid {
+    border-radius: 0;
+    box-shadow: none;
+    border: 0;
+    border-top: 1px solid var(--border);
+  }
+  details.month-section summary .count {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
   @media (max-width: 640px) {
     .day { min-height: 78px; padding: 4px; }
     .day .dnum { font-size: 12px; padding: 1px 5px; }
     .chip { font-size: 10px; padding: 2px 4px; }
     header h1 { font-size: 22px; }
     .cal-controls h2 { font-size: 18px; }
+    details.month-section summary { padding: 10px 12px; font-size: 14px; }
   }
 </style>
 </head>
@@ -269,16 +314,11 @@
   <div class="person-filters" id="person-filters"></div>
 
   <section class="panel active" id="panel-calendar" role="tabpanel">
-    <div class="cal-controls">
-      <div class="nav">
-        <button id="prev" aria-label="Previous month">‹</button>
-        <button class="today-btn" id="today">Today</button>
-        <button id="next" aria-label="Next month">›</button>
-      </div>
+    <div class="cal-controls" style="justify-content:center">
       <h2 id="month-label"></h2>
-      <div style="width:1px"></div>
     </div>
     <div class="grid" id="grid"></div>
+    <div class="future-months" id="future-months"></div>
   </section>
 
   <section class="panel" id="panel-list" role="tabpanel">
@@ -394,12 +434,85 @@
   let selectedPerson = "all";
 
   const personRanges = [
-    { person: "matt", start: "2026-06-10", end: "2026-06-18", note: "Travel dates" },
     { person: "wren", start: "2026-06-22", end: "2026-06-25", note: "Travel dates" },
-    { person: "chelsea", start: "2026-07-01", end: "2026-07-05", note: "Travel dates" }
+    { person: "chelsea", start: "2026-07-01", end: "2026-07-05", note: "Travel dates" },
+    // Matt (from May–Aug 2026 wall calendar)
+    { person: "matt", start: "2026-04-27", end: "2026-04-29", note: "NYC" },
+    { person: "matt", start: "2026-04-30", end: "2026-05-03", note: "NoLa" },
+    { person: "matt", start: "2026-05-04", end: "2026-05-10", note: "Alala in Denver" },
+    { person: "matt", start: "2026-05-11", end: "2026-05-13", note: "Sea Island" },
+    { person: "matt", start: "2026-05-27", end: "2026-05-29", note: "NYC" },
+    { person: "matt", start: "2026-06-05", end: "2026-06-11", note: "Munich → Barcelona (8:25 flight Fri, 9:55 back Thu)" },
+    { person: "matt", start: "2026-06-16", end: "2026-06-19", note: "Chelsea conference" },
+    { person: "matt", start: "2026-06-26", end: "2026-06-28", note: "Montana (?)" },
+    { person: "matt", start: "2026-07-15", end: "2026-07-24", note: "Italy: Rome → Positano" },
+    { person: "matt", start: "2026-07-25", end: "2026-07-26", note: "World Cup weekend" },
+    { person: "matt", start: "2026-08-01", end: "2026-08-02", note: "Lakewood Cup" },
+    { person: "matt", start: "2026-08-10", end: "2026-08-11", note: "Herr" },
+    // Wren – 2026–2027 school year (dates shifted from 2024–25 MSD calendar; verify when official cal is released)
+    { person: "wren", start: "2026-10-31", end: "2026-11-01", note: "Fall Break" },
+    { person: "wren", start: "2026-11-22", end: "2026-12-01", note: "Thanksgiving Break (½-day dismissal)" },
+    { person: "wren", start: "2026-12-20", end: "2027-01-06", note: "Winter Vacation (½-day dismissal)" },
+    { person: "wren", start: "2027-02-17", end: "2027-02-18", note: "Winter Break – No School" },
+    { person: "wren", start: "2027-03-20", end: "2027-03-21", note: "Conferences – No School" },
+    { person: "wren", start: "2027-03-22", end: "2027-03-30", note: "Spring Break" },
+    { person: "wren", start: "2027-06-30", end: "2027-07-04", note: "Campus Closed" }
   ];
 
-  const oneOffEvents = []; // add { title, color, location, date, time, note, owner } here later
+  // { title, color, location, date, time, note, owner }
+  const oneOffEvents = [
+    // Matt
+    { title: "Dinner",          color: "#3b82f6", date: "2026-05-04", owner: "matt" },
+    { title: "Concert",         color: "#3b82f6", date: "2026-05-05", owner: "matt" },
+    { title: "Tennis",          color: "#3b82f6", date: "2026-05-11", time: "6:00 PM", owner: "matt" },
+    { title: "Scotch Dinner",   color: "#3b82f6", date: "2026-05-14", owner: "matt" },
+    { title: "Scotch Play Day", color: "#3b82f6", date: "2026-05-16", time: "2:00 – 5:00 PM", note: "Weekend", owner: "matt" },
+    { title: "Tennis",          color: "#3b82f6", date: "2026-05-18", time: "6:00 PM", owner: "matt" },
+    { title: "Member Guest",    color: "#3b82f6", date: "2026-05-20", owner: "matt" },
+    { title: "Bob's Birthday",  color: "#3b82f6", date: "2026-07-08", owner: "matt" },
+    { title: "Last Day (V)",    color: "#3b82f6", date: "2026-08-07", owner: "matt" },
+    { title: "Steve",           color: "#3b82f6", date: "2026-08-08", owner: "matt" },
+    // Wren
+    { title: "Memorial Day – school off", color: "#ec4899", date: "2026-05-25", owner: "wren" },
+    { title: "Half day (last day)",       color: "#ec4899", date: "2026-05-29", owner: "wren" },
+    { title: "1st day no school",         color: "#ec4899", date: "2026-06-01", owner: "wren" },
+    { title: "1st full day of school",    color: "#ec4899", date: "2026-09-01", owner: "wren" },
+    // Wren – 2026–27 MSD school year (dates shifted from 2024–25 cal; verify)
+    { title: "Back to School Picnic",     color: "#ec4899", date: "2026-08-06", owner: "wren" },
+    { title: "Family Visit Day",          color: "#ec4899", date: "2026-08-16", owner: "wren" },
+    { title: "MSD 101 (New Families)",    color: "#ec4899", date: "2026-08-17", owner: "wren" },
+    { title: "Family Visit Day",          color: "#ec4899", date: "2026-08-19", owner: "wren" },
+    { title: "First Day of School",       color: "#ec4899", date: "2026-08-20", owner: "wren" },
+    { title: "Labor Day – No School",     color: "#ec4899", date: "2026-09-02", owner: "wren", note: "Actual Labor Day 2026 is Sept 7 (Mon)" },
+    { title: "Toddlers begin reg. schedule", color: "#ec4899", date: "2026-09-03", owner: "wren" },
+    { title: "Back to School Night",      color: "#ec4899", date: "2026-09-12", owner: "wren" },
+    { title: "Welcome Back Reception",    color: "#ec4899", date: "2026-09-25", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2026-09-27", owner: "wren" },
+    { title: "Conferences – No School",   color: "#ec4899", date: "2026-10-10", owner: "wren" },
+    { title: "Conferences – No School",   color: "#ec4899", date: "2026-10-11", owner: "wren" },
+    { title: "Fall Harvest Festival",     color: "#ec4899", date: "2026-10-20", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2026-10-31", owner: "wren" },
+    { title: "GrandFriends Day (½-day)",  color: "#ec4899", date: "2026-11-22", owner: "wren" },
+    { title: "Colorado Gives Day",        color: "#ec4899", date: "2026-12-10", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2027-01-06", owner: "wren" },
+    { title: "MLK Day – No School",       color: "#ec4899", date: "2027-01-20", owner: "wren", note: "Actual MLK Day 2027 is Jan 18" },
+    { title: "No School (TODD/PRI/K)",    color: "#ec4899", date: "2027-02-07", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2027-02-18", owner: "wren" },
+    { title: "Professional Dev Day",      color: "#ec4899", date: "2027-03-14", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2027-03-31", owner: "wren" },
+    { title: "Staff Day – No School",     color: "#ec4899", date: "2027-05-05", owner: "wren" },
+    { title: "Memorial Day – No School",  color: "#ec4899", date: "2027-05-26", owner: "wren", note: "Actual Memorial Day 2027 is May 31" },
+    { title: "Last Day (½-day)",          color: "#ec4899", date: "2027-05-30", owner: "wren" },
+    { title: "Juneteenth – Closed",       color: "#ec4899", date: "2027-06-19", owner: "wren" },
+    // Chelsea
+    { title: "Tennis", color: "#c4b5fd", date: "2026-04-28", time: "4:00 PM",  owner: "chelsea" },
+    { title: "Tennis", color: "#c4b5fd", date: "2026-05-24", time: "11:00 AM", owner: "chelsea" },
+    // Everyone (no owner)
+    { title: "Silly Jellyfish Brunch", color: "#f97316", date: "2026-05-27", time: "8:45 – 9:45 AM", location: "Rick's" }
+  ];
+
+  const oneOffVisible = ev =>
+    selectedPerson === "all" || !ev.owner || ev.owner === selectedPerson;
 
   // --- Helpers --------------------------------------------------------------
   const ymd = d =>
@@ -434,6 +547,7 @@
     selectedPerson = personId;
     renderPersonFilters();
     renderCalendar();
+    renderFutureMonths();
     renderList();
   };
 
@@ -467,8 +581,9 @@
   // --- Calendar render ------------------------------------------------------
   const monthLabel = document.getElementById("month-label");
   const grid = document.getElementById("grid");
+  const futureMonthsEl = document.getElementById("future-months");
   const today = new Date();
-  let cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+  const FUTURE_MONTH_COUNT = 17;
 
   const monthNames = [
     "January","February","March","April","May","June",
@@ -476,38 +591,103 @@
   ];
   const dowShort = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-  function renderCalendar() {
-    monthLabel.textContent = `${monthNames[cursor.getMonth()]} ${cursor.getFullYear()}`;
-    grid.innerHTML = "";
+  function renderMonthGrid(gridEl, monthDate) {
+    gridEl.innerHTML = "";
 
     dowShort.forEach(d => {
       const el = document.createElement("div");
       el.className = "dow";
       el.textContent = d;
-      grid.appendChild(el);
+      gridEl.appendChild(el);
     });
 
-    const firstDow = new Date(cursor.getFullYear(), cursor.getMonth(), 1).getDay();
-    const daysInMonth = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 0).getDate();
-    const daysInPrev = new Date(cursor.getFullYear(), cursor.getMonth(), 0).getDate();
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const firstDow = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrev = new Date(year, month, 0).getDate();
 
-    // leading days from previous month
     for (let i = firstDow - 1; i >= 0; i--) {
       const dnum = daysInPrev - i;
-      const day = new Date(cursor.getFullYear(), cursor.getMonth() - 1, dnum);
-      grid.appendChild(buildDay(day, true));
+      const day = new Date(year, month - 1, dnum);
+      gridEl.appendChild(buildDay(day, true));
     }
-    // current month
     for (let i = 1; i <= daysInMonth; i++) {
-      const day = new Date(cursor.getFullYear(), cursor.getMonth(), i);
-      grid.appendChild(buildDay(day, false));
+      const day = new Date(year, month, i);
+      gridEl.appendChild(buildDay(day, false));
     }
-    // trailing days to fill grid (6 rows ├ù 7 = 42)
     const filled = firstDow + daysInMonth;
     const trailing = (Math.ceil(filled / 7) * 7) - filled;
     for (let i = 1; i <= trailing; i++) {
-      const day = new Date(cursor.getFullYear(), cursor.getMonth() + 1, i);
-      grid.appendChild(buildDay(day, true));
+      const day = new Date(year, month + 1, i);
+      gridEl.appendChild(buildDay(day, true));
+    }
+  }
+
+  function countEventsInMonth(monthDate) {
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let count = 0;
+    for (let i = 1; i <= daysInMonth; i++) {
+      const day = new Date(year, month, i);
+      count += personRangesForDate(day).length;
+      events.forEach(ev => { if (occursOn(ev, day)) count++; });
+      oneOffEvents.forEach(ev => {
+        if (sameDay(day, parseYmd(ev.date)) && oneOffVisible(ev)) count++;
+      });
+    }
+    return count;
+  }
+
+  function renderCalendar() {
+    monthLabel.textContent = `${monthNames[today.getMonth()]} ${today.getFullYear()}`;
+    renderMonthGrid(grid, today);
+  }
+
+  function renderFutureMonths() {
+    const openSet = new Set();
+    futureMonthsEl.querySelectorAll("details.month-section[open]").forEach(d => {
+      openSet.add(d.dataset.key);
+    });
+    futureMonthsEl.innerHTML = "";
+
+    for (let i = 1; i <= FUTURE_MONTH_COUNT; i++) {
+      const monthDate = new Date(today.getFullYear(), today.getMonth() + i, 1);
+      const key = `${monthDate.getFullYear()}-${monthDate.getMonth()}`;
+
+      const details = document.createElement("details");
+      details.className = "month-section";
+      details.dataset.key = key;
+      if (openSet.has(key)) details.open = true;
+
+      const summary = document.createElement("summary");
+      const label = document.createElement("span");
+      label.textContent = `${monthNames[monthDate.getMonth()]} ${monthDate.getFullYear()}`;
+      const count = document.createElement("span");
+      count.className = "count";
+      const n = countEventsInMonth(monthDate);
+      count.textContent = n === 1 ? "1 event" : `${n} events`;
+      summary.appendChild(label);
+      summary.appendChild(count);
+      details.appendChild(summary);
+
+      const monthGrid = document.createElement("div");
+      monthGrid.className = "grid";
+      details.appendChild(monthGrid);
+
+      details.addEventListener("toggle", () => {
+        if (details.open && !monthGrid.dataset.rendered) {
+          renderMonthGrid(monthGrid, monthDate);
+          monthGrid.dataset.rendered = "1";
+        }
+      });
+      if (details.open) {
+        renderMonthGrid(monthGrid, monthDate);
+        monthGrid.dataset.rendered = "1";
+      }
+
+      futureMonthsEl.appendChild(details);
     }
   }
 
@@ -529,7 +709,7 @@
         chip.className = "ribbon";
         chip.style.background = person.color;
         chip.title = `${person.name}: ${r.note}`;
-        chip.textContent = person.name;
+        chip.textContent = r.note || person.name;
         row.appendChild(chip);
       });
       cell.appendChild(row);
@@ -547,7 +727,7 @@
     });
 
     oneOffEvents.forEach(ev => {
-      if (sameDay(date, parseYmd(ev.date))) {
+      if (sameDay(date, parseYmd(ev.date)) && oneOffVisible(ev)) {
         const chip = document.createElement("div");
         chip.className = "chip";
         chip.style.background = ev.color || "#475569";
@@ -559,19 +739,6 @@
 
     return cell;
   }
-
-  document.getElementById("prev").addEventListener("click", () => {
-    cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
-    renderCalendar();
-  });
-  document.getElementById("next").addEventListener("click", () => {
-    cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1);
-    renderCalendar();
-  });
-  document.getElementById("today").addEventListener("click", () => {
-    cursor = new Date(today.getFullYear(), today.getMonth(), 1);
-    renderCalendar();
-  });
 
   // --- List render ----------------------------------------------------------
   const fullDow = ["Sundays","Mondays","Tuesdays","Wednesdays","Thursdays","Fridays","Saturdays"];
@@ -627,10 +794,14 @@
     }
 
     oneoffEl.innerHTML = "";
-    if (oneOffEvents.length === 0) {
+    const visibleOneOffs = oneOffEvents
+      .filter(oneOffVisible)
+      .slice()
+      .sort((a, b) => a.date.localeCompare(b.date));
+    if (visibleOneOffs.length === 0) {
       oneoffEl.innerHTML = `<div class="empty">No one-off events yet.</div>`;
     } else {
-      oneOffEvents.forEach(ev => {
+      visibleOneOffs.forEach(ev => {
         const date = parseYmd(ev.date);
         const human = date.toLocaleDateString(undefined, {
           weekday: "long", month: "long", day: "numeric", year: "numeric"
@@ -662,6 +833,7 @@
 
   renderPersonFilters();
   renderCalendar();
+  renderFutureMonths();
   renderList();
 </script>
 </body>
