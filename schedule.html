@@ -95,6 +95,7 @@
   .person-pill.matt { background: #3b82f6; border-color: #3b82f6; }
   .person-pill.wren { background: #ec4899; border-color: #ec4899; }
   .person-pill.chelsea { background: #c4b5fd; border-color: #c4b5fd; }
+  .person-pill.vivian { background: #eab308; border-color: #eab308; }
   .person-pill.all { background: var(--accent); border-color: var(--accent); color: white; }
   .person-pill:hover { background: var(--accent-soft); }
   .ribbon-row {
@@ -111,9 +112,9 @@
     color: white;
     font-weight: 700;
     text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   .panel { display: none; }
   .panel.active { display: block; }
@@ -172,10 +173,14 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    cursor: pointer;
+    transition: background 0.12s, box-shadow 0.12s;
   }
   .day:nth-child(7n + 8) { border-left: 0; }
   .day.muted { background: #fbf7f1; color: #b9aebd; }
   .day.today { background: var(--today); }
+  .day:hover { background: var(--accent-soft); }
+  .day.today:hover { background: #ffe0d0; }
   .day .dnum {
     font-weight: 700;
     font-size: 13px;
@@ -195,10 +200,10 @@
     border-radius: 6px;
     color: white;
     font-weight: 600;
-    cursor: default;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    cursor: inherit;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
   .chip .t { font-weight: 500; opacity: 0.85; margin-right: 4px; }
 
@@ -310,6 +315,83 @@
     font-weight: 500;
   }
 
+  /* Daily-view modal */
+  .day-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 30, 50, 0.45);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+    overflow-y: auto;
+    z-index: 50;
+  }
+  .day-overlay.open { display: flex; }
+  .day-modal {
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(40, 30, 50, 0.25);
+    max-width: 620px;
+    width: 100%;
+    padding: 22px 22px 18px;
+    position: relative;
+    animation: pop 0.16s ease-out;
+  }
+  @keyframes pop {
+    from { transform: scale(0.96); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+  .day-modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .day-modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  .day-modal-header .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .day-modal-close {
+    margin-left: auto;
+    border: 1px solid var(--border);
+    background: var(--card);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--ink);
+    flex: 0 0 auto;
+  }
+  .day-modal-close:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .day-modal-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .day-modal-nav button {
+    border: 1px solid var(--border);
+    background: var(--card);
+    border-radius: 10px;
+    padding: 7px 12px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .day-modal-nav button:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .day-modal .ev { margin-bottom: 8px; }
+  .day-modal .section-title { margin: 12px 0 6px; font-size: 13px; }
+  .day-modal .empty { padding: 18px 4px; text-align: center; }
+
   @media (max-width: 640px) {
     .day { min-height: 78px; padding: 4px; }
     .day .dnum { font-size: 12px; padding: 1px 5px; }
@@ -317,6 +399,8 @@
     header h1 { font-size: 22px; }
     .cal-controls h2 { font-size: 18px; }
     details.month-section summary { padding: 10px 12px; font-size: 14px; }
+    .day-modal { padding: 18px 16px 14px; }
+    .day-modal-header h2 { font-size: 18px; }
   }
 </style>
 </head>
@@ -367,28 +451,37 @@
   </section>
 </div>
 
+<div class="day-overlay" id="day-overlay" role="dialog" aria-modal="true" aria-labelledby="day-modal-title">
+  <div class="day-modal" id="day-modal">
+    <div class="day-modal-header">
+      <div>
+        <h2 id="day-modal-title"></h2>
+        <div class="sub" id="day-modal-sub"></div>
+      </div>
+      <button class="day-modal-close" id="day-modal-close" aria-label="Close">×</button>
+    </div>
+    <div class="day-modal-nav">
+      <button id="day-prev" aria-label="Previous day">‹ Prev</button>
+      <button id="day-next" aria-label="Next day">Next ›</button>
+    </div>
+    <div id="day-modal-body"></div>
+  </div>
+</div>
+
 <script>
   // --- Data -----------------------------------------------------------------
   // daysOfWeek: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
   // ranges: each entry is { start, end } as YYYY-MM-DD strings; null = open-ended
   const events = [
     {
-      id: "private-swim",
-      title: "Private Swimming",
-      color: "#3b82f6",
-      location: "JCC – with Mishelle",
-      daysOfWeek: [3],
-      time: "9:00 AM",
-      ranges: [{ start: "2026-06-03", end: null }],
-      note: "Starts Wed, Jun 3, 2026"
-    },
-    {
       id: "group-swim",
       title: "Group Swimming",
       color: "#06b6d4",
       location: "Lakewood Country Club",
+      shortLocation: "LCC",
+      address: "6800 West 10th Avenue, Lakewood, CO 80214",
       daysOfWeek: [2, 3, 4],
-      time: "12:00 PM",
+      time: "11:30 AM",
       ranges: [
         { start: "2026-06-02", end: "2026-06-12" },
         { start: "2026-06-16", end: "2026-06-26" },
@@ -397,24 +490,42 @@
       note: "Tue / Wed / Thu during three sessions in summer"
     },
     {
+      id: "jcc-swim-tue",
+      title: "Swimming",
+      color: "#0891b2",
+      location: "JCC",
+      shortLocation: "JCC",
+      address: "350 S Dahlia St, Denver, CO 80246",
+      daysOfWeek: [2],
+      time: "5:00 PM",
+      ranges: [{ start: "2026-06-02", end: null }],
+      note: "Drop off 4:30 PM · Tuesdays at the JCC"
+    },
+    {
       id: "tumbling",
-      title: "Tumbling",
+      title: "Twist and Tumble",
       color: "#f59e0b",
-      location: "Tiny Tumblers",
+      location: "Twist and Tumble",
+      shortLocation: "Twist & Tumble",
+      address: "760 S Colorado Blvd L, Denver, CO 80246",
       daysOfWeek: [1],
       time: "4:00 PM",
-      ranges: [{ start: "2026-06-08", end: null }],
-      note: "Starts Mon, Jun 8, 2026 – no end date"
+      ranges: [{ start: "2026-06-01", end: null }],
+      note: "Starts Mon, Jun 1, 2026 – no end date"
     },
     {
       id: "music",
       title: "Music Class",
       color: "#a855f7",
-      location: "Wash Park (Outside)",
+      location: "Wash Park (Outside) – just south of the boathouse",
+      shortLocation: "Wash Park",
+      address: "Washington Park Boathouse, S Downing St, Denver, CO 80209",
+      mapEmbed: "https://www.google.com/maps?q=39.700,-104.9695&t=k&z=18&output=embed",
+      mapLink: "https://www.google.com/maps/search/?api=1&query=39.700,-104.9695",
       daysOfWeek: [2],
       time: "10:00 – 10:45 AM",
       ranges: [{ start: "2026-05-26", end: "2026-07-09" }],
-      note: "Tuesdays, May 26 – Jul 9, 2026"
+      note: "Tuesdays, May 26 – Jul 9, 2026 · meet just south of the boathouse"
     },
     {
       id: "church-may",
@@ -467,20 +578,64 @@
       owner: "wren",
       ranges: [{ start: null, end: "2026-05-26" }],
       note: "Tuesdays – last session Tue, May 26, 2026"
+    },
+    {
+      id: "vivian-weekday",
+      title: "Vivian (Nanny)",
+      color: "#eab308",
+      location: "",
+      daysOfWeek: [1, 2, 3, 4],
+      time: "7:30 AM – 4:30 PM",
+      owner: "vivian",
+      ranges: [{ start: "2026-06-01", end: null }],
+      note: "Mon–Thu, first day Mon, Jun 1, 2026"
+    },
+    {
+      id: "house-cleaning",
+      title: "House Cleaning",
+      color: "#8b5cf6",
+      location: "",
+      daysOfWeek: [3],
+      time: "1:30 – 4:00 PM",
+      intervalWeeks: 2,
+      ranges: [{ start: "2026-06-03", end: null }],
+      note: "Every other Wednesday, starts Jun 3, 2026"
+    },
+    {
+      id: "vivian-friday",
+      title: "Vivian (Nanny)",
+      color: "#eab308",
+      location: "",
+      daysOfWeek: [5],
+      time: "8:00 AM – 12:00 PM",
+      owner: "vivian",
+      ranges: [{ start: "2026-06-05", end: null }],
+      exceptions: ["2026-07-03"],
+      note: "Fridays, summer nanny"
     }
   ];
 
   const people = [
     { id: "matt", name: "Matt", color: "#3b82f6" },
     { id: "wren", name: "Wren", color: "#ec4899" },
-    { id: "chelsea", name: "Chelsea", color: "#c4b5fd" }
+    { id: "chelsea", name: "Chelsea", color: "#c4b5fd" },
+    { id: "vivian", name: "Vivian", color: "#eab308" }
   ];
 
   let selectedPerson = "all";
 
   const personRanges = [
-    { person: "wren", start: "2026-06-22", end: "2026-06-25", note: "Travel dates" },
     { person: "chelsea", start: "2026-07-01", end: "2026-07-05", note: "Travel dates" },
+    // Vivian time off
+    { person: "vivian", start: "2026-06-27", end: "2026-06-27", note: "Vivian off" },
+    { person: "vivian", start: "2026-07-03", end: "2026-07-04", note: "Vivian off" },
+    // Montana — Matt, Chelsea, Wren (UA 2246 Jun 25 DEN→FCA, UA 5991 Jun 29 FCA→DEN)
+    { person: "matt",    start: "2026-06-25", end: "2026-06-29", note: "Montana (Kalispell)" },
+    { person: "chelsea", start: "2026-06-25", end: "2026-06-29", note: "Montana (Kalispell)" },
+    { person: "wren",    start: "2026-06-25", end: "2026-06-29", note: "Montana (Kalispell)" },
+    // Italy — Matt & Chelsea (UA 177 Jul 15 DEN→FCO, UA 965 Jul 22 NAP→EWR)
+    { person: "matt",    start: "2026-07-15", end: "2026-07-22", note: "Italy: Rome → Naples" },
+    { person: "chelsea", start: "2026-07-15", end: "2026-07-22", note: "Italy: Rome → Naples" },
     // Matt (from May–Aug 2026 wall calendar)
     { person: "matt", start: "2026-04-27", end: "2026-04-29", note: "NYC" },
     { person: "matt", start: "2026-04-30", end: "2026-05-03", note: "NoLa" },
@@ -488,9 +643,7 @@
     { person: "matt", start: "2026-05-11", end: "2026-05-13", note: "Sea Island" },
     { person: "matt", start: "2026-05-27", end: "2026-05-29", note: "NYC" },
     { person: "matt", start: "2026-06-05", end: "2026-06-11", note: "Munich → Barcelona (8:25 flight Fri, 9:55 back Thu)" },
-    { person: "matt", start: "2026-06-16", end: "2026-06-19", note: "Chelsea conference" },
-    { person: "matt", start: "2026-06-26", end: "2026-06-28", note: "Montana (?)" },
-    { person: "matt", start: "2026-07-15", end: "2026-07-24", note: "Italy: Rome → Positano" },
+    { person: "chelsea", start: "2026-06-16", end: "2026-06-19", note: "Conference" },
     { person: "matt", start: "2026-07-25", end: "2026-07-26", note: "World Cup weekend" },
     { person: "matt", start: "2026-08-01", end: "2026-08-02", note: "Lakewood Cup" },
     { person: "matt", start: "2026-08-10", end: "2026-08-11", note: "Herr" },
@@ -612,15 +765,43 @@
     });
   };
 
+  const timeToMinutes = timeStr => {
+    if (!timeStr) return Infinity;
+    const first = timeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?/i);
+    if (!first) return Infinity;
+    let hour = parseInt(first[1], 10);
+    const min = first[2] ? parseInt(first[2], 10) : 0;
+    let mer = first[3];
+    if (!mer) {
+      const m = timeStr.match(/(AM|PM)/i);
+      if (m) mer = m[1];
+    }
+    if (mer) {
+      mer = mer.toUpperCase();
+      if (mer === "PM" && hour !== 12) hour += 12;
+      if (mer === "AM" && hour === 12) hour = 0;
+    }
+    return hour * 60 + min;
+  };
+
   const occursOn = (ev, day) => {
     if (!ev.daysOfWeek.includes(day.getDay())) return false;
-    return ev.ranges.some(r => {
+    if (ev.exceptions && ev.exceptions.includes(ymd(day))) return false;
+    const inRange = ev.ranges.some(r => {
       const start = parseYmd(r.start);
       const end = parseYmd(r.end);
       if (start && day < start) return false;
       if (end && day > end) return false;
       return true;
     });
+    if (!inRange) return false;
+    if (ev.intervalWeeks && ev.intervalWeeks > 1) {
+      const anchor = parseYmd(ev.ranges[0].start);
+      if (!anchor) return true;
+      const weeksDiff = Math.round((day - anchor) / (7 * 24 * 60 * 60 * 1000));
+      if (weeksDiff < 0 || weeksDiff % ev.intervalWeeks !== 0) return false;
+    }
+    return true;
   };
 
   // --- Calendar render ------------------------------------------------------
@@ -742,6 +923,7 @@
   function buildDay(date, muted) {
     const cell = document.createElement("div");
     cell.className = "day" + (muted ? " muted" : "") + (sameDay(date, today) ? " today" : "");
+    cell.addEventListener("click", () => openDay(date));
     const num = document.createElement("div");
     num.className = "dnum";
     num.textContent = date.getDate();
@@ -763,30 +945,164 @@
       cell.appendChild(row);
     }
 
+    const dayItems = [];
     events.forEach(ev => {
-      if (occursOn(ev, date)) {
-        const chip = document.createElement("div");
-        chip.className = "chip";
-        chip.style.background = ev.color;
-        chip.title = `${ev.title} · ${ev.time}${ev.location ? " · " + ev.location : ""}`;
-        chip.innerHTML = `<span class="t">${ev.time.replace(/:00 /, " ")}</span>${ev.title}`;
-        cell.appendChild(chip);
-      }
+      if (occursOn(ev, date)) dayItems.push({ type: "recurring", ev });
     });
-
     oneOffEvents.forEach(ev => {
       if (sameDay(date, parseYmd(ev.date)) && oneOffVisible(ev)) {
-        const chip = document.createElement("div");
-        chip.className = "chip";
-        chip.style.background = ev.color || "#475569";
+        dayItems.push({ type: "oneoff", ev });
+      }
+    });
+    dayItems.sort((a, b) => timeToMinutes(a.ev.time) - timeToMinutes(b.ev.time));
+
+    dayItems.forEach(({ type, ev }) => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.style.background = ev.color || "#475569";
+      if (type === "recurring") {
+        chip.title = `${ev.title} · ${ev.time}${ev.location ? " · " + ev.location : ""}${ev.address ? " · " + ev.address : ""}`;
+        const loc = ev.shortLocation ? ` · ${ev.shortLocation}` : "";
+        chip.innerHTML = `<span class="t">${ev.time.replace(/:00 /, " ")}</span>${ev.title}${loc}`;
+      } else {
         chip.title = `${ev.title}${ev.time ? " · " + ev.time : ""}${ev.location ? " · " + ev.location : ""}`;
         chip.textContent = (ev.time ? ev.time + " " : "") + ev.title;
-        cell.appendChild(chip);
       }
+      cell.appendChild(chip);
     });
 
     return cell;
   }
+
+  // --- Daily view modal ----------------------------------------------------
+  const dayOverlay = document.getElementById("day-overlay");
+  const dayModalTitle = document.getElementById("day-modal-title");
+  const dayModalSub = document.getElementById("day-modal-sub");
+  const dayModalBody = document.getElementById("day-modal-body");
+  let activeDay = null;
+
+  function renderDay(date) {
+    activeDay = date;
+    dayModalTitle.textContent = date.toLocaleDateString(undefined, {
+      weekday: "long", month: "long", day: "numeric", year: "numeric"
+    });
+    const isToday = sameDay(date, today);
+    dayModalSub.textContent = isToday ? "Today" : "";
+
+    dayModalBody.innerHTML = "";
+
+    const ranges = personRangesForDate(date);
+    const recurring = events
+      .filter(ev => occursOn(ev, date))
+      .slice()
+      .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+    const oneOffs = oneOffEvents
+      .filter(ev => sameDay(date, parseYmd(ev.date)) && oneOffVisible(ev))
+      .slice()
+      .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+
+    if (!ranges.length && !recurring.length && !oneOffs.length) {
+      const empty = document.createElement("div");
+      empty.className = "empty";
+      empty.textContent = "Nothing scheduled.";
+      dayModalBody.appendChild(empty);
+      return;
+    }
+
+    if (ranges.length) {
+      const title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = "Travel / out of town";
+      dayModalBody.appendChild(title);
+      ranges.forEach(r => {
+        const person = people.find(p => p.id === r.person) || { name: r.person, color: "#777" };
+        const card = document.createElement("div");
+        card.className = "ev";
+        card.innerHTML = `
+          <div class="swatch" style="background:${person.color}"></div>
+          <div>
+            <h3>${person.name}</h3>
+            ${r.note ? `<div class="meta">${r.note}</div>` : ""}
+          </div>`;
+        dayModalBody.appendChild(card);
+      });
+    }
+
+    if (recurring.length) {
+      const title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = "Recurring";
+      dayModalBody.appendChild(title);
+      recurring.forEach(ev => {
+        const card = document.createElement("div");
+        card.className = "ev";
+        const addressLink = ev.address
+          ? `<div class="meta">📍 ${ev.location ? ev.location + " — " : ""}<a href="${ev.mapLink || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.address))}" target="_blank" rel="noopener">${ev.address}</a></div>`
+          : (ev.location ? `<div class="meta">📍 ${ev.location}</div>` : "");
+        const mapEmbed = ev.mapEmbed
+          ? `<div class="meta" style="margin-top:8px"><iframe src="${ev.mapEmbed}" width="100%" height="220" style="border:1px solid var(--border); border-radius:10px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>`
+          : "";
+        card.innerHTML = `
+          <div class="swatch" style="background:${ev.color}"></div>
+          <div>
+            <h3>${ev.title}</h3>
+            <div class="meta">at <strong>${ev.time}</strong></div>
+            ${addressLink}
+            ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
+            ${mapEmbed}
+          </div>`;
+        dayModalBody.appendChild(card);
+      });
+    }
+
+    if (oneOffs.length) {
+      const title = document.createElement("div");
+      title.className = "section-title";
+      title.textContent = "Events";
+      dayModalBody.appendChild(title);
+      oneOffs.forEach(ev => {
+        const card = document.createElement("div");
+        card.className = "ev";
+        card.innerHTML = `
+          <div class="swatch" style="background:${ev.color || "#475569"}"></div>
+          <div>
+            <h3>${ev.title}</h3>
+            ${ev.time ? `<div class="meta">at <strong>${ev.time}</strong></div>` : ""}
+            ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
+            ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
+          </div>`;
+        dayModalBody.appendChild(card);
+      });
+    }
+  }
+
+  function openDay(date) {
+    renderDay(new Date(date.getFullYear(), date.getMonth(), date.getDate()));
+    dayOverlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+  function closeDay() {
+    dayOverlay.classList.remove("open");
+    document.body.style.overflow = "";
+    activeDay = null;
+  }
+  function stepDay(delta) {
+    if (!activeDay) return;
+    const next = new Date(activeDay.getFullYear(), activeDay.getMonth(), activeDay.getDate() + delta);
+    renderDay(next);
+  }
+  document.getElementById("day-modal-close").addEventListener("click", closeDay);
+  document.getElementById("day-prev").addEventListener("click", () => stepDay(-1));
+  document.getElementById("day-next").addEventListener("click", () => stepDay(1));
+  dayOverlay.addEventListener("click", e => {
+    if (e.target === dayOverlay) closeDay();
+  });
+  document.addEventListener("keydown", e => {
+    if (!dayOverlay.classList.contains("open")) return;
+    if (e.key === "Escape") closeDay();
+    else if (e.key === "ArrowLeft") stepDay(-1);
+    else if (e.key === "ArrowRight") stepDay(1);
+  });
 
   document.getElementById("prev").addEventListener("click", () => {
     cursor = new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1);
@@ -835,12 +1151,15 @@
         const days = ev.daysOfWeek.map(d => fullDow[d]).join(", ");
         const card = document.createElement("div");
         card.className = "ev";
+        const addressLink = ev.address
+          ? `<div class="meta">📍 ${ev.location ? ev.location + " — " : ""}<a href="${ev.mapLink || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(ev.address))}" target="_blank" rel="noopener">${ev.address}</a></div>`
+          : (ev.location ? `<div class="meta">📍 ${ev.location}</div>` : "");
         card.innerHTML = `
           <div class="swatch" style="background:${ev.color}"></div>
           <div>
             <h3>${ev.title}</h3>
             <div class="meta"><strong>${days}</strong> at <strong>${ev.time}</strong></div>
-            ${ev.location ? `<div class="meta">📍 ${ev.location}</div>` : ""}
+            ${addressLink}
             ${ev.note ? `<div class="meta">${ev.note}</div>` : ""}
           </div>`;
         recurringEl.appendChild(card);
