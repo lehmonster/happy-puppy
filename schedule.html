@@ -205,7 +205,7 @@
     word-break: break-word;
     overflow-wrap: anywhere;
   }
-  .chip .t { font-weight: 500; opacity: 0.85; margin-right: 4px; }
+  .chip .t { font-weight: 500; opacity: 0.85; display: block; }
 
   /* Events list */
   .section-title {
@@ -581,7 +581,7 @@
     },
     {
       id: "vivian-weekday",
-      title: "🧸 Vivian (Nanny)",
+      title: "Vivian (Nanny)",
       color: "#eab308",
       location: "",
       daysOfWeek: [1, 2, 3, 4],
@@ -603,7 +603,7 @@
     },
     {
       id: "vivian-friday",
-      title: "🧸 Vivian (Nanny)",
+      title: "Vivian (Nanny)",
       color: "#eab308",
       location: "",
       daysOfWeek: [5],
@@ -959,7 +959,8 @@
         chip.innerHTML = `<span class="t">${ev.time.replace(/:00 /, " ")}</span>${ev.title}${loc}`;
       } else {
         chip.title = `${ev.title}${ev.time ? " · " + ev.time : ""}${ev.location ? " · " + ev.location : ""}`;
-        chip.textContent = (ev.time ? ev.time + " " : "") + ev.title;
+        const timeHtml = ev.time ? `<span class="t">${ev.time.replace(/:00 /, " ")}</span>` : "";
+        chip.innerHTML = `${timeHtml}${ev.title}`;
       }
       cell.appendChild(chip);
     });
