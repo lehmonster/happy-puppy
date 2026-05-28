@@ -587,8 +587,8 @@
       daysOfWeek: [1, 2, 3, 4],
       time: "7:30 AM – 4:30 PM",
       owner: "vivian",
-      ranges: [{ start: "2026-06-01", end: null }],
-      note: "Mon–Thu, first day Mon, Jun 1, 2026"
+      ranges: [{ start: "2026-06-01", end: "2026-08-07" }],
+      note: "Mon–Thu, Jun 1 – Aug 7, 2026"
     },
     {
       id: "house-cleaning",
@@ -609,9 +609,9 @@
       daysOfWeek: [5],
       time: "8:00 AM – 12:00 PM",
       owner: "vivian",
-      ranges: [{ start: "2026-06-05", end: null }],
+      ranges: [{ start: "2026-06-05", end: "2026-08-07" }],
       exceptions: ["2026-07-03"],
-      note: "Fridays, summer nanny"
+      note: "Fridays, Jun 5 – Aug 7, 2026"
     }
   ];
 
@@ -676,12 +676,16 @@
     { title: "Half day (last day)",       color: "#ec4899", date: "2026-05-29", owner: "wren" },
     { title: "Summer break begins",       color: "#ec4899", date: "2026-06-01", owner: "wren" },
     // Wren – 2026–27 MSD school year (official calendar, updated 1/7/26)
-    { title: "Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "Refer to your child's schedule" },
-    { title: "MSD 101 – New Families",           color: "#ec4899", date: "2026-08-29", owner: "wren", note: "Adults only" },
-    { title: "New Student Orientation (½-day)",  color: "#ec4899", date: "2026-08-31", owner: "wren", note: "Toddler Phase-in begins" },
-    { title: "First Full Day of School",         color: "#ec4899", date: "2026-09-01", owner: "wren", note: "Primary Phase-in begins" },
+    { title: "Welcome Back Picnic/Reception",    color: "#ec4899", date: "2026-08-16", owner: "wren", location: "Lakeside" },
+    { title: "Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "Refer to your child's schedule · Toddler Family Visits (Parents Only)" },
+    { title: "MSD 101 – New Families",           color: "#ec4899", date: "2026-08-29", owner: "wren", note: "New families only" },
+    { title: "New Student Orientation (½-day)",  color: "#ec4899", date: "2026-08-31", owner: "wren", note: "K–MS half day" },
+    { title: "First Full Day of School (K–MS)",  color: "#ec4899", date: "2026-09-01", owner: "wren", note: "Toddler Phase-in begins · 2nd Year Primary ½-day" },
+    { title: "2nd Year Primary – regular hours", color: "#ec4899", date: "2026-09-02", owner: "wren" },
+    { title: "1st Year Primary – ½-day",         color: "#ec4899", date: "2026-09-03", owner: "wren" },
+    { title: "1st Year Primary – regular hours", color: "#ec4899", date: "2026-09-04", owner: "wren" },
     { title: "Labor Day – No School",            color: "#ec4899", date: "2026-09-07", owner: "wren" },
-    { title: "Back to School Night",             color: "#ec4899", date: "2026-09-10", owner: "wren", note: "Adults only" },
+    { title: "Back to School Night",             color: "#ec4899", date: "2026-09-10", time: "6:00 – 8:00 PM", owner: "wren", note: "Adults only" },
     { title: "Staff Day – No School",            color: "#ec4899", date: "2026-09-25", owner: "wren" },
     { title: "GrandFriends Day (½-day)",         color: "#ec4899", date: "2026-11-20", owner: "wren" },
     { title: "Colorado Gives Day",               color: "#ec4899", date: "2026-12-08", owner: "wren" },
