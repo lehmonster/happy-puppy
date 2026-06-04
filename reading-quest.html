@@ -410,10 +410,10 @@
      handles well ("buh" for /b/, "mmm" for /m/). For full words and
      sentences we let the synth speak normally. */
   const PHONEMES = {
-    A: 'aah', B: 'buh', C: 'kuh', D: 'duh', E: 'eh',
+    A: 'aa',  B: 'buh', C: 'kuh', D: 'duh', E: 'eh',
     F: 'fff', G: 'guh', H: 'huh', I: 'ih',  J: 'juh',
-    K: 'kuh', L: 'lll', M: 'mmm', N: 'nnn', O: 'aah',
-    P: 'puh', Q: 'kwuh', R: 'rrr', S: 'sss', T: 'tuh',
+    K: 'kuh', L: 'lll', M: 'mmm', N: 'nnn', O: 'awh',
+    P: 'puh', Q: 'kw',  R: 'rrr', S: 'sss', T: 'tuh',
     U: 'uh',  V: 'vvv', W: 'wuh', X: 'ks',  Y: 'yuh',
     Z: 'zzz'
   };
@@ -452,25 +452,37 @@
     speak(ph, { rate: 0.7, pitch: 1.15 });
   }
 
-  /* Speak a CVC word by sounding it out, then saying the whole word. */
+  /* Speak a CVC word by sounding it out, then saying the whole word.
+     Uses a generation token so an interrupted blend doesn't keep firing
+     letters into a newly-started blend. */
+  let blendGen = 0;
   function speakBlend(word) {
     if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const gen = ++blendGen;
     const letters = word.toUpperCase().split('');
     let i = 0;
     function next() {
+      if (gen !== blendGen) return;
       if (i < letters.length) {
         const ph = PHONEMES[letters[i]] || letters[i];
         const u = new SpeechSynthesisUtterance(ph);
         u.rate = 0.65; u.pitch = 1.15; u.lang = 'en-US';
         if (preferredVoice) u.voice = preferredVoice;
-        u.onend = () => { i++; setTimeout(next, 220); };
+        u.onend = () => {
+          if (gen !== blendGen) return;
+          i++;
+          setTimeout(next, 220);
+        };
         window.speechSynthesis.speak(u);
       } else {
-        setTimeout(() => speak(word, { rate: 0.85, pitch: 1.15 }), 200);
+        setTimeout(() => {
+          if (gen !== blendGen) return;
+          speak(word, { rate: 0.85, pitch: 1.15 });
+        }, 200);
       }
     }
-    window.speechSynthesis.cancel();
-    next();
+    setTimeout(next, 60);
   }
 
   /* ── DATA ─────────────────────────────────────────────────────────────── */

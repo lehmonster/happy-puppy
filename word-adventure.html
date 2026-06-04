@@ -375,9 +375,24 @@
       0%   { opacity: 1; transform: translateY(0)     rotate(0deg); }
       100% { opacity: 0; transform: translateY(108vh) rotate(540deg); }
     }
+    /* Home button */
+    .home-btn {
+      position: fixed; top: 12px; left: 12px;
+      background: white; border: 3px solid #4fb995;
+      border-radius: 50%; width: 48px; height: 48px;
+      font-size: 1.4rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      touch-action: manipulation;
+    }
+    .home-btn:active { transform: scale(0.92); }
   </style>
 </head>
 <body>
+
+<a class="home-btn" href="games.html" aria-label="Back to all games">🏠</a>
 
 <script>
   /* spawn floating background decorations */

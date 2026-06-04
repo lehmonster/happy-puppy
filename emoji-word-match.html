@@ -300,9 +300,25 @@
       animation: flash 0.4s ease forwards;
     }
     @keyframes flash { 0% { opacity:1; } 100% { opacity:0; } }
+
+    /* Home button (visible on mode screen) */
+    .home-btn {
+      position: fixed; top: 12px; left: 12px;
+      background: white; border: 3px solid #ffb84d;
+      border-radius: 50%; width: 48px; height: 48px;
+      font-size: 1.4rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      touch-action: manipulation;
+    }
+    .home-btn:active { transform: scale(0.92); }
   </style>
 </head>
 <body>
+
+<a class="home-btn" href="games.html" aria-label="Back to all games" id="home-link">🏠</a>
 
 <h1>🧠 Emoji & Word Match!</h1>
 <div class="tagline">Flip a picture. Flip the word that matches. 💛💙</div>
@@ -398,12 +414,14 @@
     document.getElementById('win-screen').classList.remove('show');
     document.getElementById('mode-screen').style.display = 'flex';
     document.getElementById('game-screen').style.display = 'none';
+    document.getElementById('home-link').style.display = 'flex';
   }
 
   function startGame(pairs) {
     pairCount = pairs;
     document.getElementById('mode-screen').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
+    document.getElementById('home-link').style.display = 'none';
     buildGrid();
   }
 
