@@ -240,13 +240,20 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-weight: 800;
       text-align: center;
-      padding: 6px 4px 7px;
-      /* Starting font-size — JS auto-shrinks per tile so every name fits */
-      font-size: 14px;
+      padding: 5px 4px 6px;
+      /* Starting font-size — JS auto-shrinks per tile if a 2-line wrap still overflows */
+      font-size: 12px;
       line-height: 1.05;
       letter-spacing: 0;
       text-shadow: 1px 1px 0 rgba(0,0,0,0.22);
-      white-space: nowrap;
+      /* Allow up to 2 lines so "SNOW WHITE" wraps cleanly instead of clipping */
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-break: keep-all;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
       overflow: hidden;
     }
 
@@ -494,16 +501,19 @@
       grid.appendChild(wrapper);
     });
 
-    // Auto-shrink each name's font-size until it fits on one line.
-    // Runs after layout settles so we have real widths to measure.
-    requestAnimationFrame(fitAllNames);
+    // Auto-shrink each name's font-size if a 2-line wrap still overflows.
+    // Double RAF guarantees grid layout has settled before we measure.
+    requestAnimationFrame(() => requestAnimationFrame(fitAllNames));
   }
 
   function fitName(el) {
     el.style.fontSize = '';
-    let size = parseFloat(getComputedStyle(el).fontSize) || 14;
+    let size = parseFloat(getComputedStyle(el).fontSize) || 12;
     const min = 7;
-    while (el.scrollWidth > el.clientWidth && size > min) {
+    // Shrink while either width OR 2-line height overflows
+    let safety = 20;
+    while (safety-- > 0 && size > min &&
+           (el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight)) {
       size -= 0.5;
       el.style.fontSize = size + 'px';
     }
@@ -513,12 +523,18 @@
     document.querySelectorAll('.princess-name').forEach(fitName);
   }
 
-  // Re-fit on resize / orientation change
+  // Re-fit on resize / orientation change, plus a defensive run after fonts
+  // load (system fonts are usually instant, but on Windows the first paint
+  // can occasionally measure with a fallback metric).
   let _fitTimer;
   window.addEventListener('resize', () => {
     clearTimeout(_fitTimer);
     _fitTimer = setTimeout(fitAllNames, 80);
   });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => fitAllNames());
+  }
+  window.addEventListener('load', fitAllNames);
 
   function onCardClick(card) {
     if (locked) return;
