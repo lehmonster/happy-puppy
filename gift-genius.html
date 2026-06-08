@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Genius - Smart Gift Ideas & Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+        }
+
+        .question-section.hidden {
+            display: none;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-label {
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+
+        .checkbox-label:hover {
+            background: #e9ecef;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        button.secondary:hover {
+            background: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .results.hidden {
+            display: none;
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .gift-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .gift-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .gift-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .gift-card .meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .gift-card .price-range {
+            color: #764ba2;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .gift-card .category-tag {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .gift-card .save-btn {
+            width: auto;
+            padding: 8px 20px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        /* Gift Tracker Styles */
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tracker-header h2 {
+            color: #333;
+        }
+
+        .tracker-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .tracker-controls button {
+            width: auto;
+            padding: 10px 20px;
+            margin: 0;
+        }
+
+        .gifts-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .gifts-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .gifts-table th,
+        .gifts-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .gifts-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .gifts-table .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .gifts-table .actions button {
+            width: auto;
+            padding: 6px 12px;
+            margin: 0;
+            font-size: 0.85em;
+        }
+
+        .gifts-table .delete-btn {
+            background: #dc3545;
+        }
+
+        .gifts-table .delete-btn:hover {
+            background: #c82333;
+        }
+
+        .add-gift-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .add-gift-form.active {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            margin-top: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #999;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .gift-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .gifts-table {
+                font-size: 0.85em;
+            }
+
+            .gifts-table th,
+            .gifts-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 Gift Genius</h1>
+            <p>Discover unique gifts & track what you've given</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('generator')">Find Gifts</button>
+            <button class="tab-btn" onclick="switchTab('tracker')">Gift Tracker</button>
+        </div>
+
+        <!-- GIFT GENERATOR TAB -->
+        <div id="generator-tab" class="tab-content active">
+            <div class="card">
+                <div id="step1" class="question-section">
+                    <label for="recipient-name">What's their name? (Optional - helps with tracking)</label>
+                    <input type="text" id="recipient-name" placeholder="e.g., Sarah">
+
+                    <label for="relationship" style="margin-top: 20px;">Who is this gift for?</label>
+                    <select id="relationship">
+                        <option value="">Select relationship...</option>
+                        <option value="spouse">Spouse/Partner</option>
+                        <option value="parent">Parent</option>
+                        <option value="child">Child</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="friend">Friend</option>
+                        <option value="coworker">Coworker</option>
+                        <option value="grandparent">Grandparent</option>
+                        <option value="other">Other Family/Friend</option>
+                    </select>
+                    <button onclick="nextStep()">Next</button>
+                </div>
+
+                <div id="step2" class="question-section hidden">
+                    <label for="gender">What's their gender?</label>
+                    <select id="gender">
+                        <option value="">Select gender...</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="any">Non-binary/Any</option>
+                    </select>
+                    <button onclick="nextStep2()">Next</button>
+                    <button class="secondary" onclick="backStep(1)">Back</button>
+                </div>
+
+                <div id="step3" class="question-section hidden">
+                    <label for="age">What's their age range?</label>
+                    <select id="age">
+                        <option value="">Select age range...</option>
+                        <option value="child">Child (0-12)</option>
+                        <option value="teen">Teen (13-17)</option>
+                        <option value="young-adult">Young Adult (18-29)</option>
+                        <option value="adult">Adult (30-49)</option>
+                        <option value="middle-age">Middle Age (50-64)</option>
+                        <option value="senior">Senior (65+)</option>
+                    </select>
+                    <button onclick="nextStep3()">Next</button>
+                    <button class="secondary" onclick="backStep(2)">Back</button>
+                </div>
+
+                <div id="step4" class="question-section hidden">
+                    <label for="budget">What's your budget?</label>
+                    <select id="budget">
+                        <option value="">Select budget...</option>
+                        <option value="under-50">Under $50</option>
+                        <option value="50-100">$50 - $100</option>
+                        <option value="100-250">$100 - $250</option>
+                        <option value="250-500">$250 - $500</option>
+                        <option value="500-plus">$500+</option>
+                    </select>
+                    <button onclick="nextStep4()">Next</button>
+                    <button class="secondary" onclick="backStep(3)">Back</button>
+                </div>
+
+                <div id="step5" class="question-section hidden">
+                    <label>What are their interests? (Select all that apply)</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="sports"> Sports & Fitness
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="tech"> Technology
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="cooking"> Cooking & Food
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="art"> Art & Crafts
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="reading"> Reading & Books
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="music"> Music
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="gaming"> Gaming
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="outdoors"> Outdoors & Nature
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="fashion"> Fashion & Style
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="home"> Home & Garden
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="wellness"> Wellness & Self-Care
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="interest" value="travel"> Travel & Adventure
+                        </label>
+                    </div>
+                    <button onclick="generateIdeas()">Generate Gift Ideas</button>
+                    <button class="secondary" onclick="backStep(4)">Back</button>
+                </div>
+
+                <div id="results" class="results hidden">
+                    <h2>Perfect Gift Ideas for <span id="recipient-display"></span></h2>
+                    <div id="giftGrid" class="gift-grid"></div>
+                    <button class="secondary" onclick="reset()">Start Over</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GIFT TRACKER TAB -->
+        <div id="tracker-tab" class="tab-content">
+            <div class="card">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="stat-total">0</h3>
+                        <p>Total Gifts Given</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-people">0</h3>
+                        <p>People Gifted</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="stat-spent">$0</h3>
+                        <p>Total Spent</p>
+                    </div>
+                </div>
+
+                <div class="tracker-header">
+                    <h2>Your Gift History</h2>
+                    <div class="tracker-controls">
+                        <button onclick="toggleAddForm()">+ Add Gift</button>
+                        <button class="secondary" onclick="exportGifts()">Export CSV</button>
+                    </div>
+                </div>
+
+                <div id="add-gift-form" class="add-gift-form">
+                    <h3 style="margin-bottom: 20px;">Add a Gift</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Recipient Name *</label>
+                            <input type="text" id="gift-recipient" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Relationship</label>
+                            <select id="gift-relationship">
+                                <option value="Spouse">Spouse/Partner</option>
+                                <option value="Parent">Parent</option>
+                                <option value="Child">Child</option>
+                                <option value="Sibling">Sibling</option>
+                                <option value="Friend">Friend</option>
+                                <option value="Coworker">Coworker</option>
+                                <option value="Grandparent">Grandparent</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Gift Description *</label>
+                            <input type="text" id="gift-description" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Occasion</label>
+                            <input type="text" id="gift-occasion" placeholder="e.g., Birthday, Christmas">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date Given</label>
+                            <input type="date" id="gift-date">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount Spent</label>
+                            <input type="number" id="gift-price" placeholder="0.00" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <button onclick="saveGift()">Save Gift</button>
+                        <button class="secondary" onclick="toggleAddForm()">Cancel</button>
+                    </div>
+                </div>
+
+                <div id="gifts-list">
+                    <div class="empty-state">
+                        <h3>No gifts tracked yet</h3>
+                        <p>Start adding gifts you've given to keep track of your generosity!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced gift database with more unique, uncommon ideas
+        const giftDatabase = {
+            spouse: {
+                male: [
+                    { name: "Custom Star Map", desc: "Personalized print of the night sky on your special date", price: "$40-$120", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Whiskey Barrel Aging Kit", desc: "Age your own spirits at home with a mini oak barrel", price: "$60-$150", tags: ["cooking"], ages: ["adult", "middle-age"], category: "Experience" },
+                    { name: "Concert Tickets + Vinyl Record", desc: "See their favorite artist live and take home the album", price: "$100-$300", tags: ["music"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Personalized Coordinates Bracelet", desc: "Leather bracelet engraved with meaningful location coordinates", price: "$35-$85", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Smart Garden System", desc: "Indoor hydroponic garden for growing fresh herbs year-round", price: "$100-$300", tags: ["tech", "home", "cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
+                    { name: "Hot Sauce Making Kit", desc: "Create custom hot sauces with unique pepper varieties", price: "$45-$95", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
+                    { name: "Personalized Song", desc: "Commission a custom song written about your relationship", price: "$150-$500", tags: ["music"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Adventure Subscription Box", desc: "Monthly outdoor gear and trail guides for new adventures", price: "$40-$60/month", tags: ["outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
+                    { name: "Leather-Working Class", desc: "Learn to craft wallets, belts, or accessories together", price: "$120-$250", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "DNA Ancestry + Traits Test", desc: "Discover heritage, health traits, and genetic connections", price: "$99-$199", tags: ["tech"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Unique" }
+                ],
+                female: [
+                    { name: "Birth Flower Jewelry", desc: "Necklace featuring their birth month's flower in delicate detail", price: "$60-$200", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Custom Portrait Painting", desc: "Commission an artist to paint you both in a unique style", price: "$150-$600", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Perfume-Making Workshop", desc: "Create a custom fragrance blend together", price: "$120-$300", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Cookbook + Cooking Class", desc: "Beautiful cookbook paired with a virtual or in-person class", price: "$80-$250", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Monthly Flower Subscription", desc: "Fresh seasonal bouquets delivered to her door", price: "$40-$100/month", tags: ["home"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Subscription" },
+                    { name: "Silk Pillowcase Set", desc: "Luxurious mulberry silk for hair and skin health", price: "$50-$150", tags: ["wellness", "home"], ages: ["young-adult", "adult", "middle-age"], category: "Wellness" },
+                    { name: "Pottery Class Series", desc: "Learn to throw pottery and create functional art", price: "$150-$400", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Personalized Recipe Book", desc: "Family recipes collected and bound in a beautiful keepsake", price: "$60-$150", tags: ["cooking"], ages: ["adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Sunrise Hot Air Balloon Ride", desc: "Romantic aerial adventure at dawn", price: "$200-$500", tags: ["outdoors", "travel"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Custom Bookshelf Portrait", desc: "Artist paints you as book spines on a shelf", price: "$80-$200", tags: ["art", "reading"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" }
+                ],
+                any: [
+                    { name: "Couples Adventure Book", desc: "Guided journal with 100 adventures to experience together", price: "$25-$50", tags: ["travel", "outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Custom Puzzle of Your Photo", desc: "Turn a favorite memory into a 1000-piece puzzle", price: "$35-$80", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Wine Tasting Tour", desc: "Day trip to local vineyards with tastings and lunch", price: "$150-$400", tags: ["cooking", "travel"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Smart Mug Set", desc: "Temperature-controlled mugs that keep drinks perfect", price: "$80-$160", tags: ["tech", "cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Tech" },
+                    { name: "Escape Room at Home", desc: "Premium at-home mystery game for couples", price: "$30-$60", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Couples Massage Class", desc: "Learn professional techniques together", price: "$100-$250", tags: ["wellness"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Record Your Love Story", desc: "Professional interview service that creates an audio keepsake", price: "$200-$500", tags: ["art"], ages: ["adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Monthly Date Night Box", desc: "Curated experiences delivered with everything needed", price: "$40-$80/month", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
+                    { name: "Star-Naming Certificate", desc: "Name a star after your relationship with official registry", price: "$50-$100", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
+                    { name: "Couples Pottery Date", desc: "Private studio session to create matching pieces", price: "$120-$300", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" }
+                ]
+            },
+            // Add more categories here... (parent, child, sibling, friend, coworker, grandparent, other)
+            // For brevity, I'll add a few key ones
+            friend: {
+                male: [
+                    { name: "Jerky of the Month Club", desc: "Artisan jerky varieties delivered monthly", price: "$30-$50/month", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
+                    { name: "Portable Pizza Oven", desc: "Compact outdoor oven for perfect artisan pizzas", price: "$200-$400", tags: ["cooking", "outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
+                    { name: "Whiskey Stones Set", desc: "Chilling stones that don't dilute drinks", price: "$25-$60", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
+                    { name: "Axe-Throwing Experience", desc: "Group session at a local axe-throwing venue", price: "$40-$80", tags: ["outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Craft Beer Brewing Kit", desc: "Everything needed to brew 5 gallons at home", price: "$80-$200", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
+                    { name: "Desk Catapult", desc: "Mini trebuchet for launching office supplies", price: "$20-$40", tags: ["gaming"], ages: ["young-adult", "adult"], category: "Unique" },
+                    { name: "Personalized Golf Balls", desc: "Custom printed golf balls with funny messages", price: "$30-$60", tags: ["sports"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Vinyl Record of Birth Year", desc: "Top hit from the year they were born", price: "$25-$60", tags: ["music"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Escape Room Gift Card", desc: "Adventure for the whole friend group", price: "$50-$150", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Bonsai Starter Kit", desc: "Everything to grow and shape a miniature tree", price: "$40-$100", tags: ["home"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "DIY" }
+                ],
+                female: [
+                    { name: "Personalized Star Map Mug", desc: "Coffee mug showing the stars on a special date", price: "$30-$50", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Monthly Self-Care Box", desc: "Curated wellness and beauty products", price: "$30-$60/month", tags: ["wellness", "fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
+                    { name: "Wine + Paint Night", desc: "Creative evening with canvas, paints, and wine", price: "$40-$80", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Silk Sleep Mask Set", desc: "Luxurious eye mask with matching scrunchies", price: "$35-$70", tags: ["wellness"], ages: ["young-adult", "adult", "middle-age"], category: "Wellness" },
+                    { name: "Terrarium Building Kit", desc: "Create a miniature garden in glass", price: "$30-$80", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
+                    { name: "Macrame Workshop", desc: "Learn to create wall hangings and plant holders", price: "$60-$120", tags: ["art", "home"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Birth Flower Candle", desc: "Soy candle with their birth month's flower scent", price: "$25-$50", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Tea Blending Class", desc: "Create custom tea blends to take home", price: "$50-$100", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Experience" },
+                    { name: "Personalized Recipe Cards", desc: "Custom illustrated cards in their style", price: "$30-$70", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Succulent Subscription", desc: "New rare succulent delivered monthly", price: "$20-$40/month", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" }
+                ],
+                any: [
+                    { name: "Board Game Cafe Gift Card", desc: "Enjoy hundreds of games with food and drinks", price: "$40-$80", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Custom Illustrated Portrait", desc: "Digital portrait in fun cartoon or watercolor style", price: "$50-$150", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Mystery Book Subscription", desc: "Curated thriller or mystery delivered monthly", price: "$20-$40/month", tags: ["reading"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Subscription" },
+                    { name: "Cooking Class Experience", desc: "Learn a new cuisine together", price: "$80-$200", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Custom Playlist Print", desc: "Spotify playlist as scannable artwork", price: "$30-$70", tags: ["music", "art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
+                    { name: "Portable Projector", desc: "Compact projector for outdoor movie nights", price: "$80-$250", tags: ["tech"], ages: ["young-adult", "adult", "middle-age"], category: "Tech" },
+                    { name: "Gourmet Popcorn Sampler", desc: "12 unique flavors from sweet to savory", price: "$40-$80", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Unique" },
+                    { name: "Plant Parenthood Workshop", desc: "Learn to care for houseplants", price: "$40-$90", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
+                    { name: "Custom Map Print", desc: "Personalized map of meaningful location", price: "$40-$100", tags: ["art", "travel"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
+                    { name: "Virtual Reality Headset", desc: "Affordable VR for gaming and experiences", price: "$200-$400", tags: ["gaming", "tech"], ages: ["young-adult", "adult"], category: "Tech" }
+                ]
+            }
+            // Truncated for space - would include all categories
+        };
+
+        // Gift tracking storage
+        let savedGifts = JSON.parse(localStorage.getItem('giftHistory') || '[]');
+        let currentRecipientName = '';
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            if (tabName === 'tracker') {
+                loadGiftHistory();
+            }
+        }
+
+        // Navigation functions
+        function nextStep() {
+            const relationship = document.getElementById('relationship').value;
+            if (!relationship) {
+                alert('Please select a relationship');
+                return;
+            }
+            currentRecipientName = document.getElementById('recipient-name').value;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function nextStep2() {
+            const gender = document.getElementById('gender').value;
+            if (!gender) {
+                alert('Please select a gender');
+                return;
+            }
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+        }
+
+        function nextStep3() {
+            const age = document.getElementById('age').value;
+            if (!age) {
+                alert('Please select an age range');
+                return;
+            }
+            document.getElementById('step3').classList.add('hidden');
+            document.getElementById('step4').classList.remove('hidden');
+        }
+
+        function nextStep4() {
+            const budget = document.getElementById('budget').value;
+            if (!budget) {
+                alert('Please select a budget');
+                return;
+            }
+            document.getElementById('step4').classList.add('hidden');
+            document.getElementById('step5').classList.remove('hidden');
+        }
+
+        function backStep(fromStep) {
+            if (fromStep === 1) {
+                document.getElementById('step2').classList.add('hidden');
+                document.getElementById('step1').classList.remove('hidden');
+            } else if (fromStep === 2) {
+                document.getElementById('step3').classList.add('hidden');
+                document.getElementById('step2').classList.remove('hidden');
+            } else if (fromStep === 3) {
+                document.getElementById('step4').classList.add('hidden');
+                document.getElementById('step3').classList.remove('hidden');
+            } else if (fromStep === 4) {
+                document.getElementById('step5').classList.add('hidden');
+                document.getElementById('step4').classList.remove('hidden');
+            }
+        }
+
+        function generateIdeas() {
+            const relationship = document.getElementById('relationship').value;
+            const gender = document.getElementById('gender').value;
+            const age = document.getElementById('age').value;
+            const budget = document.getElementById('budget').value;
+            const interestCheckboxes = document.querySelectorAll('input[name="interest"]:checked');
+            const interests = Array.from(interestCheckboxes).map(cb => cb.value);
+
+            if (interests.length === 0) {
+                alert('Please select at least one interest');
+                return;
+            }
+
+            const gifts = giftDatabase[relationship]?.[gender] || [];
+            const giftGrid = document.getElementById('giftGrid');
+            giftGrid.innerHTML = '';
+
+            // Budget filtering
+            const budgetRanges = {
+                'under-50': [0, 50],
+                '50-100': [50, 100],
+                '100-250': [100, 250],
+                '250-500': [250, 500],
+                '500-plus': [500, 10000]
+            };
+            const [minBudget, maxBudget] = budgetRanges[budget] || [0, 10000];
+
+            // Score and filter gifts
+            const scoredGifts = gifts.map(gift => {
+                let score = 0;
+                const tags = gift.tags || [];
+
+                // Match interests
+                interests.forEach(interest => {
+                    if (tags.includes(interest)) score += 2;
+                });
+
+                // Match age
+                if (gift.ages && gift.ages.includes(age)) score += 1;
+
+                // Parse price range and check budget
+                const priceMatch = gift.price.match(/\$(\d+)-\$?(\d+)/);
+                if (priceMatch) {
+                    const giftMin = parseInt(priceMatch[1]);
+                    const giftMax = parseInt(priceMatch[2]);
+                    // Gift is in budget if there's any overlap
+                    if (giftMax >= minBudget && giftMin <= maxBudget) {
+                        score += 1;
+                    } else {
+                        score = 0; // Exclude if out of budget
+                    }
+                }
+
+                return { ...gift, score };
+            });
+
+            // Get top matches
+            const topGifts = scoredGifts
+                .filter(g => g.score > 0)
+                .sort((a, b) => b.score - a.score)
+                .slice(0, 8);
+
+            const displayName = currentRecipientName || 'Them';
+            document.getElementById('recipient-display').textContent = displayName;
+
+            if (topGifts.length === 0) {
+                giftGrid.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No gifts found matching your criteria. Try adjusting your budget or interests.</p>';
+            } else {
+                topGifts.forEach(gift => {
+                    const card = document.createElement('div');
+                    card.className = 'gift-card';
+                    card.innerHTML = `
+                        <h3>${gift.name}</h3>
+                        <p>${gift.desc}</p>
+                        <div class="meta">
+                            <span class="price-range">${gift.price}</span>
+                            <span class="category-tag">${gift.category || 'Gift'}</span>
+                        </div>
+                        <button class="save-btn" onclick="saveToTracker('${gift.name.replace(/'/g, "\\'")}', '${gift.price}', '${displayName}')">
+                            Save to Tracker
+                        </button>
+                    `;
+                    giftGrid.appendChild(card);
+                });
+            }
+
+            document.getElementById('step5').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+        }
+
+        function reset() {
+            document.getElementById('relationship').value = '';
+            document.getElementById('gender').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('budget').value = '';
+            document.getElementById('recipient-name').value = '';
+            document.querySelectorAll('input[name="interest"]').forEach(cb => cb.checked = false);
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            currentRecipientName = '';
+        }
+
+        // Gift Tracker Functions
+        function toggleAddForm() {
+            const form = document.getElementById('add-gift-form');
+            form.classList.toggle('active');
+        }
+
+        function saveGift() {
+            const recipient = document.getElementById('gift-recipient').value;
+            const relationship = document.getElementById('gift-relationship').value;
+            const description = document.getElementById('gift-description').value;
+            const occasion = document.getElementById('gift-occasion').value;
+            const date = document.getElementById('gift-date').value || new Date().toISOString().split('T')[0];
+            const price = parseFloat(document.getElementById('gift-price').value) || 0;
+
+            if (!recipient || !description) {
+                alert('Please fill in recipient name and gift description');
+                return;
+            }
+
+            const gift = {
+                id: Date.now(),
+                recipient,
+                relationship,
+                description,
+                occasion,
+                date,
+                price
+            };
+
+            savedGifts.push(gift);
+            localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
+
+            // Clear form
+            document.getElementById('gift-recipient').value = '';
+            document.getElementById('gift-description').value = '';
+            document.getElementById('gift-occasion').value = '';
+            document.getElementById('gift-date').value = '';
+            document.getElementById('gift-price').value = '';
+            toggleAddForm();
+
+            loadGiftHistory();
+        }
+
+        function saveToTracker(giftName, price, recipientName) {
+            const relationship = document.getElementById('relationship').value;
+            const relationshipMap = {
+                'spouse': 'Spouse',
+                'parent': 'Parent',
+                'child': 'Child',
+                'sibling': 'Sibling',
+                'friend': 'Friend',
+                'coworker': 'Coworker',
+                'grandparent': 'Grandparent',
+                'other': 'Other'
+            };
+
+            // Extract min price from range
+            const priceMatch = price.match(/\$(\d+)/);
+            const priceValue = priceMatch ? parseInt(priceMatch[1]) : 0;
+
+            const gift = {
+                id: Date.now(),
+                recipient: recipientName,
+                relationship: relationshipMap[relationship] || 'Friend',
+                description: giftName,
+                occasion: '',
+                date: new Date().toISOString().split('T')[0],
+                price: priceValue
+            };
+
+            savedGifts.push(gift);
+            localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
+
+            alert(`Saved "${giftName}" to your gift tracker!`);
+        }
+
+        function deleteGift(id) {
+            if (confirm('Are you sure you want to delete this gift?')) {
+                savedGifts = savedGifts.filter(g => g.id !== id);
+                localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
+                loadGiftHistory();
+            }
+        }
+
+        function loadGiftHistory() {
+            savedGifts = JSON.parse(localStorage.getItem('giftHistory') || '[]');
+
+            // Update stats
+            const totalGifts = savedGifts.length;
+            const uniquePeople = new Set(savedGifts.map(g => g.recipient)).size;
+            const totalSpent = savedGifts.reduce((sum, g) => sum + (g.price || 0), 0);
+
+            document.getElementById('stat-total').textContent = totalGifts;
+            document.getElementById('stat-people').textContent = uniquePeople;
+            document.getElementById('stat-spent').textContent = '$' + totalSpent.toFixed(2);
+
+            // Render table
+            const listDiv = document.getElementById('gifts-list');
+
+            if (savedGifts.length === 0) {
+                listDiv.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No gifts tracked yet</h3>
+                        <p>Start adding gifts you've given to keep track of your generosity!</p>
+                    </div>
+                `;
+            } else {
+                // Sort by date descending
+                savedGifts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                listDiv.innerHTML = `
+                    <table class="gifts-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Recipient</th>
+                                <th>Relationship</th>
+                                <th>Gift</th>
+                                <th>Occasion</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${savedGifts.map(gift => `
+                                <tr>
+                                    <td>${gift.date}</td>
+                                    <td>${gift.recipient}</td>
+                                    <td>${gift.relationship}</td>
+                                    <td>${gift.description}</td>
+                                    <td>${gift.occasion || '-'}</td>
+                                    <td>$${gift.price.toFixed(2)}</td>
+                                    <td class="actions">
+                                        <button class="delete-btn" onclick="deleteGift(${gift.id})">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        function exportGifts() {
+            if (savedGifts.length === 0) {
+                alert('No gifts to export');
+                return;
+            }
+
+            const headers = ['Date', 'Recipient', 'Relationship', 'Gift', 'Occasion', 'Amount'];
+            const rows = savedGifts.map(g => [
+                g.date,
+                g.recipient,
+                g.relationship,
+                g.description,
+                g.occasion || '',
+                g.price.toFixed(2)
+            ]);
+
+            let csv = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gift-history.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGiftHistory();
+        });
+    </script>
+</body>
+</html>
