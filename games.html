@@ -126,6 +126,7 @@
     .game-card.reading  { border-color: #00897b; --tint: linear-gradient(135deg, #d4f1f4, #fff); }
     .game-card.princess { border-color: #d684d7; --tint: linear-gradient(135deg, #f8ebf9, #fff); }
     .game-card.memory   { border-color: #ffb84d; --tint: linear-gradient(135deg, #fff9e6, #fff); }
+    .game-card.packing  { border-color: #7a9cc6; --tint: linear-gradient(135deg, #e8f2ff, #fff); }
 
     .game-emoji {
       font-size: clamp(3.2rem, 10vw, 4.5rem);
@@ -148,6 +149,7 @@
     .game-card.word     .game-emoji { background: linear-gradient(135deg, #c8f0e4, #4fb995); }
     .game-card.reading  .game-emoji { background: linear-gradient(135deg, #b2dfdb, #4db8c4); }
     .game-card.princess .game-emoji { background: linear-gradient(135deg, #f3d7f8, #d684d7); }
+    .game-card.packing  .game-emoji { background: linear-gradient(135deg, #b3d9ff, #7a9cc6); }
     .game-card.memory   .game-emoji { background: linear-gradient(135deg, #ffe6b3, #ffb84d); }
 
     .game-info {
@@ -166,6 +168,7 @@
     .game-card.word     .game-title { color: #2d7a5c; }
     .game-card.reading  .game-title { color: #00695c; }
     .game-card.princess .game-title { color: #9d3fa8; }
+    .game-card.packing  .game-title { color: #4a7ba7; }
     .game-card.memory   .game-title { color: #d97e3a; }
 
     .game-desc {
@@ -189,6 +192,7 @@
     .game-card.word     .play-arrow { color: #2d7a5c; }
     .game-card.reading  .play-arrow { color: #00695c; }
     .game-card.princess .play-arrow { color: #9d3fa8; }
+    .game-card.packing  .play-arrow { color: #4a7ba7; }
     .game-card.memory   .play-arrow { color: #d97e3a; }
 
     /* Stagger the entrance animation so the cards pop in one after another */
@@ -201,6 +205,7 @@
     .game-card:nth-child(2) { animation-delay: 0.18s; }
     .game-card:nth-child(3) { animation-delay: 0.31s; }
     .game-card:nth-child(4) { animation-delay: 0.44s; }
+    .game-card:nth-child(5) { animation-delay: 0.57s; }
   </style>
 </head>
 <body>
@@ -257,6 +262,16 @@
     <div class="game-info">
       <div class="game-title">Emoji &amp; Word Match</div>
       <div class="game-desc">Flip cards and find the perfect emoji-word pairs!</div>
+    </div>
+    <div class="play-arrow">▶</div>
+  </div>
+
+
+  <div class="game-card packing" onclick="window.location.href='packing-pinterest.html'">
+    <div class="game-emoji">✈️</div>
+    <div class="game-info">
+      <div class="game-title">Travel Packing List</div>
+      <div class="game-desc">Upload photos & get AI styling suggestions for your trip!</div>
     </div>
     <div class="play-arrow">▶</div>
   </div>
