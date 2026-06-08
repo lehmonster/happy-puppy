@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Travel Packing List - Pinterest Style</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg-cream:#fdfbf7;--card-white:#fff;--navy:#2c3e50;--dusty-blue:#7a9cc6;--sage:#9db4a8;--terracotta:#d4876f;--peach:#f5d5c8;--gold:#d4af37;--text:#333;--text-light:#6c757d;--border:#e8e4df;--shadow:0 10px 30px rgba(0,0,0,.08);--shadow-lg:0 20px 60px rgba(0,0,0,.12)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Poppins,-apple-system,sans-serif;background:var(--bg-cream);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.hero{background:linear-gradient(135deg,var(--dusty-blue) 0%,var(--sage) 100%);padding:80px 20px 60px;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'✈';position:absolute;font-size:200px;opacity:.05;top:-40px;right:-20px;transform:rotate(15deg)}
+.hero h1{font-family:'Playfair Display',serif;font-size:48px;font-weight:700;color:#fff;margin-bottom:12px;letter-spacing:-.5px}
+.hero .subtitle{font-size:18px;color:rgba(255,255,255,.9);font-weight:300;letter-spacing:2px;text-transform:uppercase}
+.hero .tagline{font-size:16px;color:rgba(255,255,255,.85);margin-top:8px;font-style:italic}
+.container{max-width:1200px;margin:0 auto;padding:40px 20px}
+.form-section{background:var(--card-white);border-radius:24px;padding:40px;box-shadow:var(--shadow);margin:-40px auto 50px;max-width:900px;position:relative}
+.form-header{text-align:center;margin-bottom:32px}
+.form-header h2{font-family:'Playfair Display',serif;font-size:32px;color:var(--navy);margin-bottom:8px}
+.form-header p{color:var(--text-light);font-size:15px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px;margin-bottom:32px}
+.form-field{display:flex;flex-direction:column}
+.form-field label{font-weight:500;margin-bottom:10px;color:var(--navy);font-size:14px;text-transform:uppercase;letter-spacing:.5px}
+.form-field input{padding:14px 18px;border:2px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;transition:all .3s;background:var(--bg-cream)}
+.form-field input:focus{outline:0;border-color:var(--dusty-blue);background:#fff;box-shadow:0 4px 12px rgba(122,156,198,.15)}
+.btn{padding:16px 40px;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:all .3s;text-transform:uppercase;letter-spacing:1px}
+.btn-primary{background:linear-gradient(135deg,var(--terracotta),var(--gold));color:#fff;box-shadow:0 8px 20px rgba(212,135,111,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(212,135,111,.4)}
+.btn-secondary{background:#fff;color:var(--navy);border:2px solid var(--border)}
+.btn-secondary:hover{border-color:var(--dusty-blue);background:var(--bg-cream)}
+.trip-card{background:linear-gradient(135deg,var(--peach),#fff9f5);border-radius:20px;padding:32px;margin-bottom:40px;box-shadow:var(--shadow);display:none}
+.trip-card.show{display:block}
+.trip-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px}
+.trip-title{font-family:'Playfair Display',serif;font-size:32px;color:var(--navy);margin-bottom:8px}
+.trip-dates{color:var(--text-light);font-size:16px}
+.weather-badge{background:#fff;padding:20px 28px;border-radius:16px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.temp{font-size:36px;font-weight:700;color:var(--terracotta);display:block}
+.weather-desc{font-size:14px;color:var(--text-light);margin-top:4px}
+.upload-section{background:#fff;border-radius:20px;padding:32px;margin-bottom:40px;box-shadow:var(--shadow)}
+.upload-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.upload-header h3{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy)}
+.upload-zone{border:3px dashed var(--border);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .3s;background:var(--bg-cream)}
+.upload-zone:hover{border-color:var(--dusty-blue);background:#fff}
+.upload-zone.drag-over{border-color:var(--terracotta);background:#fff5f2}
+.upload-icon{font-size:48px;margin-bottom:16px}
+.upload-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;margin-top:24px}
+.uploaded-item{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.1);aspect-ratio:1}
+.uploaded-item img{width:100%;height:100%;object-fit:cover}
+.uploaded-item .remove{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.95);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:all .2s}
+.uploaded-item .remove:hover{background:var(--terracotta);color:#fff;transform:scale(1.1)}
+.ai-suggestions{background:linear-gradient(135deg,#f8f9ff,#fff5f8);border-radius:20px;padding:32px;margin-bottom:40px;box-shadow:var(--shadow);display:none}
+.ai-suggestions.show{display:block}
+.ai-header{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.ai-header h3{font-family:'Playfair Display',serif;font-size:26px;color:var(--navy)}
+.ai-badge{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.suggestions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+.suggestion-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,.06);transition:all .3s;cursor:pointer;border:2px solid transparent}
+.suggestion-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,.12);border-color:var(--dusty-blue)}
+.suggestion-card.added{background:var(--sage);color:#fff}
+.suggestion-icon{font-size:32px;margin-bottom:12px}
+.suggestion-name{font-weight:600;margin-bottom:4px;font-size:15px}
+.suggestion-reason{font-size:13px;color:var(--text-light);line-height:1.4}
+.suggestion-card.added .suggestion-reason{color:rgba(255,255,255,.9)}
+.style-picker{display:flex;gap:12px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.style-chip{padding:8px 20px;border:2px solid var(--border);border-radius:20px;background:#fff;cursor:pointer;transition:all .3s;font-size:14px;font-weight:500}
+.style-chip:hover{border-color:var(--dusty-blue)}
+.style-chip.active{background:var(--dusty-blue);color:#fff;border-color:var(--dusty-blue)}
+.packing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:28px;margin-top:40px}
+.category-card{background:#fff;border-radius:20px;padding:28px;box-shadow:var(--shadow);transition:all .3s}
+.category-card:hover{box-shadow:var(--shadow-lg)}
+.category-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid var(--border)}
+.category-icon{font-size:32px}
+.category-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--navy)}
+.item-list{list-style:none}
+.item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #f5f5f5;transition:all .2s}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--bg-cream);margin:0 -12px;padding:14px 12px;border-radius:10px}
+.checkbox{width:22px;height:22px;cursor:pointer;accent-color:var(--sage)}
+.item-label{flex:1;cursor:pointer;user-select:none;font-size:15px}
+.item.checked .item-label{text-decoration:line-through;color:var(--text-light)}
+.person-badge{font-size:10px;padding:4px 10px;border-radius:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.person-badge.mom{background:#e8d5f2;color:#7e4a9e}
+.person-badge.toddler{background:#ffd6e8;color:#d14081}
+.person-badge.both{background:var(--peach);color:var(--terracotta)}
+.progress-section{background:#fff;border-radius:20px;padding:28px;box-shadow:var(--shadow);margin-bottom:32px;text-align:center}
+.progress-ring{width:160px;height:160px;margin:0 auto 20px;position:relative}
+.progress-ring svg{transform:rotate(-90deg)}
+.progress-ring circle{fill:none;stroke-width:12}
+.progress-ring .bg{stroke:#f0f0f0}
+.progress-ring .progress{stroke:var(--sage);stroke-linecap:round;transition:stroke-dashoffset .5s}
+.progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:32px;font-weight:700;color:var(--navy)}
+.progress-label{font-size:18px;color:var(--text-light);margin-top:12px}
+.actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+.loading{text-align:center;padding:60px 20px}
+.spinner{width:50px;height:50px;border:4px solid var(--border);border-top-color:var(--dusty-blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (max-width:768px){
+.hero h1{font-size:36px}
+.form-section{padding:28px 20px}
+.packing-grid{grid-template-columns:1fr}
+.trip-header{flex-direction:column}
+}
+@media print{
+.form-section,.upload-section,.ai-suggestions,.actions{display:none!important}
+body{background:#fff}
+.category-card{break-inside:avoid;box-shadow:none;border:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Travel Packing List</h1>
+  <p class="subtitle">Mom & Toddler</p>
+  <p class="tagline">Smart, Stylish, Stress-Free</p>
+</div>
+
+<div class="container">
+  <div class="form-section">
+    <div class="form-header">
+      <h2>Plan Your Trip</h2>
+      <p>Tell us where you're going and we'll create a custom packing list</p>
+    </div>
+
+    <form id="tripForm">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="destination">Destination</label>
+          <input type="text" id="destination" placeholder="Amalfi Coast, Paris, Tokyo..." required />
+        </div>
+        <div class="form-field">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" required />
+        </div>
+        <div class="form-field">
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" required />
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-bottom:24px">
+        <label>Travel Style</label>
+        <div class="style-picker">
+          <div class="style-chip active" data-style="casual">Casual & Comfy</div>
+          <div class="style-chip" data-style="beachy">Beachy & Light</div>
+          <div class="style-chip" data-style="chic">Chic & Stylish</div>
+          <div class="style-chip" data-style="adventure">Adventure Ready</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%">Generate My Packing List ✨</button>
+    </form>
+  </div>
+
+  <div id="loading" class="loading" style="display:none">
+    <div class="spinner"></div>
+    <p style="color:var(--text-light);font-size:16px">Creating your personalized packing list...</p>
+  </div>
+
+  <div id="tripInfo" class="trip-card">
+    <div class="trip-header">
+      <div>
+        <h2 class="trip-title" id="tripTitle"></h2>
+        <p class="trip-dates" id="tripDates"></p>
+      </div>
+      <div class="weather-badge">
+        <span class="temp" id="temperature"></span>
+        <p class="weather-desc" id="weatherDesc"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="uploadSection" class="upload-section" style="display:none">
+    <div class="upload-header">
+      <span style="font-size:32px">📸</span>
+      <div>
+        <h3>Upload Your Wardrobe</h3>
+        <p style="color:var(--text-light);font-size:14px;margin-top:4px">Add photos of clothes you're considering</p>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">👗</div>
+      <p style="font-weight:600;margin-bottom:8px">Drop images here or click to upload</p>
+      <p style="color:var(--text-light);font-size:14px">Upload photos of dresses, tops, shoes, accessories...</p>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
+    </div>
+
+    <div id="uploadGallery" class="upload-gallery"></div>
+
+    <button id="analyzeBtn" class="btn btn-primary" style="width:100%;margin-top:24px;display:none">✨ Get AI Styling Suggestions</button>
+  </div>
+
+  <div id="aiSuggestions" class="ai-suggestions">
+    <div class="ai-header">
+      <span style="font-size:32px">🤖</span>
+      <h3>Smart Suggestions</h3>
+      <span class="ai-badge">AI Powered</span>
+    </div>
+    <p style="color:var(--text-light);margin-bottom:24px">Based on your destination, weather, and uploaded items:</p>
+    <div id="suggestionsGrid" class="suggestions-grid"></div>
+  </div>
+
+  <div id="progressSection" class="progress-section" style="display:none">
+    <div class="progress-ring">
+      <svg width="160" height="160">
+        <circle class="bg" cx="80" cy="80" r="70"></circle>
+        <circle class="progress" cx="80" cy="80" r="70" id="progressCircle"></circle>
+      </svg>
+      <div class="progress-text" id="progressPercent">0%</div>
+    </div>
+    <p class="progress-label" id="progressLabel">0 of 0 items packed</p>
+  </div>
+
+  <div id="packingList" class="packing-grid"></div>
+
+  <div class="actions" id="actions" style="display:none">
+    <button class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+    <button class="btn btn-secondary" onclick="resetAll()">🔄 Start Over</button>
+    <button class="btn btn-primary" onclick="shareList()">📤 Share</button>
+  </div>
+</div>
+
+<script>
+const PACKING_ITEMS={documents:{title:"Documents",icon:"📋",items:[{name:"Passport / ID",person:"both"},{name:"Travel itinerary",person:"mom"},{name:"Travel insurance",person:"both"},{name:"Boarding passes",person:"mom"},{name:"Wallet / Cards",person:"mom"},{name:"Cash",person:"mom"},{name:"Phone & charger",person:"mom"},{name:"Medical info",person:"both"}]},health:{title:"Health & First Aid",icon:"💊",items:[{name:"Prescription meds",person:"both"},{name:"Tylenol (adult & kids)",person:"both"},{name:"Children's Benadryl",person:"toddler"},{name:"Thermometer",person:"toddler"},{name:"Band-aids",person:"both"},{name:"Sunscreen SPF 50",person:"both"},{name:"Aloe vera",person:"both"},{name:"Bug spray",person:"both"},{name:"Hand sanitizer",person:"both"},{name:"First aid kit",person:"both"}]},clothing_mom:{title:"Mom's Clothing",icon:"👗",items:[{name:"Light shirts",person:"mom",quantity:"days",weather:"warm"},{name:"Tank tops",person:"mom",quantity:2,weather:"warm"},{name:"Dresses",person:"mom",quantity:2},{name:"Shorts",person:"mom",quantity:2,weather:"warm"},{name:"Light pants",person:"mom",quantity:1},{name:"Swimsuit",person:"mom",weather:"warm"},{name:"Cover-up",person:"mom",weather:"warm"},{name:"Light cardigan",person:"mom"},{name:"Evening top",person:"mom"},{name:"Underwear",person:"mom",quantity:"days+2"},{name:"Bras",person:"mom",quantity:2},{name:"Socks",person:"mom",quantity:"days"},{name:"Pajamas",person:"mom",quantity:2},{name:"Scarf / Sarong",person:"mom"}]},clothing_toddler:{title:"Toddler's Clothing",icon:"👶",items:[{name:"T-shirts",person:"toddler",quantity:"days+2"},{name:"Shorts",person:"toddler",quantity:"days+1",weather:"warm"},{name:"Dresses",person:"toddler",quantity:2},{name:"Pants",person:"toddler",quantity:1},{name:"Swimsuit",person:"toddler",weather:"warm"},{name:"Sun hat",person:"toddler",weather:"warm"},{name:"Light jacket",person:"toddler"},{name:"Underwear",person:"toddler",quantity:"days+3"},{name:"Socks",person:"toddler",quantity:"days+2"},{name:"Pajamas",person:"toddler",quantity:2},{name:"Shoes (2 pairs)",person:"toddler"},{name:"Sandals",person:"toddler",weather:"warm"}]},shoes:{title:"Footwear",icon:"👟",items:[{name:"Walking sneakers",person:"mom"},{name:"Sandals",person:"mom",weather:"warm"},{name:"Dress shoes",person:"mom"},{name:"Flip flops",person:"both",weather:"warm"}]},toiletries:{title:"Toiletries",icon:"🧴",items:[{name:"Toothbrush & paste",person:"both"},{name:"Shampoo & conditioner",person:"mom"},{name:"Body wash",person:"both"},{name:"Face cleanser",person:"mom"},{name:"Moisturizer",person:"mom"},{name:"Deodorant",person:"mom"},{name:"Makeup",person:"mom"},{name:"Hairbrush",person:"both"},{name:"Hair ties",person:"both"},{name:"Razor",person:"mom"},{name:"Lip balm",person:"both"}]},diapering:{title:"Diapering",icon:"🍼",items:[{name:"Night diapers",person:"toddler",quantity:"nights+3"},{name:"Swim diapers",person:"toddler",weather:"warm",quantity:3},{name:"Wipes",person:"toddler",quantity:3},{name:"Diaper cream",person:"toddler"},{name:"Changing pad",person:"toddler"},{name:"Disposal bags",person:"toddler"}]},food_drink:{title:"Food & Drink",icon:"🍎",items:[{name:"Snacks",person:"both"},{name:"Sippy cups",person:"toddler",quantity:2},{name:"Water bottles",person:"both"},{name:"Bibs",person:"toddler",quantity:2},{name:"Snack containers",person:"toddler"}]},gear:{title:"Baby Gear",icon:"🎒",items:[{name:"Stroller",person:"toddler"},{name:"Car seat",person:"toddler"},{name:"Baby carrier",person:"toddler"}]},sleep:{title:"Sleep",icon:"🌙",items:[{name:"Pack n' Play",person:"toddler"},{name:"Blanket",person:"toddler"},{name:"Stuffed animal",person:"toddler"},{name:"Sound machine",person:"toddler"},{name:"Night light",person:"toddler"}]},entertainment:{title:"Entertainment",icon:"🎨",items:[{name:"iPad / Tablet",person:"toddler"},{name:"Headphones",person:"toddler"},{name:"Books",person:"toddler",quantity:3},{name:"Small toys",person:"toddler",quantity:3},{name:"Coloring book",person:"toddler"}]}};
+
+const AI_SUGGESTIONS={warm:{casual:[{name:"White linen shirt",icon:"👕",reason:"Perfect beach cover-up"},{name:"Straw hat",icon:"🎩",reason:"Stylish sun protection"},{name:"Crossbody bag",icon:"👜",reason:"Hands-free for toddler"},{name:"Oversized sunglasses",icon:"🕶️",reason:"Chic & practical"}],beachy:[{name:"Crochet cover-up",icon:"👗",reason:"Airy and Instagram-worthy"},{name:"Shell necklace",icon:"📿",reason:"Beach accessory"},{name:"Woven tote",icon:"👜",reason:"Fits everything"},{name:"Ankle wrap sandals",icon:"👡",reason:"Dressy but comfortable"}],chic:[{name:"Silk scarf",icon:"🧣",reason:"Elevates any outfit"},{name:"Statement earrings",icon:"💍",reason:"Instant upgrade"},{name:"Espadrille wedges",icon:"👠",reason:"Comfortable height"},{name:"Structured tote",icon:"👜",reason:"Polished look"}],adventure:[{name:"Quick-dry shorts",icon:"🩳",reason:"Water activities"},{name:"Hiking sandals",icon:"🥾",reason:"Trail to beach"},{name:"Backpack",icon:"🎒",reason:"Hands-free"},{name:"UV protection shirt",icon:"👕",reason:"Sun safety"}]},cold:{casual:[{name:"Cozy sweater",icon:"🧥",reason:"Warmth with style"},{name:"Warm scarf",icon:"🧣",reason:"Layers beautifully"},{name:"Ankle boots",icon:"🥾",reason:"Practical & cute"}],chic:[{name:"Cashmere wrap",icon:"🧣",reason:"Luxe layering"},{name:"Leather gloves",icon:"🧤",reason:"Elegant & warm"},{name:"Knee-high boots",icon:"👢",reason:"Statement footwear"}]}};
+
+let tripData=null;let checkedItems=new Set();let uploadedImages=[];let selectedStyle='casual';
+
+document.getElementById('startDate').min=new Date().toISOString().split('T')[0];
+document.getElementById('endDate').min=new Date().toISOString().split('T')[0];
+document.getElementById('startDate').addEventListener('change',function(){
+document.getElementById('endDate').min=this.value;
+});
+
+document.querySelectorAll('.style-chip').forEach(chip=>{
+chip.addEventListener('click',function(){
+document.querySelectorAll('.style-chip').forEach(c=>c.classList.remove('active'));
+this.classList.add('active');
+selectedStyle=this.dataset.style;
+});
+});
+
+const uploadZone=document.getElementById('uploadZone');
+const fileInput=document.getElementById('fileInput');
+const uploadGallery=document.getElementById('uploadGallery');
+const analyzeBtn=document.getElementById('analyzeBtn');
+
+uploadZone.addEventListener('click',()=>fileInput.click());
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag-over')});
+uploadZone.addEventListener('dragleave',()=>uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('drag-over');handleFiles(e.dataTransfer.files)});
+fileInput.addEventListener('change',e=>handleFiles(e.target.files));
+
+function handleFiles(files){
+Array.from(files).forEach(file=>{
+if(file.type.startsWith('image/')){
+const reader=new FileReader();
+reader.onload=e=>{uploadedImages.push(e.target.result);addImageToGallery(e.target.result)};
+reader.readAsDataURL(file);
+}
+});
+if(uploadedImages.length>0)analyzeBtn.style.display='block';
+}
+
+function addImageToGallery(src){
+const item=document.createElement('div');
+item.className='uploaded-item';
+item.innerHTML=`<img src="${src}" alt="Item" /><button class="remove" onclick="removeImage(this)">×</button>`;
+uploadGallery.appendChild(item);
+}
+
+function removeImage(btn){
+const item=btn.parentElement;
+const idx=Array.from(uploadGallery.children).indexOf(item);
+uploadedImages.splice(idx,1);
+item.remove();
+if(uploadedImages.length===0)analyzeBtn.style.display='none';
+}
+
+analyzeBtn.addEventListener('click',()=>generateAISuggestions());
+
+function generateAISuggestions(){
+const grid=document.getElementById('suggestionsGrid');
+const section=document.getElementById('aiSuggestions');
+const condition=tripData?.weather?.condition||'warm';
+const suggestions=AI_SUGGESTIONS[condition]?.[selectedStyle]||AI_SUGGESTIONS.warm.casual;
+
+grid.innerHTML='';
+suggestions.forEach(s=>{
+const card=document.createElement('div');
+card.className='suggestion-card';
+card.innerHTML=`<div class="suggestion-icon">${s.icon}</div><div class="suggestion-name">${s.name}</div><div class="suggestion-reason">${s.reason}</div>`;
+card.addEventListener('click',function(){
+this.classList.toggle('added');
+if(this.classList.contains('added'))this.innerHTML+='<div style="margin-top:12px;font-size:12px;font-weight:600">✓ ADDED</div>';
+else this.querySelector('div:last-child').remove();
+});
+grid.appendChild(card);
+});
+
+section.classList.add('show');
+section.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+document.getElementById('tripForm').addEventListener('submit',async function(e){
+e.preventDefault();
+
+const destination=document.getElementById('destination').value;
+const startDate=document.getElementById('startDate').value;
+const endDate=document.getElementById('endDate').value;
+
+document.getElementById('loading').style.display='block';
+document.getElementById('tripInfo').classList.remove('show');
+document.getElementById('packingList').innerHTML='';
+document.getElementById('uploadSection').style.display='none';
+document.getElementById('progressSection').style.display='none';
+document.getElementById('actions').style.display='none';
+
+try{
+const weather=await getWeather(destination,startDate,endDate);
+tripData={destination,startDate:new Date(startDate),endDate:new Date(endDate),weather};
+displayTripInfo();
+generatePackingList();
+document.getElementById('loading').style.display='none';
+document.getElementById('uploadSection').style.display='block';
+document.getElementById('progressSection').style.display='block';
+document.getElementById('actions').style.display='flex';
+}catch(error){
+console.error(error);
+tripData={destination,startDate:new Date(startDate),endDate:new Date(endDate),weather:{avgTemp:75,condition:'warm',precipitation:false}};
+setTimeout(()=>{
+displayTripInfo();
+generatePackingList();
+document.getElementById('loading').style.display='none';
+document.getElementById('uploadSection').style.display='block';
+document.getElementById('progressSection').style.display='block';
+document.getElementById('actions').style.display='flex';
+},1000);
+}
+});
+
+async function getWeather(city,startDate,endDate){
+try{
+const geoResp=await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
+const geoData=await geoResp.json();
+if(!geoData.results||!geoData.results.length)throw new Error('City not found');
+const{latitude,longitude,name,country}=geoData.results[0];
+const weatherResp=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&temperature_unit=fahrenheit&timezone=auto&start_date=${startDate}&end_date=${endDate}`);
+const weatherData=await weatherResp.json();
+const temps=weatherData.daily.temperature_2m_max;
+const avgTemp=Math.round(temps.reduce((a,b)=>a+b,0)/temps.length);
+const maxTemp=Math.max(...temps);
+const minTemp=Math.min(...weatherData.daily.temperature_2m_min);
+const precipitation=weatherData.daily.precipitation_sum.some(p=>p>0);
+let condition='warm';
+if(avgTemp<50)condition='cold';
+else if(avgTemp>75)condition='warm';
+else condition='mild';
+const weatherCode=weatherData.daily.weathercode[0];
+const weatherDesc={0:'Clear',1:'Mostly Clear',2:'Partly Cloudy',3:'Overcast',45:'Foggy',51:'Light Drizzle',61:'Light Rain',63:'Rain',65:'Heavy Rain',71:'Light Snow',73:'Snow',80:'Showers',95:'Thunderstorm'}[weatherCode]||'Variable';
+return{city:`${name}, ${country}`,avgTemp,maxTemp,minTemp,condition,precipitation,description:weatherDesc};
+}catch(error){
+console.error(error);
+return{city:city,avgTemp:75,maxTemp:80,minTemp:70,condition:'warm',precipitation:false,description:'Sunny'};
+}
+}
+
+function displayTripInfo(){
+const{destination,startDate,endDate,weather}=tripData;
+const nights=Math.ceil((endDate-startDate)/(1000*60*60*24));
+const fmt={month:'short',day:'numeric'};
+document.getElementById('tripTitle').textContent=weather.city||destination;
+document.getElementById('tripDates').textContent=`${startDate.toLocaleDateString('en-US',fmt)} - ${endDate.toLocaleDateString('en-US',fmt)} • ${nights} nights`;
+document.getElementById('temperature').textContent=`${weather.avgTemp}°F`;
+document.getElementById('weatherDesc').textContent=`${weather.description} • ${weather.minTemp}°-${weather.maxTemp}°F`;
+document.getElementById('tripInfo').classList.add('show');
+}
+
+function generatePackingList(){
+const container=document.getElementById('packingList');
+container.innerHTML='';
+const{startDate,endDate,weather}=tripData;
+const days=Math.ceil((endDate-startDate)/(1000*60*60*24));
+const nights=days;
+
+Object.keys(PACKING_ITEMS).forEach(catKey=>{
+const cat=PACKING_ITEMS[catKey];
+const card=document.createElement('div');
+card.className='category-card';
+const header=document.createElement('div');
+header.className='category-header';
+header.innerHTML=`<span class="category-icon">${cat.icon}</span><h3 class="category-title">${cat.title}</h3>`;
+card.appendChild(header);
+const list=document.createElement('ul');
+list.className='item-list';
+
+cat.items.forEach((item,idx)=>{
+if(item.weather&&item.weather!==weather.condition){
+if(item.weather==='warm'&&weather.avgTemp<70)return;
+if(item.weather==='cold'&&weather.avgTemp>55)return;
+}
+let itemName=item.name;
+if(item.quantity==='days+2')itemName+=` (${days+2})`;
+else if(item.quantity==='days+1')itemName+=` (${days+1})`;
+else if(item.quantity==='days+3')itemName+=` (${days+3})`;
+else if(item.quantity==='nights+3')itemName+=` (${nights+3})`;
+else if(item.quantity==='days')itemName+=` (${days})`;
+else if(item.quantity&&typeof item.quantity==='number')itemName+=` (${item.quantity})`;
+
+const itemId=`${catKey}-${idx}`;
+const isChecked=checkedItems.has(itemId);
+const li=document.createElement('li');
+li.className=`item ${isChecked?'checked':''}`;
+li.innerHTML=`<input type="checkbox" class="checkbox" id="${itemId}" ${isChecked?'checked':''} />
+<label class="item-label" for="${itemId}">${itemName}</label>
+<span class="person-badge ${item.person}">${item.person}</span>`;
+
+li.querySelector('.checkbox').addEventListener('change',function(){
+if(this.checked){checkedItems.add(itemId);li.classList.add('checked')}
+else{checkedItems.delete(itemId);li.classList.remove('checked')}
+updateProgress();
+saveProgress();
+});
+list.appendChild(li);
+});
+
+card.appendChild(list);
+container.appendChild(card);
+});
+
+updateProgress();
+loadProgress();
+}
+
+function updateProgress(){
+const total=document.querySelectorAll('.checkbox').length;
+const checked=checkedItems.size;
+const percent=total>0?Math.round((checked/total)*100):0;
+document.getElementById('progressPercent').textContent=`${percent}%`;
+document.getElementById('progressLabel').textContent=`${checked} of ${total} items packed`;
+const circle=document.getElementById('progressCircle');
+const circumference=2*Math.PI*70;
+const offset=circumference-(percent/100)*circumference;
+circle.style.strokeDasharray=`${circumference} ${circumference}`;
+circle.style.strokeDashoffset=offset;
+}
+
+function saveProgress(){
+const data={tripData,checkedItems:Array.from(checkedItems),uploadedImages,selectedStyle};
+localStorage.setItem('packingListProgress',JSON.stringify(data));
+}
+
+function loadProgress(){
+const saved=localStorage.getItem('packingListProgress');
+if(saved){
+try{
+const data=JSON.parse(saved);
+checkedItems=new Set(data.checkedItems);
+uploadedImages=data.uploadedImages||[];
+selectedStyle=data.selectedStyle||'casual';
+data.checkedItems.forEach(id=>{
+const cb=document.getElementById(id);
+if(cb){cb.checked=true;cb.closest('.item').classList.add('checked')}
+});
+if(uploadedImages.length>0){
+uploadedImages.forEach(img=>addImageToGallery(img));
+analyzeBtn.style.display='block';
+}
+updateProgress();
+}catch(e){console.error(e)}
+}
+}
+
+function resetAll(){
+if(confirm('Start over? This will clear your list and photos.')){
+checkedItems.clear();
+uploadedImages=[];
+tripData=null;
+localStorage.removeItem('packingListProgress');
+document.getElementById('tripInfo').classList.remove('show');
+document.getElementById('packingList').innerHTML='';
+document.getElementById('uploadSection').style.display='none';
+document.getElementById('aiSuggestions').classList.remove('show');
+document.getElementById('progressSection').style.display='none';
+document.getElementById('actions').style.display='none';
+document.getElementById('uploadGallery').innerHTML='';
+document.getElementById('tripForm').reset();
+analyzeBtn.style.display='none';
+}
+}
+
+function shareList(){
+if(!tripData)return;
+const{destination,startDate,endDate}=tripData;
+const checked=checkedItems.size;
+const total=document.querySelectorAll('.checkbox').length;
+const percent=Math.round((checked/total)*100);
+const text=`✈️ Packing for ${destination}!\n📅 ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}\n✓ ${percent}% packed (${checked}/${total} items)`;
+if(navigator.share)navigator.share({title:'My Packing List',text:text,url:window.location.href});
+else navigator.clipboard.writeText(text).then(()=>alert('✓ Copied!'));
+}
+
+window.addEventListener('beforeunload',saveProgress);
+</script>
+
+</body>
+</html>
