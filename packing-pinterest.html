@@ -114,7 +114,7 @@ body{background:#fff}
 
 <div class="hero">
   <h1>Travel Packing List</h1>
-  <p class="subtitle">Mom & Toddler</p>
+  <p class="subtitle" id="heroSubtitle">Mom & Toddler</p>
   <p class="tagline">Smart, Stylish, Stress-Free</p>
 </div>
 
@@ -138,6 +138,14 @@ body{background:#fff}
         <div class="form-field">
           <label for="endDate">End Date</label>
           <input type="date" id="endDate" required />
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-bottom:24px">
+        <label>Who's Traveling?</label>
+        <div class="style-picker">
+          <div class="style-chip active" data-travelers="both">Mom & Toddler</div>
+          <div class="style-chip" data-travelers="mom">Just Me</div>
         </div>
       </div>
 
@@ -229,7 +237,7 @@ const PACKING_ITEMS={documents:{title:"Documents",icon:"📋",items:[{name:"Pass
 
 const AI_SUGGESTIONS={warm:{casual:[{name:"White linen shirt",icon:"👕",reason:"Perfect beach cover-up"},{name:"Straw hat",icon:"🎩",reason:"Stylish sun protection"},{name:"Crossbody bag",icon:"👜",reason:"Hands-free for toddler"},{name:"Oversized sunglasses",icon:"🕶️",reason:"Chic & practical"}],beachy:[{name:"Crochet cover-up",icon:"👗",reason:"Airy and Instagram-worthy"},{name:"Shell necklace",icon:"📿",reason:"Beach accessory"},{name:"Woven tote",icon:"👜",reason:"Fits everything"},{name:"Ankle wrap sandals",icon:"👡",reason:"Dressy but comfortable"}],chic:[{name:"Silk scarf",icon:"🧣",reason:"Elevates any outfit"},{name:"Statement earrings",icon:"💍",reason:"Instant upgrade"},{name:"Espadrille wedges",icon:"👠",reason:"Comfortable height"},{name:"Structured tote",icon:"👜",reason:"Polished look"}],adventure:[{name:"Quick-dry shorts",icon:"🩳",reason:"Water activities"},{name:"Hiking sandals",icon:"🥾",reason:"Trail to beach"},{name:"Backpack",icon:"🎒",reason:"Hands-free"},{name:"UV protection shirt",icon:"👕",reason:"Sun safety"}]},cold:{casual:[{name:"Cozy sweater",icon:"🧥",reason:"Warmth with style"},{name:"Warm scarf",icon:"🧣",reason:"Layers beautifully"},{name:"Ankle boots",icon:"🥾",reason:"Practical & cute"}],chic:[{name:"Cashmere wrap",icon:"🧣",reason:"Luxe layering"},{name:"Leather gloves",icon:"🧤",reason:"Elegant & warm"},{name:"Knee-high boots",icon:"👢",reason:"Statement footwear"}]}};
 
-let tripData=null;let checkedItems=new Set();let uploadedImages=[];let selectedStyle='casual';
+let tripData=null;let checkedItems=new Set();let uploadedImages=[];let selectedStyle='casual';let selectedTravelers='both';
 
 document.getElementById('startDate').min=new Date().toISOString().split('T')[0];
 document.getElementById('endDate').min=new Date().toISOString().split('T')[0];
@@ -239,9 +247,14 @@ document.getElementById('endDate').min=this.value;
 
 document.querySelectorAll('.style-chip').forEach(chip=>{
 chip.addEventListener('click',function(){
-document.querySelectorAll('.style-chip').forEach(c=>c.classList.remove('active'));
+const parent=this.parentElement;
+parent.querySelectorAll('.style-chip').forEach(c=>c.classList.remove('active'));
 this.classList.add('active');
-selectedStyle=this.dataset.style;
+if(this.dataset.style)selectedStyle=this.dataset.style;
+if(this.dataset.travelers){
+selectedTravelers=this.dataset.travelers;
+document.getElementById('heroSubtitle').textContent=selectedTravelers==='both'?'Mom & Toddler':'Solo Travel';
+}
 });
 });
 
@@ -389,6 +402,9 @@ const days=Math.ceil((endDate-startDate)/(1000*60*60*24));
 const nights=days;
 
 Object.keys(PACKING_ITEMS).forEach(catKey=>{
+// Skip toddler-only categories when traveling solo
+if(selectedTravelers==='mom'&&['clothing_toddler','diapering','gear','sleep'].includes(catKey))return;
+
 const cat=PACKING_ITEMS[catKey];
 const card=document.createElement('div');
 card.className='category-card';
@@ -404,6 +420,10 @@ if(item.weather&&item.weather!==weather.condition){
 if(item.weather==='warm'&&weather.avgTemp<70)return;
 if(item.weather==='cold'&&weather.avgTemp>55)return;
 }
+
+// Filter by travelers
+if(selectedTravelers==='mom'&&item.person==='toddler')return;
+if(selectedTravelers==='mom'&&item.person==='both'&&catKey.includes('toddler'))return;
 let itemName=item.name;
 if(item.quantity==='days+2')itemName+=` (${days+2})`;
 else if(item.quantity==='days+1')itemName+=` (${days+1})`;
@@ -451,7 +471,7 @@ circle.style.strokeDashoffset=offset;
 }
 
 function saveProgress(){
-const data={tripData,checkedItems:Array.from(checkedItems),uploadedImages,selectedStyle};
+const data={tripData,checkedItems:Array.from(checkedItems),uploadedImages,selectedStyle,selectedTravelers};
 localStorage.setItem('packingListProgress',JSON.stringify(data));
 }
 
@@ -463,6 +483,7 @@ const data=JSON.parse(saved);
 checkedItems=new Set(data.checkedItems);
 uploadedImages=data.uploadedImages||[];
 selectedStyle=data.selectedStyle||'casual';
+selectedTravelers=data.selectedTravelers||'both';
 data.checkedItems.forEach(id=>{
 const cb=document.getElementById(id);
 if(cb){cb.checked=true;cb.closest('.item').classList.add('checked')}

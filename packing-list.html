@@ -255,6 +255,35 @@
     color: white;
   }
 
+  .traveler-selector {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .traveler-option {
+    padding: 10px 24px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .traveler-option:hover {
+    border-color: var(--accent);
+  }
+
+  .traveler-option.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
   .progress-bar {
     height: 8px;
     background: var(--border);
@@ -336,12 +365,20 @@
 
 <header>
   <h1>✈️ Travel Packing List</h1>
-  <p>Smart packing for mom & toddler adventures</p>
+  <p id="headerSubtitle">Smart packing for mom & toddler adventures</p>
 </header>
 
 <div class="wrap">
   <div class="form-card">
     <form id="tripForm">
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Who's Traveling?</label>
+        <div class="traveler-selector">
+          <div class="traveler-option active" data-travelers="both">Mom & Toddler</div>
+          <div class="traveler-option" data-travelers="mom">Just Me</div>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label for="destination">Destination City</label>
@@ -645,6 +682,7 @@ const PACKING_ITEMS = {
 
 let tripData = null;
 let checkedItems = new Set();
+let selectedTravelers = 'both';
 
 // Set min date to today
 document.getElementById('startDate').min = new Date().toISOString().split('T')[0];
@@ -653,6 +691,17 @@ document.getElementById('endDate').min = new Date().toISOString().split('T')[0];
 // Update end date min when start date changes
 document.getElementById('startDate').addEventListener('change', function() {
   document.getElementById('endDate').min = this.value;
+});
+
+// Handle traveler selection
+document.querySelectorAll('.traveler-option').forEach(option => {
+  option.addEventListener('click', function() {
+    document.querySelectorAll('.traveler-option').forEach(o => o.classList.remove('active'));
+    this.classList.add('active');
+    selectedTravelers = this.dataset.travelers;
+    document.getElementById('headerSubtitle').textContent =
+      selectedTravelers === 'both' ? 'Smart packing for mom & toddler adventures' : 'Smart packing for solo adventures';
+  });
 });
 
 document.getElementById('tripForm').addEventListener('submit', async function(e) {
@@ -819,6 +868,9 @@ function generatePackingList() {
   const nights = days;
 
   Object.keys(PACKING_ITEMS).forEach(categoryKey => {
+    // Skip toddler-only categories when traveling solo
+    if (selectedTravelers === 'mom' && ['clothing_toddler', 'toiletries_toddler', 'diapering', 'gear', 'bedtime'].includes(categoryKey)) return;
+
     const category = PACKING_ITEMS[categoryKey];
     const card = document.createElement('div');
     card.className = 'category-card';
@@ -842,6 +894,9 @@ function generatePackingList() {
         if (item.weather === 'cold' && weather.avgTemp > 55) return;
         if (item.weather === 'mild' && (weather.avgTemp < 50 || weather.avgTemp > 80)) return;
       }
+
+      // Filter by travelers
+      if (selectedTravelers === 'mom' && item.person === 'toddler') return;
 
       let itemName = item.name;
 
@@ -900,7 +955,8 @@ function updateProgress() {
 function saveProgress() {
   const data = {
     tripData,
-    checkedItems: Array.from(checkedItems)
+    checkedItems: Array.from(checkedItems),
+    selectedTravelers
   };
   localStorage.setItem('packingListProgress', JSON.stringify(data));
 }
@@ -911,6 +967,7 @@ function loadProgress() {
     try {
       const data = JSON.parse(saved);
       checkedItems = new Set(data.checkedItems);
+      selectedTravelers = data.selectedTravelers || 'both';
 
       data.checkedItems.forEach(id => {
         const checkbox = document.getElementById(id);
