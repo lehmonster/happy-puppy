@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chelsea's Reading Dashboard</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Simple Bar Chart Component using SVG
+        function SimpleBarChart({ data }) {
+          const maxValue = Math.max(...data.map(d => d.count));
+          const chartHeight = 180;
+          const barWidth = 100 / (data.length * 1.5);
+          
+          return (
+            <svg width="100%" height={chartHeight} style={{ background: "#130810" }} viewBox="0 0 500 180">
+              {data.map((d, i) => {
+                const barHeight = (d.count / maxValue) * (chartHeight - 40);
+                const x = i * 70 + 30;
+                const y = chartHeight - barHeight - 20;
+                
+                return (
+                  <g key={i}>
+                    <rect x={x} y={y} width="45" height={barHeight} fill={d.color} rx="4" />
+                    <text x={x + 22.5} y={chartHeight - 5} textAnchor="middle" fontSize="12" fill="#7a5060" fontWeight="700">{d.year}</text>
+                    <text x={x + 22.5} y={y - 5} textAnchor="middle" fontSize="11" fill="#d4a0c0">{d.count}</text>
+                  </g>
+                );
+              })}
+            </svg>
+          );
+        }
+
+        function SimplePieChart({ data }) {
+          const total = data.reduce((sum, d) => sum + d.value, 0);
+          let currentAngle = -90;
+          const radius = 50;
+          const cx = 70;
+          const cy = 70;
+          
+          return (
+            <svg width="100%" height="140" viewBox="0 0 140 140" style={{ background: "#130810" }}>
+              {data.map((d, i) => {
+                const sliceAngle = (d.value / total) * 360;
+                const startAngle = currentAngle;
+                const endAngle = currentAngle + sliceAngle;
+                
+                const startRad = (startAngle * Math.PI) / 180;
+                const endRad = (endAngle * Math.PI) / 180;
+                
+                const x1 = cx + radius * Math.cos(startRad);
+                const y1 = cy + radius * Math.sin(startRad);
+                const x2 = cx + radius * Math.cos(endRad);
+                const y2 = cy + radius * Math.sin(endRad);
+                
+                const largeArc = sliceAngle > 180 ? 1 : 0;
+                
+                const path = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                
+                currentAngle = endAngle;
+                
+                return <path key={i} d={path} fill={d.color} stroke="none" />;
+              })}
+            </svg>
+          );
+        }
+
+        // ─── DATA ───────────────────────────────────────────────────────────────────
+
+        const YEAR_DATA = [
+          { year: "Earlier", count: 70, color: "#c9854e" },
+          { year: "'22", count: 67, color: "#2d8a5f" },
+          { year: "'23", count: 70, color: "#1a7a8a" },
+          { year: "'24", count: 100, color: "#7a3baf" },
+          { year: "'25", count: 83, color: "#c0395a" },
+          { year: "'26", count: 19, color: "#c0392b" },
+        ];
+
+        const GENRE_DATA = [
+          { name: "Romance & RomCom", value: 155, color: "#d4617a" },
+          { name: "Thriller & Suspense", value: 85, color: "#7a3baf" },
+          { name: "Women's Fiction", value: 75, color: "#2d8a5f" },
+          { name: "Literary Fiction", value: 30, color: "#c05030" },
+          { name: "Crime & Mystery", value: 25, color: "#1a7a8a" },
+          { name: "Nonfiction", value: 22, color: "#8B6E3C" },
+          { name: "Seasonal", value: 20, color: "#c9a020" },
+        ];
+
+        const AUTHORS = [
+          { name: "Victor Methos", count: 28, color: "#7a3baf" },
+          { name: "Colleen Hoover", count: 17, color: "#d4617a" },
+          { name: "Elin Hilderbrand", count: 16, color: "#2d8a5f" },
+          { name: "Jaine Diamond", count: 10, color: "#c0395a" },
+          { name: "Ali Hazelwood", count: 9, color: "#c05030" },
+          { name: "KA Tucker", count: 9, color: "#1a7a8a" },
+          { name: "Christina Lauren", count: 7, color: "#c9a020" },
+          { name: "Emily Henry", count: 7, color: "#c9854e" },
+        ];
+
+        const INSIGHTS = [
+          { emoji: "📈", label: "Peak Reading Year", value: "2024", sub: "100 books in one year" },
+          { emoji: "⭐", label: "Only 5-Star of 2025", value: "Love of My Afterlife", sub: "Kristy Greenwood" },
+          { emoji: "🔥", label: "Series Obsession", value: "Victor Methos", sub: "28 books devoured" },
+          { emoji: "📚", label: "Dominant Genre", value: "Romance", sub: "155 books & counting" },
+          { emoji: "✨", label: "2026 Discovery", value: "Gabrielle Zevin", sub: "3 books this year" },
+          { emoji: "📖", label: "Avg Books / Month", value: "~6.9", sub: "across all of 2025" },
+        ];
+
+        const THEMES = [
+          {
+            id: "thriller",
+            name: "Psychological Thriller & Domestic Suspense",
+            emoji: "🔪",
+            color: "#7a3baf",
+            light: "#c4a8e8",
+            bg: "linear-gradient(135deg, #120820, #1a0f2e)",
+            count: 85,
+            vibe: "Twisty plots, unreliable narrators, marriages with dark secrets, and the kind of ending that makes you gasp audibly.",
+            keyAuthors: ["Victor Methos", "Harlan Coben", "Peter Swanson", "Riley Sagar", "Greer Hendricks", "BA Paris", "David Ellis"],
+            standouts: ["Verity", "I Am Pilgrim", "A Killer's Wife", "The Kind Worth Killing", "The Wife Between Us", "First Lie Wins", "Listen for the Lie", "Greenwich Park", "Pretty Little Wife", "End of Story"],
+            note: "Victor Methos alone accounts for 28 of these. You basically read his entire catalog.",
+          },
+          {
+            id: "romance",
+            name: "Romance & RomCom",
+            emoji: "💕",
+            color: "#c0395a",
+            light: "#f4a0b8",
+            bg: "linear-gradient(135deg, #1a0810, #280d18)",
+            count: 155,
+            vibe: "Your dominant genre by a wide margin. Enemies to lovers, workplace tension, small-town charm, STEM romance — you've read every subgenre going.",
+            keyAuthors: ["Emily Henry", "Abby Jimenez", "Tessa Bailey", "Ali Hazelwood", "Lucy Score", "KA Tucker", "Jaine Diamond", "Christina Lauren", "Colleen Hoover"],
+            standouts: ["Happy Place", "Beach Read", "Book Lovers", "The Love Hypothesis", "Things We Never Got Over", "It Happened One Summer", "Bride", "Not in Love", "Deep End", "November 9"],
+            note: "Colleen Hoover has 17 entries. Emily Henry has 7. Ali Hazelwood has 9. You are well-covered.",
+          },
+          {
+            id: "womens",
+            name: "Women's Fiction & Beach Reads",
+            emoji: "🌊",
+            color: "#1e8a6a",
+            light: "#90d4be",
+            bg: "linear-gradient(135deg, #08160f, #0e201a)",
+            count: 75,
+            vibe: "Nantucket summers, found families, complicated friendships, and women navigating life's messy turns with grace (eventually).",
+            keyAuthors: ["Elin Hilderbrand", "Liane Moriarty", "Taylor Jenkins Reid", "Rebecca Serle", "Laura Dave", "Carly Fortune", "Kate Clayborn", "Sally Hepworth"],
+            standouts: ["Malibu Rising", "Hotel Nantucket", "The Last Thing He Told Me", "Here One Moment", "Every Summer After", "Five Star Weekend", "Swan Song", "After I Do", "One Italian Summer"],
+            note: "Hilderbrand has 16 books on your list. You've read nearly her entire Nantucket catalog.",
+          },
+          {
+            id: "literary",
+            name: "Literary Fiction & Prestige Reads",
+            emoji: "📖",
+            color: "#b84020",
+            light: "#e8a888",
+            bg: "linear-gradient(135deg, #160808, #220d08)",
+            count: 30,
+            vibe: "The books that surprised you by how much you thought about them afterward. Your 2026 reads skew heavily here — a new era is emerging.",
+            keyAuthors: ["Matt Haig", "Gabrielle Zevin", "Bonnie Garmus", "Ann Patchett", "Miranda July", "Margaret Atwood", "Markus Zusak", "VE Schwab"],
+            standouts: ["Tomorrow & Tomorrow & Tomorrow", "Lessons in Chemistry", "The Midnight Library", "Tom Lake", "The Testaments", "The Book Thief", "All Fours", "The Storied Life of AJ Fikry", "Elsewhere", "Beautyland"],
+            note: "Your 2026 Gabrielle Zevin arc (3 books this year) signals a genuine literary gear-shift happening.",
+          },
+          {
+            id: "crime",
+            name: "Crime Fiction & Detective Mysteries",
+            emoji: "🔍",
+            color: "#1a6a8a",
+            light: "#88c8e0",
+            bg: "linear-gradient(135deg, #080f16, #0e1820)",
+            count: 25,
+            vibe: "Procedurals with atmosphere, small-town secrets, and detectives you'd follow anywhere. You're early in this genre — and it has a lot to offer.",
+            keyAuthors: ["Jane Harper", "Richard Osman", "Jo Nesbø", "Dervla McTiernan", "Robert Crais", "Karin Slaughter", "Benjamin Stevenson"],
+            standouts: ["The Dry", "The Thursday Murder Club", "We Solve Murders", "What Happened to Nina", "The Good Daughter", "The Monkey's Raincoat", "Everyone in My Family Has Killed Someone", "The Most Wonderful Crime of the Year"],
+            note: "This is your most underdeveloped genre. Tana French, Holly Jackson, and Dervla McTiernan's full catalog are all waiting.",
+          },
+          {
+            id: "nonfiction",
+            name: "Nonfiction, Memoir & Self-Help",
+            emoji: "💡",
+            color: "#8B6020",
+            light: "#d4a868",
+            bg: "linear-gradient(135deg, #120e06, #1c1408)",
+            count: 22,
+            vibe: "The books you actually apply to your life. Wellness, leadership, celebrity confessionals, parenting wisdom — all present and accounted for.",
+            keyAuthors: ["Gabby Bernstein", "Mel Robbins", "Dan Harris", "Paul Kalanithi", "Dolly Alderton", "Tinx", "Sahil Bloom"],
+            standouts: ["Let Them", "10% Happier", "When Breath Becomes Air", "Good Material", "The Shift", "Co-Intelligence", "Careless People", "The Five Types of Wealth", "The Psilocybin Handbook for Women"],
+            note: "2026 is leaning into this genre hard. The Whole-Brain Child + Co-Intelligence in the same year is a very Chelsea thing.",
+          },
+          {
+            id: "seasonal",
+            name: "Seasonal & Holiday Reads",
+            emoji: "❄️",
+            color: "#4a80c0",
+            light: "#a0c8f0",
+            bg: "linear-gradient(135deg, #080c18, #0e1422)",
+            count: 20,
+            vibe: "Christmas romances, winter cottages, and books that feel like a mug of something warm. More of these than you may realize.",
+            keyAuthors: ["Elin Hilderbrand", "Sarah Morgenthaler", "Sierra Simone", "Lyssa Kay Adams", "Beth O'Leary", "Josie Silver"],
+            standouts: ["Winter Street", "Winter Stroll", "Winter Storms", "Winter Solstice", "A Winter in New York", "The Christmas You Found Me", "Snow Place Like LA", "A Jingle Bell Mingle", "A Holly Jolly Ever After"],
+            note: "Hilderbrand's entire Winter series made the list. The Christmas read is clearly a tradition.",
+          },
+        ];
+
+        // ─── TOOLTIP COMPONENTS ─────────────────────────────────────────────────────
+
+        const CustomTooltip = ({ active, payload }) =>
+          active && payload?.length ? (
+            <div style={{ background: "#1a0a14", border: "1px solid #5a2040", borderRadius: 8, padding: "8px 12px" }}>
+              <p style={{ color: "#f5e0ef", fontFamily: "Lato, sans-serif", fontSize: 13, margin: 0 }}>
+                <strong style={{ color: "#d4a0c0" }}>{payload[0].payload.year}</strong> · {payload[0].value} books
+              </p>
+            </div>
+          ) : null;
+
+        const GenreTooltip = ({ active, payload }) =>
+          active && payload?.length ? (
+            <div style={{ background: "#1a0a14", border: "1px solid #5a2040", borderRadius: 8, padding: "8px 12px" }}>
+              <p style={{ color: "#f5e0ef", fontFamily: "Lato, sans-serif", fontSize: 12, margin: 0 }}>
+                {payload[0].name}: <strong>{payload[0].value}</strong>
+              </p>
+            </div>
+          ) : null;
+
+        // ─── TAB VIEWS ───────────────────────────────────────────────────────────────
+
+        function VisualDashboard() {
+          return (
+            <div style={{ background: "#0d0810", color: "#f5e0ef", fontFamily: "Georgia, serif" }}>
+              {/* HERO */}
+              <div style={{ background: "linear-gradient(135deg, #1c0a14 0%, #2a0d24 40%, #1a0a2e 100%)", padding: "3rem 2rem 2.5rem", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: -80, right: -80, width: 300, height: 300, borderRadius: "50%", background: "radial-gradient(circle, rgba(139,26,74,0.2), transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ position: "absolute", bottom: -60, left: -60, width: 250, height: 250, borderRadius: "50%", background: "radial-gradient(circle, rgba(74,59,140,0.2), transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 12, marginBottom: 8 }}>
+                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(72px, 15vw, 112px)", fontWeight: 700, color: "#fff", lineHeight: 1 }}>412</span>
+                    <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "clamp(18px, 4vw, 28px)", color: "#b07090" }}>books</span>
+                  </div>
+                  <p style={{ fontFamily: "Lato, sans-serif", fontWeight: 300, color: "#7a5060", fontSize: 13, letterSpacing: 1, marginBottom: 32 }}>tracked across 6 years</p>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "clamp(16px, 5vw, 48px)", flexWrap: "wrap" }}>
+                    {[{ label: "Years Tracked", value: "6" }, { label: "Avg / Year", value: "69" }, { label: "Best Year", value: "2024" }, { label: "2026 YTD", value: "19" }].map((s) => (
+                      <div key={s.label} style={{ textAlign: "center" }}>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 5vw, 32px)", fontWeight: 700, color: "#d4a0c0" }}>{s.value}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "#6a4050" }}>{s.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
+                {/* YEAR CHART */}
+                <section style={{ marginBottom: 20 }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14 }}>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#f5e0ef", margin: 0 }}>Reading by Year</h2>
+                    <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#7a5060", letterSpacing: 1 }}>books read each period</span>
+                  </div>
+                  <div style={{ background: "#130810", borderRadius: 14, padding: "24px 16px 16px", border: "1px solid #2a1020" }}>
+                    <SimpleBarChart data={YEAR_DATA} />
+                  </div>
+                </section>
+
+                {/* GENRE + AUTHORS */}
+                <div style={{ display: "grid", gridTemplateColumns: "5fr 6fr", gap: 16, marginBottom: 20 }}>
+                  <section>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#f5e0ef", margin: "0 0 14px" }}>By Genre</h2>
+                    <div style={{ background: "#130810", borderRadius: 14, padding: "20px", border: "1px solid #2a1020" }}>
+                      <SimplePieChart data={GENRE_DATA} />
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
+                        {GENRE_DATA.map((g) => (
+                          <div key={g.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: 2, background: g.color, flexShrink: 0 }} />
+                            <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#8a6070", flex: 1, lineHeight: 1.3 }}>{g.name}</span>
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 12, color: g.color, fontWeight: 700 }}>{g.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+                  <section>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#f5e0ef", margin: "0 0 14px" }}>Top Authors</h2>
+                    <div style={{ background: "#130810", borderRadius: 14, padding: "20px", border: "1px solid #2a1020", display: "flex", flexDirection: "column", gap: 11 }}>
+                      {AUTHORS.map((a, i) => (
+                        <div key={a.name}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
+                            <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#c0a0b0", fontWeight: 700 }}>
+                              <span style={{ color: "#4a2030", marginRight: 6, fontSize: 10 }}>#{i + 1}</span>{a.name}
+                            </span>
+                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: a.color }}>{a.count}</span>
+                          </div>
+                          <div style={{ background: "#2a1020", borderRadius: 4, height: 5 }}>
+                            <div style={{ width: `${(a.count / 28) * 100}%`, background: `linear-gradient(90deg, ${a.color}99, ${a.color})`, borderRadius: 4, height: "100%" }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+
+                {/* INSIGHTS */}
+                <section>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#f5e0ef", margin: "0 0 14px" }}>Reading Insights</h2>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10 }}>
+                    {INSIGHTS.map((ins) => (
+                      <div key={ins.label} style={{ background: "#130810", borderRadius: 12, padding: "16px", border: "1px solid #2a1020" }}>
+                        <div style={{ fontSize: 22, marginBottom: 8 }}>{ins.emoji}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: "#5a3040", marginBottom: 5 }}>{ins.label}</div>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: "#f5e0ef", lineHeight: 1.3, marginBottom: 3 }}>{ins.value}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#7a5060" }}>{ins.sub}</div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+          );
+        }
+
+        function LiteraryThemes() {
+          const [expanded, setExpanded] = useState("romance");
+          return (
+            <div style={{ background: "#0c0810", fontFamily: "Georgia, serif", color: "#f0e8f4" }}>
+              {/* Summary bar */}
+              <div style={{ background: "#110818", borderBottom: "1px solid #2a1a3a", padding: "1rem 1.5rem", overflowX: "auto" }}>
+                <div style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 6, justifyContent: "space-between" }}>
+                  {THEMES.map((t) => (
+                    <button key={t.id} onClick={() => setExpanded(expanded === t.id ? null : t.id)} style={{ flex: 1, minWidth: 60, padding: "8px 4px", borderRadius: 8, border: `1.5px solid ${expanded === t.id ? t.color : "#2a1a3a"}`, background: expanded === t.id ? `${t.color}22` : "transparent", color: expanded === t.id ? t.light : "#6a4a7a", cursor: "pointer", fontFamily: "Lato, sans-serif", fontSize: "clamp(9px, 1.5vw, 12px)", fontWeight: 700, textAlign: "center", transition: "all 0.2s" }}>
+                      <div style={{ fontSize: "clamp(16px, 3vw, 20px)", marginBottom: 3 }}>{t.emoji}</div>
+                      <div style={{ lineHeight: 1.2 }}>{t.count}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ maxWidth: 860, margin: "0 auto", padding: "1.5rem 1rem 3rem", display: "flex", flexDirection: "column", gap: 12 }}>
+                {THEMES.map((t) => {
+                  const isOpen = expanded === t.id;
+                  return (
+                    <div key={t.id} onClick={() => setExpanded(isOpen ? null : t.id)} style={{ background: isOpen ? t.bg : "#130810", borderRadius: 14, border: `1.5px solid ${isOpen ? t.color + "55" : "#2a1a3a"}`, overflow: "hidden", transition: "all 0.3s ease", boxShadow: isOpen ? `0 8px 32px ${t.color}20` : "none", cursor: "pointer" }}>
+                      <div style={{ padding: "18px 20px", display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{ width: 44, height: 44, borderRadius: 10, background: `${t.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0, border: `1px solid ${t.color}33` }}>{t.emoji}</div>
+                        <div style={{ flex: 1 }}>
+                          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(14px, 3vw, 18px)", fontWeight: 700, color: "#f0e8f4", margin: "0 0 3px", lineHeight: 1.2 }}>{t.name}</h2>
+                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: t.light, fontWeight: 700, letterSpacing: 1 }}>{t.count} books</div>
+                        </div>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: t.color, flexShrink: 0, lineHeight: 1 }}>{t.count}</div>
+                        <div style={{ color: "#4a2a5a", fontSize: 16, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</div>
+                      </div>
+                      {isOpen && (
+                        <div style={{ padding: "0 20px 20px" }}>
+                          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "#c0a8d4", lineHeight: 1.65, margin: "0 0 18px", paddingTop: 2, borderTop: `1px solid ${t.color}22` }}>"{t.vibe}"</p>
+                          <div style={{ marginBottom: 18 }}>
+                            <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#5a3a6a", marginBottom: 10 }}>Representative Reads</div>
+                            <div style={{ display: "flex", gap: 6, alignItems: "flex-end", flexWrap: "wrap" }}>
+                              {t.standouts.map((book, i) => {
+                                const h = 60 + ((i * 17) % 50);
+                                const shades = ["aa", "cc", "ee", "bb", "dd", "99", "ff", "cc", "aa", "bb"];
+                                return (
+                                  <div key={book} title={book} style={{ width: 28, height: h, background: `${t.color}${shades[i % shades.length]}`, borderRadius: "3px 3px 2px 2px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 2px 6px rgba(0,0,0,0.4)", position: "relative", overflow: "hidden" }}>
+                                    <span style={{ fontFamily: "Lato, sans-serif", fontSize: 7, fontWeight: 700, color: "rgba(255,255,255,0.9)", writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)", lineHeight: 1.1, textAlign: "center", padding: "2px 0", letterSpacing: 0.5, maxHeight: h - 8, overflow: "hidden" }}>{book.length > 20 ? book.slice(0, 18) + "…" : book}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <div style={{ marginBottom: 14 }}>
+                            <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#5a3a6a", marginBottom: 8 }}>Key Authors</div>
+                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                              {t.keyAuthors.map((a) => (<span key={a} style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: t.light, background: `${t.color}18`, border: `1px solid ${t.color}44`, borderRadius: 20, padding: "3px 10px" }}>{a}</span>))}
+                            </div>
+                          </div>
+                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#7a5a8a", background: `${t.color}10`, borderRadius: 8, padding: "10px 14px", borderLeft: `3px solid ${t.color}55`, lineHeight: 1.6 }}>📝 {t.note}</div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        }
+
+        // ─── ROOT APP ────────────────────────────────────────────────────────────────
+
+        const TABS = [
+          { id: "stats", label: "📊 Overview", subtitle: "Charts & Data" },
+          { id: "themes", label: "🎭 By Theme", subtitle: "7 Genres" },
+        ];
+
+        function App() {
+          const [activeTab, setActiveTab] = useState("stats");
+
+          return (
+            <div style={{ fontFamily: "Georgia, serif" }}>
+              <style>{`
+                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap');
+                * { box-sizing: border-box; margin: 0; padding: 0; }
+                body { font-family: Georgia, serif; }
+              `}</style>
+
+              {/* SHARED HEADER */}
+              <div style={{ background: "linear-gradient(135deg, #1c0a14 0%, #2a0d24 50%, #1a0a2e 100%)", padding: "1.5rem 2rem 0", position: "relative", overflow: "hidden" }}>
+                <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(139,26,74,0.15), transparent 70%)", pointerEvents: "none" }} />
+                <div style={{ maxWidth: 900, margin: "0 auto" }}>
+                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "#9a6080", marginBottom: 6 }}>Chelsea Taylor · Reading Life</p>
+                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "clamp(24px, 5vw, 38px)", fontWeight: 700, color: "#f0d8ff", marginBottom: "1.5rem" }}>
+                    412 Books &amp; Counting
+                  </h1>
+
+                  {/* TAB BAR */}
+                  <div style={{ display: "flex", gap: 4 }}>
+                    {TABS.map((tab) => {
+                      const isActive = activeTab === tab.id;
+                      return (
+                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: isActive ? "#0c0810" : "transparent", color: isActive ? "#f0e8f4" : "#7a5080", cursor: "pointer", fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: "clamp(11px, 2vw, 14px)", letterSpacing: 0.5, transition: "all 0.2s", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                          <span>{tab.label}</span>
+                          <span style={{ fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.6, fontWeight: 400 }}>{tab.subtitle}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* TAB CONTENT */}
+              {activeTab === "stats" && <VisualDashboard />}
+              {activeTab === "themes" && <LiteraryThemes />}
+            </div>
+          );
+        }
+
+        ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+</body>
+</html>
