@@ -5,6 +5,85 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Taylor Family Calendar</title>
 <style>
+  /* Password overlay */
+  #password-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, sans-serif;
+  }
+  #password-overlay.hidden {
+    display: none;
+  }
+  .password-box {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  .password-box h2 {
+    margin: 0 0 10px;
+    color: #2b2233;
+    font-size: 28px;
+  }
+  .password-box p {
+    color: #7a6f80;
+    margin: 0 0 24px;
+    font-size: 15px;
+  }
+  .password-box input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #ece4d9;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    margin-bottom: 16px;
+  }
+  .password-box input:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  .password-box button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .password-box button:hover {
+    opacity: 0.9;
+  }
+  .password-error {
+    color: #e53e3e;
+    font-size: 14px;
+    margin-top: 12px;
+    display: none;
+  }
+  .password-error.show {
+    display: block;
+  }
+
+  #main-content {
+    display: none;
+  }
+  #main-content.unlocked {
+    display: block;
+  }
+</style>
+<style>
   :root {
     --bg: #fdf9f3;
     --card: #ffffff;
@@ -405,6 +484,18 @@
 </style>
 </head>
 <body>
+
+<div id="password-overlay">
+  <div class="password-box">
+    <h2>🔒 Protected Page</h2>
+    <p>Enter the family password to continue</p>
+    <input type="password" id="password-input" placeholder="Enter password" />
+    <button onclick="checkPassword()">Unlock</button>
+    <div class="password-error" id="password-error">Incorrect password. Try again!</div>
+  </div>
+</div>
+
+<div id="main-content">
 <header>
   <h1>Taylor Family Calendar</h1>
   <p>Recurring activities &amp; one-off events</p>
@@ -1248,6 +1339,43 @@
   renderOtherMonths();
   renderList();
 </script>
+
+</div><!-- end main-content -->
+
+<script>
+  // Password protection
+  const CORRECT_PASSWORD = 'Taylor';
+
+  // Check if already unlocked in this session
+  if (sessionStorage.getItem('schedule-unlocked') === 'true') {
+    document.getElementById('password-overlay').classList.add('hidden');
+    document.getElementById('main-content').classList.add('unlocked');
+  }
+
+  function checkPassword() {
+    const input = document.getElementById('password-input');
+    const error = document.getElementById('password-error');
+
+    if (input.value === CORRECT_PASSWORD) {
+      sessionStorage.setItem('schedule-unlocked', 'true');
+      document.getElementById('password-overlay').classList.add('hidden');
+      document.getElementById('main-content').classList.add('unlocked');
+    } else {
+      error.classList.add('show');
+      input.value = '';
+      input.focus();
+      setTimeout(() => error.classList.remove('show'), 3000);
+    }
+  }
+
+  // Allow Enter key to submit
+  document.getElementById('password-input')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      checkPassword();
+    }
+  });
+</script>
+
 </body>
 </html>
 
