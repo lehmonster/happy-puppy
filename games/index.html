@@ -206,9 +206,37 @@
     .game-card:nth-child(3) { animation-delay: 0.31s; }
     .game-card:nth-child(4) { animation-delay: 0.44s; }
     .game-card:nth-child(5) { animation-delay: 0.57s; }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      border: 3px solid #5f7dcc;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: transform 0.2s;
+      z-index: 100;
+    }
+    .back-btn:hover {
+      transform: scale(1.1);
+    }
+    .back-btn:active {
+      transform: scale(0.95);
+    }
   </style>
 </head>
 <body>
+
+<a href="../index.html" class="back-btn" title="Back to Home">🏠</a>
 
 <script>
   /* Floating background decorations */
@@ -239,15 +267,6 @@
     <div class="play-arrow">▶</div>
   </div>
 
-  <div class="game-card reading" onclick="window.location.href='reading-quest.html'">
-    <div class="game-emoji">📖</div>
-    <div class="game-info">
-      <div class="game-title">Reading Quest</div>
-      <div class="game-desc">Learn letters, sounds, and your first words!</div>
-    </div>
-    <div class="play-arrow">▶</div>
-  </div>
-
   <div class="game-card princess" onclick="window.location.href='princess.html'">
     <div class="game-emoji">👑</div>
     <div class="game-info">
@@ -262,16 +281,6 @@
     <div class="game-info">
       <div class="game-title">Emoji &amp; Word Match</div>
       <div class="game-desc">Flip cards and find the perfect emoji-word pairs!</div>
-    </div>
-    <div class="play-arrow">▶</div>
-  </div>
-
-
-  <div class="game-card packing" onclick="window.location.href='packing-pinterest.html'">
-    <div class="game-emoji">✈️</div>
-    <div class="game-info">
-      <div class="game-title">Travel Packing List</div>
-      <div class="game-desc">Upload photos & get AI styling suggestions for your trip!</div>
     </div>
     <div class="play-arrow">▶</div>
   </div>
