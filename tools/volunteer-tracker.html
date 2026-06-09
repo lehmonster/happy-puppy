@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Impact Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: #FAFCFE;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #B8D4E8 0%, #C5E0F0 40%, #DDE8F5 100%);
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1.5px solid #DDE8F5;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(139,26,74,0.15), transparent 70%);
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            color: #2C3E50;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-family: 'Lato', sans-serif;
+            color: #5A6B7C;
+            font-size: 1em;
+            font-weight: 300;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            font-family: 'Lato', sans-serif;
+            background: rgba(255, 255, 255, 0.6);
+            color: #5A6B7C;
+            border: 1.5px solid #DDE8F5;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #8B9FD9;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #8B9FD9;
+            border-color: #8B9FD9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1.5px solid #DDE8F5;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #8B9FD9;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-family: 'Lato', sans-serif;
+            color: #6a4050;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: #FFFFFF;
+            border-radius: 14px;
+            padding: 25px;
+            border: 1.5px solid #DDE8F5;
+        }
+
+        .panel h2 {
+            font-family: 'Playfair Display', serif;
+            color: #2C3E50;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1.5px solid #DDE8F5;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2C3E50;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1.5px solid #DDE8F5;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #8B9FD9;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            font-family: 'Lato', sans-serif;
+            background: #8B9FD9;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: #7a8ec8;
+        }
+
+        .btn-secondary {
+            background: #B8D4E8;
+            color: #2C3E50;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #a8c4d8;
+        }
+
+        .btn-delete {
+            background: #c0395a;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #a02848;
+        }
+
+        .btn-edit {
+            background: #d4617a;
+            padding: 6px 12px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .btn-edit:hover {
+            background: #c05168;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #DDE8F5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Lato', sans-serif;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: #8B9FD9;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select {
+            padding: 8px 12px;
+            border: 1.5px solid #DDE8F5;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Lato', sans-serif;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-bar select:focus {
+            outline: none;
+            border-color: #8B9FD9;
+        }
+
+        .event-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            background: #FFFFFF;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1.5px solid #DDE8F5;
+            border-left: 4px solid #8B9FD9;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .event-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #2C3E50;
+            font-size: 1.15em;
+        }
+
+        .event-date {
+            font-family: 'Lato', sans-serif;
+            color: #8B9FD9;
+            font-weight: 700;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        .event-org {
+            font-family: 'Lato', sans-serif;
+            color: #5A6B7C;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .event-details {
+            font-family: 'Lato', sans-serif;
+            color: #5A6B7C;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .event-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-family: 'Lato', sans-serif;
+            color: #7a5060;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+
+        .export-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1.5px solid #DDE8F5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1.5px solid #DDE8F5;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Playfair Display', serif;
+            color: #2C3E50;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #B8D4E8;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: #8B9FD9;
+        }
+
+        #modalBody {
+            font-family: 'Lato', sans-serif;
+        }
+
+        #modalBody h3 {
+            font-family: 'Playfair Display', serif;
+            color: #2C3E50;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        #modalBody p {
+            color: #5A6B7C;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        #modalBody strong {
+            color: #2C3E50;
+        }
+
+        .impact-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .thermometer-section {
+            background: white;
+            border-radius: 14px;
+            padding: 40px;
+            margin-bottom: 20px;
+            border: 1.5px solid #DDE8F5;
+            text-align: center;
+        }
+
+        .thermometer-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .thermometer {
+            width: 60px;
+            height: 400px;
+            background: #f0f0f0;
+            border-radius: 30px 30px 0 0;
+            position: relative;
+            border: 3px solid #DDE8F5;
+        }
+
+        .thermometer-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, #d4617a, #8B9FD9);
+            border-radius: 27px 27px 0 0;
+            transition: height 1s ease;
+        }
+
+        .thermometer-bulb {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #d4617a, #c0395a);
+            border-radius: 50%;
+            border: 3px solid #DDE8F5;
+        }
+
+        .thermometer-labels {
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: space-between;
+            height: 400px;
+            padding: 10px 0;
+        }
+
+        .thermometer-label {
+            font-family: 'Lato', sans-serif;
+            font-size: 12px;
+            color: #7a5060;
+            font-weight: 600;
+        }
+
+        .impact-total {
+            margin-top: 40px;
+        }
+
+        .impact-breakdown {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border: 1.5px solid #DDE8F5;
+        }
+
+        .org-impact-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #FAFCFE;
+            border-radius: 8px;
+            border-left: 4px solid #8B9FD9;
+        }
+
+        .org-impact-name {
+            font-family: 'Lato', sans-serif;
+            font-weight: 600;
+            color: #2C3E50;
+            font-size: 1.05em;
+        }
+
+        .org-impact-stats {
+            font-family: 'Lato', sans-serif;
+            color: #5A6B7C;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .org-impact-hours {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            font-weight: 700;
+            color: #8B9FD9;
+        }
+
+        .impact-insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1.5px solid #DDE8F5;
+            text-align: center;
+        }
+
+        .insight-emoji {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .insight-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #d4617a;
+            margin-bottom: 10px;
+        }
+
+        .insight-label {
+            font-family: 'Lato', sans-serif;
+            color: #6a4050;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Volunteer Impact Tracker</h1>
+            <p>Track your community engagement and measure your impact</p>
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('tracker')">📋 Tracker</button>
+                <button class="tab-btn" onclick="switchTab('impact')">🌡️ Impact</button>
+            </div>
+        </div>
+
+        <div id="trackerView">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalEvents">0</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalHours">0</div>
+                <div class="stat-label">Total Hours</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalParticipants">0</div>
+                <div class="stat-label">Total Participants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalOrgs">0</div>
+                <div class="stat-label">Organizations</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="panel">
+                <h2>Add New Event</h2>
+                <form id="eventForm">
+                    <div class="form-group">
+                        <label for="eventName">Event Name *</label>
+                        <input type="text" id="eventName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="organization">Organization *</label>
+                        <input type="text" id="organization" list="orgList" required>
+                        <datalist id="orgList">
+                            <option value="Colorado Pet Pantry">
+                            <option value="Salvation Army">
+                            <option value="Denver Zoo">
+                            <option value="Women's Foundation">
+                            <option value="United Way Denver">
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Date *</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hours">Hours *</label>
+                        <input type="number" id="hours" step="0.5" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="participants">Number of Participants</label>
+                        <input type="number" id="participants" min="1" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location">
+                    </div>
+                    <button type="submit" class="btn" id="submitBtn">Add Event</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;">Cancel</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>Events List</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search events, organizations, or descriptions...">
+                </div>
+                <div class="filter-bar">
+                    <select id="orgFilter">
+                        <option value="">All Organizations</option>
+                    </select>
+                    <select id="yearFilter">
+                        <option value="">All Years</option>
+                    </select>
+                    <select id="sortFilter">
+                        <option value="date-desc">Newest First</option>
+                        <option value="date-asc">Oldest First</option>
+                        <option value="hours-desc">Most Hours</option>
+                        <option value="hours-asc">Least Hours</option>
+                    </select>
+                </div>
+                <div class="event-list" id="eventList"></div>
+                <div class="export-section">
+                    <button class="btn" onclick="exportData()">Export to CSV</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div id="impactView" style="display:none;">
+            <div class="impact-container">
+                <div class="thermometer-section">
+                    <h2 style="font-family: 'Playfair Display', serif; color: #2C3E50; text-align: center; margin-bottom: 30px; font-size: 2em;">Total Community Impact</h2>
+                    <div class="thermometer-wrapper">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" id="thermometerFill"></div>
+                            <div class="thermometer-bulb"></div>
+                        </div>
+                        <div class="thermometer-labels">
+                            <div class="thermometer-label">0</div>
+                            <div class="thermometer-label">50</div>
+                            <div class="thermometer-label">100</div>
+                            <div class="thermometer-label">150</div>
+                            <div class="thermometer-label">200</div>
+                            <div class="thermometer-label">250</div>
+                        </div>
+                    </div>
+                    <div class="impact-total">
+                        <div style="font-family: 'Playfair Display', serif; font-size: 4em; font-weight: 700; color: #8B9FD9; line-height: 1;" id="totalImpactHours">0</div>
+                        <div style="font-family: 'Lato', sans-serif; font-size: 1em; color: #5A6B7C; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Total Impact Hours</div>
+                        <div style="font-family: 'Lato', sans-serif; font-size: 0.9em; color: #7a5060; margin-top: 8px; font-style: italic;">Hours × Participants</div>
+                    </div>
+                </div>
+
+                <div class="impact-breakdown">
+                    <h3 style="font-family: 'Playfair Display', serif; color: #2C3E50; margin-bottom: 20px; font-size: 1.5em;">Impact by Organization</h3>
+                    <div id="orgImpactList"></div>
+                </div>
+
+                <div class="impact-insights">
+                    <div class="insight-card">
+                        <div class="insight-emoji">👥</div>
+                        <div class="insight-number" id="insightAvgParticipants">0</div>
+                        <div class="insight-label">Avg Participants per Event</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-emoji">⏱️</div>
+                        <div class="insight-number" id="insightAvgHours">0</div>
+                        <div class="insight-label">Avg Hours per Event</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-emoji">💪</div>
+                        <div class="insight-number" id="insightMultiplier">0</div>
+                        <div class="insight-label">Average Impact Multiplier</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-emoji">🎯</div>
+                        <div class="insight-number" id="insightBiggestEvent">-</div>
+                        <div class="insight-label">Biggest Single Event</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Event Details</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize data
+        let events = [];
+        let editingId = null;
+
+        // Load events from localStorage
+        function loadEvents() {
+            const stored = localStorage.getItem('volunteerEvents');
+            if (stored) {
+                events = JSON.parse(stored);
+            } else {
+                // Initialize with data from CSVs only
+                events = [
+                    // Colorado Pet Pantry - May 2026 (from CSV)
+                    {
+                        id: Date.now() + 1,
+                        name: "Colorado Pet Pantry Volunteer Day",
+                        organization: "Colorado Pet Pantry",
+                        date: "2026-05-31",
+                        hours: 3,
+                        participants: 6,
+                        description: "Frndly TV team volunteer event: Chris Q, Laura D, Tiara T, Merlin M, Steve S (with 1 guest). Total impact: 18 hours",
+                        location: "2830 S. Zuni St. Englewood, CO 80110"
+                    },
+                    // Adopt an Angel - Salvation Army December (from CSV)
+                    {
+                        id: Date.now() + 2,
+                        name: "Adopt an Angel - Holiday Gift Drive",
+                        organization: "Salvation Army",
+                        date: "2025-12-15",
+                        hours: 2,
+                        participants: 26,
+                        description: "48 angels adopted by Frndly TV team members including Chelsea (6), Alison (6), Paul (2), Cori (1), McKenna (2), Mark (1), Nick (1), John G (1), Laurie (1), Leah (2), Erin (1), LeRoy (2), Natalie (2), Taylor (1), Alex Z (1), Cliff (1), Paul (1), Lisa (1), C Lee (2), Taylor/Kiana (1), Cory (1), Joey (2), Matt Lozier (1), Jabreesha (5), Jen R (2), Dave L (1)",
+                        location: "Salvation Army Denver"
+                    }
+                ];
+                saveEvents();
+            }
+        }
+
+        // Save events to localStorage
+        function saveEvents() {
+            localStorage.setItem('volunteerEvents', JSON.stringify(events));
+            updateStats();
+            renderEvents();
+            updateFilters();
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalEvents = events.length;
+            const totalHours = events.reduce((sum, e) => sum + (parseFloat(e.hours) || 0), 0);
+            const totalParticipants = events.reduce((sum, e) => sum + (parseInt(e.participants) || 0), 0);
+            const uniqueOrgs = new Set(events.map(e => e.organization));
+
+            document.getElementById('totalEvents').textContent = totalEvents;
+            document.getElementById('totalHours').textContent = totalHours.toFixed(1);
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+            document.getElementById('totalOrgs').textContent = uniqueOrgs.size;
+        }
+
+        // Update filter dropdowns
+        function updateFilters() {
+            // Organization filter
+            const uniqueOrgs = [...new Set(events.map(e => e.organization))].sort();
+            const orgFilter = document.getElementById('orgFilter');
+            const currentOrgValue = orgFilter.value;
+            orgFilter.innerHTML = '<option value="">All Organizations</option>';
+            uniqueOrgs.forEach(org => {
+                const option = document.createElement('option');
+                option.value = org;
+                option.textContent = org;
+                orgFilter.appendChild(option);
+            });
+            orgFilter.value = currentOrgValue;
+
+            // Year filter
+            const uniqueYears = [...new Set(events.map(e => new Date(e.date).getFullYear()))].sort().reverse();
+            const yearFilter = document.getElementById('yearFilter');
+            const currentYearValue = yearFilter.value;
+            yearFilter.innerHTML = '<option value="">All Years</option>';
+            uniqueYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearFilter.appendChild(option);
+            });
+            yearFilter.value = currentYearValue;
+        }
+
+        // Render events list
+        function renderEvents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const orgFilter = document.getElementById('orgFilter').value;
+            const yearFilter = document.getElementById('yearFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+
+            let filtered = events.filter(event => {
+                const matchesSearch = !searchTerm ||
+                    event.name.toLowerCase().includes(searchTerm) ||
+                    event.organization.toLowerCase().includes(searchTerm) ||
+                    (event.description && event.description.toLowerCase().includes(searchTerm));
+
+                const matchesOrg = !orgFilter || event.organization === orgFilter;
+                const matchesYear = !yearFilter || new Date(event.date).getFullYear().toString() === yearFilter;
+
+                return matchesSearch && matchesOrg && matchesYear;
+            });
+
+            // Sort events
+            filtered.sort((a, b) => {
+                switch(sortFilter) {
+                    case 'date-desc':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'date-asc':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'hours-desc':
+                        return b.hours - a.hours;
+                    case 'hours-asc':
+                        return a.hours - b.hours;
+                    default:
+                        return new Date(b.date) - new Date(a.date);
+                }
+            });
+
+            const eventList = document.getElementById('eventList');
+            eventList.innerHTML = '';
+
+            if (filtered.length === 0) {
+                eventList.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No events found</p>';
+                return;
+            }
+
+            filtered.forEach(event => {
+                const eventEl = document.createElement('div');
+                eventEl.className = 'event-item';
+
+                const date = new Date(event.date + 'T00:00:00');
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                eventEl.innerHTML = `
+                    <div class="event-header">
+                        <div>
+                            <div class="event-title">${event.name}</div>
+                            <div class="event-org">${event.organization}</div>
+                        </div>
+                        <div class="event-actions">
+                            <button class="btn btn-edit" onclick="editEvent(${event.id})">Edit</button>
+                            <button class="btn btn-delete" onclick="deleteEvent(${event.id})">Delete</button>
+                        </div>
+                    </div>
+                    <div class="event-date">${formattedDate}</div>
+                    ${event.description ? `<div class="event-details">${event.description}</div>` : ''}
+                    ${event.location ? `<div class="event-details">📍 ${event.location}</div>` : ''}
+                    <div class="event-stats">
+                        <span>⏱️ ${event.hours} hours</span>
+                        <span>👥 ${event.participants} participants</span>
+                        <span>💪 ${(event.hours * event.participants)} total impact hours</span>
+                    </div>
+                `;
+                eventList.appendChild(eventEl);
+            });
+        }
+
+        // Handle form submission
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const event = {
+                id: editingId || Date.now(),
+                name: document.getElementById('eventName').value,
+                organization: document.getElementById('organization').value,
+                date: document.getElementById('eventDate').value,
+                hours: parseFloat(document.getElementById('hours').value),
+                participants: parseInt(document.getElementById('participants').value) || 1,
+                description: document.getElementById('description').value,
+                location: document.getElementById('location').value
+            };
+
+            if (editingId) {
+                const index = events.findIndex(e => e.id === editingId);
+                events[index] = event;
+                editingId = null;
+                document.getElementById('submitBtn').textContent = 'Add Event';
+                document.getElementById('cancelBtn').style.display = 'none';
+            } else {
+                events.push(event);
+            }
+
+            saveEvents();
+            this.reset();
+        });
+
+        // Cancel edit
+        document.getElementById('cancelBtn').addEventListener('click', function() {
+            editingId = null;
+            document.getElementById('eventForm').reset();
+            document.getElementById('submitBtn').textContent = 'Add Event';
+            this.style.display = 'none';
+        });
+
+        // Edit event
+        function editEvent(id) {
+            const event = events.find(e => e.id === id);
+            if (!event) return;
+
+            editingId = id;
+            document.getElementById('eventName').value = event.name;
+            document.getElementById('organization').value = event.organization;
+            document.getElementById('eventDate').value = event.date;
+            document.getElementById('hours').value = event.hours;
+            document.getElementById('participants').value = event.participants;
+            document.getElementById('description').value = event.description || '';
+            document.getElementById('location').value = event.location || '';
+
+            document.getElementById('submitBtn').textContent = 'Update Event';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+
+            // Scroll to form
+            document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Delete event
+        function deleteEvent(id) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                events = events.filter(e => e.id !== id);
+                saveEvents();
+            }
+        }
+
+        // Search and filter handlers
+        document.getElementById('searchInput').addEventListener('input', renderEvents);
+        document.getElementById('orgFilter').addEventListener('change', renderEvents);
+        document.getElementById('yearFilter').addEventListener('change', renderEvents);
+        document.getElementById('sortFilter').addEventListener('change', renderEvents);
+
+        // Tab switching
+        function switchTab(tab) {
+            const trackerView = document.getElementById('trackerView');
+            const impactView = document.getElementById('impactView');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if (tab === 'tracker') {
+                trackerView.style.display = 'block';
+                impactView.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                trackerView.style.display = 'none';
+                impactView.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+                renderImpactView();
+            }
+        }
+
+        // Render impact view
+        function renderImpactView() {
+            const totalImpact = events.reduce((sum, e) => sum + (e.hours * e.participants), 0);
+            const totalEvents = events.length;
+            const totalHours = events.reduce((sum, e) => sum + parseFloat(e.hours), 0);
+            const totalParticipants = events.reduce((sum, e) => sum + parseInt(e.participants), 0);
+
+            // Update thermometer
+            const maxThermometer = 250;
+            const fillPercentage = Math.min((totalImpact / maxThermometer) * 100, 100);
+            document.getElementById('thermometerFill').style.height = fillPercentage + '%';
+            document.getElementById('totalImpactHours').textContent = totalImpact.toFixed(0);
+
+            // Organization breakdown
+            const orgImpact = {};
+            events.forEach(event => {
+                if (!orgImpact[event.organization]) {
+                    orgImpact[event.organization] = {
+                        hours: 0,
+                        events: 0,
+                        participants: 0,
+                        impact: 0
+                    };
+                }
+                orgImpact[event.organization].hours += parseFloat(event.hours);
+                orgImpact[event.organization].events += 1;
+                orgImpact[event.organization].participants += parseInt(event.participants);
+                orgImpact[event.organization].impact += event.hours * event.participants;
+            });
+
+            const orgList = document.getElementById('orgImpactList');
+            orgList.innerHTML = '';
+
+            Object.keys(orgImpact).sort((a, b) => orgImpact[b].impact - orgImpact[a].impact).forEach(org => {
+                const data = orgImpact[org];
+                const item = document.createElement('div');
+                item.className = 'org-impact-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="org-impact-name">${org}</div>
+                        <div class="org-impact-stats">${data.events} events • ${data.participants} participants • ${data.hours.toFixed(1)} hours</div>
+                    </div>
+                    <div class="org-impact-hours">${data.impact.toFixed(0)}</div>
+                `;
+                orgList.appendChild(item);
+            });
+
+            // Insights
+            const avgParticipants = totalEvents > 0 ? (totalParticipants / totalEvents).toFixed(1) : 0;
+            const avgHours = totalEvents > 0 ? (totalHours / totalEvents).toFixed(1) : 0;
+            const avgMultiplier = totalHours > 0 ? (totalImpact / totalHours).toFixed(1) : 0;
+
+            let biggestEvent = '-';
+            let biggestImpact = 0;
+            events.forEach(e => {
+                const impact = e.hours * e.participants;
+                if (impact > biggestImpact) {
+                    biggestImpact = impact;
+                    biggestEvent = e.name;
+                }
+            });
+            if (biggestEvent.length > 20) {
+                biggestEvent = biggestEvent.substring(0, 18) + '...';
+            }
+
+            document.getElementById('insightAvgParticipants').textContent = avgParticipants;
+            document.getElementById('insightAvgHours').textContent = avgHours;
+            document.getElementById('insightMultiplier').textContent = avgMultiplier + 'x';
+            document.getElementById('insightBiggestEvent').textContent = biggestEvent;
+        }
+
+        // Modal functions
+        function showEventModal(event) {
+            const modal = document.getElementById('eventModal');
+            const modalBody = document.getElementById('modalBody');
+
+            const date = new Date(event.date + 'T00:00:00');
+            const formattedDate = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+
+            modalBody.innerHTML = `
+                <h3>${event.name}</h3>
+                <p><strong>Organization:</strong> ${event.organization}</p>
+                <p><strong>Date:</strong> ${formattedDate}</p>
+                <p><strong>Hours:</strong> ${event.hours}</p>
+                <p><strong>Participants:</strong> ${event.participants}</p>
+                <p><strong>Total Impact Hours:</strong> ${event.hours * event.participants}</p>
+                ${event.location ? `<p><strong>Location:</strong> ${event.location}</p>` : ''}
+                ${event.description ? `<p><strong>Description:</strong> ${event.description}</p>` : ''}
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-edit" onclick="closeModal(); editEvent(${event.id})">Edit</button>
+                    <button class="btn btn-delete" onclick="closeModal(); deleteEvent(${event.id})">Delete</button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').classList.remove('active');
+        }
+
+        // Export to CSV
+        function exportData() {
+            let csv = 'Event Name,Organization,Date,Hours,Participants,Total Impact Hours,Location,Description\n';
+
+            events.forEach(event => {
+                const row = [
+                    event.name,
+                    event.organization,
+                    event.date,
+                    event.hours,
+                    event.participants,
+                    event.hours * event.participants,
+                    event.location || '',
+                    event.description || ''
+                ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
+                csv += row + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `volunteer-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        loadEvents();
+    </script>
+</body>
+</html>
