@@ -5,812 +5,370 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteer Impact Tracker</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Lato', sans-serif;
-            background: #FAFCFE;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #B8D4E8 0%, #C5E0F0 40%, #DDE8F5 100%);
-            border-radius: 14px;
-            padding: 30px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            border: 1.5px solid #DDE8F5;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -60px;
-            right: -60px;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(139,26,74,0.15), transparent 70%);
-            pointer-events: none;
-        }
-
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            color: #2C3E50;
-            margin-bottom: 10px;
-            font-size: 2.2em;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-family: 'Lato', sans-serif;
-            color: #5A6B7C;
-            font-size: 1em;
-            font-weight: 300;
-        }
-
-        .tab-nav {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-
-        .tab-btn {
-            font-family: 'Lato', sans-serif;
-            background: rgba(255, 255, 255, 0.6);
-            color: #5A6B7C;
-            border: 1.5px solid #DDE8F5;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: #8B9FD9;
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: #8B9FD9;
-            border-color: #8B9FD9;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: #FFFFFF;
-            border-radius: 12px;
-            padding: 25px;
-            border: 1.5px solid #DDE8F5;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #8B9FD9;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-family: 'Lato', sans-serif;
-            color: #6a4050;
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 968px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .panel {
-            background: #FFFFFF;
-            border-radius: 14px;
-            padding: 25px;
-            border: 1.5px solid #DDE8F5;
-        }
-
-        .panel h2 {
-            font-family: 'Playfair Display', serif;
-            color: #2C3E50;
-            font-size: 1.4em;
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1.5px solid #DDE8F5;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #2C3E50;
-            font-weight: 600;
-            font-size: 0.9em;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1.5px solid #DDE8F5;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: 'Lato', sans-serif;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #8B9FD9;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .btn {
-            font-family: 'Lato', sans-serif;
-            background: #8B9FD9;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .btn:hover {
-            background: #7a8ec8;
-        }
-
-        .btn-secondary {
-            background: #B8D4E8;
-            color: #2C3E50;
-            margin-left: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #a8c4d8;
-        }
-
-        .btn-delete {
-            background: #c0395a;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .btn-delete:hover {
-            background: #a02848;
-        }
-
-        .btn-edit {
-            background: #d4617a;
-            padding: 6px 12px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-
-        .btn-edit:hover {
-            background: #c05168;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid #DDE8F5;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Lato', sans-serif;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #8B9FD9;
-        }
-
-        .filter-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-bar select {
-            padding: 8px 12px;
-            border: 1.5px solid #DDE8F5;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: 'Lato', sans-serif;
-            background: white;
-            cursor: pointer;
-        }
-
-        .filter-bar select:focus {
-            outline: none;
-            border-color: #8B9FD9;
-        }
-
-        .event-list {
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .event-item {
-            background: #FFFFFF;
-            border-radius: 10px;
-            padding: 18px;
-            margin-bottom: 12px;
-            border: 1.5px solid #DDE8F5;
-            border-left: 4px solid #8B9FD9;
-        }
-
-        .event-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 10px;
-        }
-
-        .event-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            color: #2C3E50;
-            font-size: 1.15em;
-        }
-
-        .event-date {
-            font-family: 'Lato', sans-serif;
-            color: #8B9FD9;
-            font-weight: 700;
-            font-size: 0.85em;
-            letter-spacing: 0.5px;
-        }
-
-        .event-org {
-            font-family: 'Lato', sans-serif;
-            color: #5A6B7C;
-            font-size: 0.9em;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
-        .event-details {
-            font-family: 'Lato', sans-serif;
-            color: #5A6B7C;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-
-        .event-stats {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-            font-size: 0.85em;
-            font-family: 'Lato', sans-serif;
-            color: #7a5060;
-        }
-
-        .event-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-
-        .export-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1.5px solid #DDE8F5;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 14px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1.5px solid #DDE8F5;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            font-family: 'Playfair Display', serif;
-            color: #2C3E50;
-            font-size: 1.5em;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: #B8D4E8;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: #8B9FD9;
-        }
-
-        #modalBody {
-            font-family: 'Lato', sans-serif;
-        }
-
-        #modalBody h3 {
-            font-family: 'Playfair Display', serif;
-            color: #2C3E50;
-            font-size: 1.3em;
-            margin-bottom: 15px;
-        }
-
-        #modalBody p {
-            color: #5A6B7C;
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        #modalBody strong {
-            color: #2C3E50;
-        }
-
-        .impact-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .thermometer-section {
-            background: white;
-            border-radius: 14px;
-            padding: 40px;
-            margin-bottom: 20px;
-            border: 1.5px solid #DDE8F5;
-            text-align: center;
-        }
-
-        .thermometer-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            gap: 20px;
-            margin: 40px 0;
-        }
-
-        .thermometer {
-            width: 60px;
-            height: 400px;
-            background: #f0f0f0;
-            border-radius: 30px 30px 0 0;
-            position: relative;
-            border: 3px solid #DDE8F5;
-        }
-
-        .thermometer-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, #d4617a, #8B9FD9);
-            border-radius: 27px 27px 0 0;
-            transition: height 1s ease;
-        }
-
-        .thermometer-bulb {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #d4617a, #c0395a);
-            border-radius: 50%;
-            border: 3px solid #DDE8F5;
-        }
-
-        .thermometer-labels {
-            display: flex;
-            flex-direction: column-reverse;
-            justify-content: space-between;
-            height: 400px;
-            padding: 10px 0;
-        }
-
-        .thermometer-label {
-            font-family: 'Lato', sans-serif;
-            font-size: 12px;
-            color: #7a5060;
-            font-weight: 600;
-        }
-
-        .impact-total {
-            margin-top: 40px;
-        }
-
-        .impact-breakdown {
-            background: white;
-            border-radius: 14px;
-            padding: 30px;
-            margin-bottom: 20px;
-            border: 1.5px solid #DDE8F5;
-        }
-
-        .org-impact-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #FAFCFE;
-            border-radius: 8px;
-            border-left: 4px solid #8B9FD9;
-        }
-
-        .org-impact-name {
-            font-family: 'Lato', sans-serif;
-            font-weight: 600;
-            color: #2C3E50;
-            font-size: 1.05em;
-        }
-
-        .org-impact-stats {
-            font-family: 'Lato', sans-serif;
-            color: #5A6B7C;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-
-        .org-impact-hours {
-            font-family: 'Playfair Display', serif;
-            font-size: 2em;
-            font-weight: 700;
-            color: #8B9FD9;
-        }
-
-        .impact-insights {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .insight-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            border: 1.5px solid #DDE8F5;
-            text-align: center;
-        }
-
-        .insight-emoji {
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-
-        .insight-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5em;
-            font-weight: 700;
-            color: #d4617a;
-            margin-bottom: 10px;
-        }
-
-        .insight-label {
-            font-family: 'Lato', sans-serif;
-            color: #6a4050;
-            font-size: 0.75em;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            line-height: 1.4;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: #FEFDFB; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #fef5fb 0%, #fff8f5 25%, #fffef8 50%, #f5fbff 75%, #f8f5ff 100%); border-radius: 20px 20px 0 0; padding: 28px 30px 0; margin-bottom: 0; position: relative; overflow: hidden; border: 1.5px solid rgba(153,183,245,0.3); border-bottom: none; }
+        .header::before { content: '✷'; position: absolute; top: 14px; right: 24px; font-size: 28px; color: #F296BD; opacity: 0.22; pointer-events: none; }
+        .header::after { content: '✨'; position: absolute; top: 20px; left: 22px; font-size: 18px; opacity: 0.15; pointer-events: none; }
+        .header h1 { font-family: 'Playfair Display', serif; font-style: italic; color: #267F53; margin-bottom: 6px; font-size: 2.1em; font-weight: 600; text-align: center; }
+        .header p { font-family: 'Nunito', sans-serif; color: #99B7F5; font-size: 0.9em; font-weight: 400; font-style: italic; text-align: center; margin-bottom: 18px; }
+        .tab-nav { display: flex; gap: 4px; margin-top: 14px; justify-content: center; flex-wrap: wrap; }
+        .tab-btn { font-family: 'Nunito', sans-serif; background: transparent; color: #7a5080; border: none; padding: 10px 22px; border-radius: 10px 10px 0 0; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .tab-btn:hover { background: rgba(12,8,16,0.06); color: #3a2040; }
+        .tab-btn.active { background: #0c0810; color: #f0e8f4; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; margin-bottom: 20px; }
+        .stat-card { background: #FFFFFF; border-radius: 20px; padding: 25px; border: 1.5px solid #d4ddf8; text-align: center; }
+        .stat-number { font-family: 'Nunito', sans-serif; font-size: 2.5em; font-weight: 800; color: #7b8fe8; margin-bottom: 10px; }
+        .stat-label { font-family: 'Nunito', sans-serif; color: #6a4050; font-size: 0.75em; text-transform: uppercase; letter-spacing: 2.5px; }
+        .main-content { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        @media (max-width: 968px) { .main-content { grid-template-columns: 1fr; } }
+        .panel { background: #FFFFFF; border-radius: 20px; padding: 25px; border: 1.5px solid #d4ddf8; }
+        .panel h2 { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.4em; font-weight: 800; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1.5px solid #d4ddf8; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #2C3E50; font-weight: 700; font-size: 0.9em; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #d4ddf8; border-radius: 12px; font-size: 14px; font-family: 'Nunito', sans-serif; transition: border-color 0.3s; background: white; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #7b8fe8; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .btn { font-family: 'Nunito', sans-serif; background: #7b8fe8; color: white; padding: 12px 30px; border: none; border-radius: 30px; font-size: 14px; cursor: pointer; transition: background 0.3s; font-weight: 700; letter-spacing: 0.5px; }
+        .btn:hover { background: #6a7ed6; }
+        .btn-secondary { background: #d4ddf8; color: #2C3E50; margin-left: 10px; }
+        .btn-secondary:hover { background: #c4cde8; }
+        .btn-delete { background: #c0395a; padding: 6px 14px; font-size: 12px; border-radius: 20px; }
+        .btn-delete:hover { background: #a02848; }
+        .btn-edit { background: #d4617a; padding: 6px 14px; font-size: 12px; margin-right: 5px; border-radius: 20px; }
+        .btn-edit:hover { background: #c05168; }
+        .btn-reset { background: #6a9f5a; margin-left: 10px; border-radius: 30px; }
+        .btn-reset:hover { background: #5a8f4a; }
+        .search-bar { margin-bottom: 20px; }
+        .search-bar input { width: 100%; padding: 12px 16px; border: 1.5px solid #d4ddf8; border-radius: 30px; font-size: 14px; font-family: 'Nunito', sans-serif; background: white; }
+        .search-bar input:focus { outline: none; border-color: #7b8fe8; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-bar select { padding: 8px 14px; border: 1.5px solid #d4ddf8; border-radius: 20px; font-size: 13px; font-family: 'Nunito', sans-serif; background: white; cursor: pointer; }
+        .filter-bar select:focus { outline: none; border-color: #7b8fe8; }
+        .event-list { max-height: 600px; overflow-y: auto; }
+        .event-item { background: #FFFFFF; border-radius: 16px; padding: 18px; margin-bottom: 12px; border: 1.5px solid #d4ddf8; border-left: 4px solid #7b8fe8; }
+        .event-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .event-title { font-family: 'Nunito', sans-serif; font-weight: 800; color: #2C3E50; font-size: 1.1em; }
+        .event-date { font-family: 'Nunito', sans-serif; color: #7b8fe8; font-weight: 700; font-size: 0.85em; letter-spacing: 0.5px; }
+        .event-org { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.9em; margin-bottom: 5px; font-weight: 600; }
+        .event-details { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.9em; line-height: 1.5; }
+        .event-stats { display: flex; gap: 15px; margin-top: 10px; font-size: 0.85em; font-family: 'Nunito', sans-serif; color: #7a5060; }
+        .event-actions { display: flex; gap: 5px; }
+        .export-section { margin-top: 20px; padding-top: 20px; border-top: 1.5px solid #d4ddf8; }
+        .impact-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        #timelineView, #photosView, #impactView { margin-top: 20px; }
+        .org-chart-section { background: white; border-radius: 20px; padding: 36px; margin-bottom: 20px; border: 1.5px solid #d4ddf8; }
+        .org-chart-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
+        .org-chart-header h2 { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.8em; font-weight: 800; }
+        .sort-toggle { display: flex; gap: 6px; }
+        .sort-btn { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; border: 1.5px solid #d4ddf8; background: white; color: #5A6B7C; cursor: pointer; transition: all 0.2s; }
+        .sort-btn.active { background: #7b8fe8; color: white; border-color: #7b8fe8; }
+        .org-bar-list { display: flex; flex-direction: column; gap: 14px; }
+        .org-bar-row { display: grid; grid-template-columns: 180px 1fr 80px; align-items: center; gap: 14px; }
+        .org-bar-label { font-family: 'Nunito', sans-serif; font-size: 0.88em; font-weight: 700; color: #2C3E50; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .org-bar-track { background: #eef2fb; border-radius: 8px; height: 28px; position: relative; overflow: hidden; }
+        .org-bar-fill { height: 100%; border-radius: 8px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); display: flex; align-items: center; padding-left: 10px; }
+        .org-bar-sublabel { font-family: 'Nunito', sans-serif; font-size: 0.75em; color: rgba(255,255,255,0.9); font-weight: 700; white-space: nowrap; overflow: hidden; }
+        .org-bar-value { font-family: 'Nunito', sans-serif; font-size: 1.1em; font-weight: 800; color: #7b8fe8; text-align: left; }
+        .impact-breakdown { background: white; border-radius: 20px; padding: 30px; margin-bottom: 20px; border: 1.5px solid #d4ddf8; }
+        .org-impact-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 10px; background: #eef2fb; border-radius: 12px; border-left: 4px solid #7b8fe8; }
+        .org-impact-name { font-family: 'Nunito', sans-serif; font-weight: 700; color: #2C3E50; font-size: 1.05em; }
+        .org-impact-stats { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.9em; margin-top: 5px; }
+        .org-impact-hours { font-family: 'Nunito', sans-serif; font-size: 2em; font-weight: 800; color: #7b8fe8; }
+        .impact-insights { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .insight-card { background: white; border-radius: 20px; padding: 25px; border: 1.5px solid #d4ddf8; text-align: center; }
+        .insight-emoji { font-size: 2.5em; margin-bottom: 15px; }
+        .insight-number { font-family: 'Nunito', sans-serif; font-size: 1.7em; font-weight: 800; color: #d4617a; margin-bottom: 10px; word-break: break-word; hyphens: auto; }
+        .insight-label { font-family: 'Nunito', sans-serif; color: #6a4050; font-size: 0.75em; text-transform: uppercase; letter-spacing: 2px; line-height: 1.4; }
+        /* ---- Timeline Tab ---- */
+        .timeline-container { max-width: 860px; margin: 0 auto; padding: 10px 20px 40px; }
+        .timeline-year-group { margin-bottom: 6px; }
+        .timeline-year-header { display: flex; align-items: center; margin: 28px 0 16px; }
+        .timeline-year-badge { font-family: 'Nunito', sans-serif; font-size: 1.4em; font-weight: 800; color: white; background: #7b8fe8; padding: 4px 18px; border-radius: 20px; white-space: nowrap; }
+        .timeline-year-meta { font-family: 'Nunito', sans-serif; font-size: 0.78em; color: #9aadcc; margin-left: 14px; white-space: nowrap; }
+        .timeline-year-line { flex: 1; height: 1.5px; background: linear-gradient(90deg, #d4ddf8, transparent); margin-left: 14px; }
+        .timeline-spine { border-left: 2.5px solid #d4ddf8; padding-left: 28px; margin-left: 12px; }
+        .timeline-event { position: relative; margin-bottom: 14px; }
+        .timeline-card { background: white; border-radius: 16px; padding: 15px 18px; border: 1.5px solid #d4ddf8; transition: box-shadow 0.2s; }
+        .timeline-card:hover { box-shadow: 0 2px 12px rgba(123,143,232,0.15); }
+        .timeline-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+        .timeline-event-title { font-family: 'Nunito', sans-serif; font-weight: 800; color: #2C3E50; font-size: 1em; line-height: 1.3; }
+        .timeline-event-date { font-family: 'Nunito', sans-serif; color: #7b8fe8; font-size: 0.78em; font-weight: 700; white-space: nowrap; margin-left: 12px; padding-top: 3px; }
+        .timeline-event-org { font-family: 'Nunito', sans-serif; font-size: 0.82em; margin: 3px 0 6px; font-weight: 700; }
+        .timeline-event-meta { display: flex; gap: 14px; font-family: 'Nunito', sans-serif; font-size: 0.78em; color: #7a5060; flex-wrap: wrap; }
+        .timeline-event-desc { font-family: 'Nunito', sans-serif; font-size: 0.8em; color: #5A6B7C; margin-top: 6px; line-height: 1.45; }
+        .timeline-event-loc { font-family: 'Nunito', sans-serif; font-size: 0.78em; color: #9aadcc; margin-top: 4px; }
+        /* ---- Photo Collage Tab ---- */
+        .collage-container { max-width: 1100px; margin: 0 auto; padding: 10px 20px 40px; }
+        .collage-header { background: white; border-radius: 20px; padding: 22px 26px; margin-bottom: 18px; border: 1.5px solid #d4ddf8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .collage-header h2 { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.4em; font-weight: 800; }
+        .collage-header p { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.85em; margin-top: 4px; }
+        .collage-count { font-family: 'Nunito', sans-serif; font-size: 0.82em; color: #9aadcc; white-space: nowrap; }
+        .collage-upload-zone { border: 2.5px dashed #b4c4f0; border-radius: 20px; padding: 34px 20px; text-align: center; cursor: pointer; transition: all 0.25s; background: white; margin-bottom: 22px; }
+        .collage-upload-zone:hover, .collage-upload-zone.drag-over { border-color: #7b8fe8; background: #f0f3fd; }
+        .collage-upload-icon { font-size: 2em; margin-bottom: 10px; }
+        .collage-upload-title { font-family: 'Nunito', sans-serif; font-size: 1.1em; color: #2C3E50; margin-bottom: 5px; font-weight: 700; }
+        .collage-upload-sub { font-family: 'Nunito', sans-serif; color: #9aadcc; font-size: 0.85em; }
+        .collage-grid { columns: 3 200px; gap: 14px; }
+        .collage-item { break-inside: avoid; margin-bottom: 14px; background: white; border-radius: 16px; border: 1.5px solid #d4ddf8; overflow: hidden; position: relative; }
+        .collage-img { width: 100%; display: block; }
+        .collage-item-actions { position: absolute; top: 8px; right: 8px; opacity: 0; transition: opacity 0.2s; }
+        .collage-item:hover .collage-item-actions { opacity: 1; }
+        .collage-delete-btn { background: rgba(192,56,90,0.88); color: white; border: none; border-radius: 20px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 700; }
+        .collage-delete-btn:hover { background: rgba(160,40,72,0.95); }
+        .collage-caption { width: 100%; padding: 8px 12px; font-family: 'Nunito', sans-serif; font-size: 0.82em; color: #5A6B7C; border: none; border-top: 1px solid #eef2fb; outline: none; background: transparent; resize: none; min-height: 32px; display: block; }
+        .collage-caption:focus { background: #f8f9fe; border-top-color: #7b8fe8; }
+        .collage-empty { text-align: center; padding: 60px 20px; background: white; border-radius: 20px; border: 1.5px solid #d4ddf8; }
+        .collage-empty-icon { font-size: 3em; margin-bottom: 14px; }
+        .collage-empty-text { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.15em; margin-bottom: 8px; font-weight: 700; }
+        .collage-empty-sub { font-family: 'Nunito', sans-serif; color: #9aadcc; font-size: 0.85em; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Volunteer Impact Tracker</h1>
-            <p>Track your community engagement and measure your impact</p>
+            <p>Frndly TV Community Engagement &mdash; Full History (2022&ndash;2026)</p>
             <div class="tab-nav">
-                <button class="tab-btn active" onclick="switchTab('tracker')">📋 Tracker</button>
-                <button class="tab-btn" onclick="switchTab('impact')">🌡️ Impact</button>
+                <button class="tab-btn active" onclick="switchTab('tracker')">&#x1F4CB; Tracker</button>
+                <button class="tab-btn" onclick="switchTab('impact')">&#x1F321;&#xFE0F; Impact</button>
+                <button class="tab-btn" onclick="switchTab('timeline')">&#x1F4C5; Timeline</button>
+                <button class="tab-btn" onclick="switchTab('photos')">&#x1F4F7; Photos</button>
             </div>
         </div>
 
         <div id="trackerView">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalEvents">0</div>
-                <div class="stat-label">Total Events</div>
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number" id="totalEvents">0</div><div class="stat-label">Total Events</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalHours">0</div><div class="stat-label">Total Hours</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalParticipants">0</div><div class="stat-label">Total Participants</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalOrgs">0</div><div class="stat-label">Organizations</div></div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalHours">0</div>
-                <div class="stat-label">Total Hours</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalParticipants">0</div>
-                <div class="stat-label">Total Participants</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalOrgs">0</div>
-                <div class="stat-label">Organizations</div>
+
+            <div class="main-content">
+                <div class="panel">
+                    <h2>Add New Event</h2>
+                    <form id="eventForm">
+                        <div class="form-group"><label for="eventName">Event Name *</label><input type="text" id="eventName" required></div>
+                        <div class="form-group">
+                            <label for="organization">Organization *</label>
+                            <input type="text" id="organization" list="orgList" required>
+                            <datalist id="orgList">
+                                <option value="Amp the Cause">
+                                <option value="Colorado Pet Pantry">
+                                <option value="Denver Parks and Rec">
+                                <option value="Denver Rescue Mission">
+                                <option value="Feed the City / Tango Charities">
+                                <option value="Florence Crittenton Services">
+                                <option value="Food Bank of the Rockies">
+                                <option value="Food for Thought">
+                                <option value="Friends of Red Rocks">
+                                <option value="Metro Caring">
+                                <option value="Operation Gratitude">
+                                <option value="Project Angel Heart">
+                                <option value="Ronald McDonald House">
+                                <option value="Safehouse Denver">
+                                <option value="Salvation Army">
+                                <option value="Samaritan House">
+                                <option value="Sun Valley Community Center">
+                                <option value="The Greenway Foundation">
+                                <option value="United Way Denver">
+                            </datalist>
+                        </div>
+                        <div class="form-group"><label for="eventDate">Date *</label><input type="date" id="eventDate" required></div>
+                        <div class="form-group"><label for="hours">Hours *</label><input type="number" id="hours" step="0.5" min="0" required></div>
+                        <div class="form-group"><label for="participants">Number of Participants</label><input type="number" id="participants" min="1" value="1"></div>
+                        <div class="form-group"><label for="description">Description</label><textarea id="description"></textarea></div>
+                        <div class="form-group"><label for="location">Location</label><input type="text" id="location"></div>
+                        <button type="submit" class="btn" id="submitBtn">Add Event</button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;">Cancel</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h2>Events List</h2>
+                    <div class="search-bar"><input type="text" id="searchInput" placeholder="Search events, organizations, or descriptions..."></div>
+                    <div class="filter-bar">
+                        <select id="orgFilter"><option value="">All Organizations</option></select>
+                        <select id="yearFilter"><option value="">All Years</option></select>
+                        <select id="sortFilter">
+                            <option value="date-desc">Newest First</option>
+                            <option value="date-asc">Oldest First</option>
+                            <option value="hours-desc">Most Hours</option>
+                            <option value="hours-asc">Least Hours</option>
+                        </select>
+                    </div>
+                    <div class="event-list" id="eventList"></div>
+                    <div class="export-section">
+                        <button class="btn" onclick="exportData()">Export to CSV</button>
+                        <button class="btn btn-reset" onclick="resetToFullHistory()">Reset to Full History</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <div class="panel">
-                <h2>Add New Event</h2>
-                <form id="eventForm">
-                    <div class="form-group">
-                        <label for="eventName">Event Name *</label>
-                        <input type="text" id="eventName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="organization">Organization *</label>
-                        <input type="text" id="organization" list="orgList" required>
-                        <datalist id="orgList">
-                            <option value="Colorado Pet Pantry">
-                            <option value="Salvation Army">
-                            <option value="Denver Zoo">
-                            <option value="Women's Foundation">
-                            <option value="United Way Denver">
-                        </datalist>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventDate">Date *</label>
-                        <input type="date" id="eventDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="hours">Hours *</label>
-                        <input type="number" id="hours" step="0.5" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="participants">Number of Participants</label>
-                        <input type="number" id="participants" min="1" value="1">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea id="description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location">
-                    </div>
-                    <button type="submit" class="btn" id="submitBtn">Add Event</button>
-                    <button type="button" class="btn btn-secondary" id="cancelBtn" style="display:none;">Cancel</button>
-                </form>
-            </div>
-
-            <div class="panel">
-                <h2>Events List</h2>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search events, organizations, or descriptions...">
-                </div>
-                <div class="filter-bar">
-                    <select id="orgFilter">
-                        <option value="">All Organizations</option>
-                    </select>
-                    <select id="yearFilter">
-                        <option value="">All Years</option>
-                    </select>
-                    <select id="sortFilter">
-                        <option value="date-desc">Newest First</option>
-                        <option value="date-asc">Oldest First</option>
-                        <option value="hours-desc">Most Hours</option>
-                        <option value="hours-asc">Least Hours</option>
-                    </select>
-                </div>
-                <div class="event-list" id="eventList"></div>
-                <div class="export-section">
-                    <button class="btn" onclick="exportData()">Export to CSV</button>
-                </div>
-            </div>
+        <div id="timelineView" style="display:none;">
+            <div class="timeline-container" id="timelineContainer"></div>
         </div>
+
+        <div id="photosView" style="display:none;">
+            <div class="collage-container">
+                <div class="collage-header">
+                    <div>
+                        <h2>Photo Collage</h2>
+                        <p>Add photos from your volunteer events — they're saved in your browser.</p>
+                    </div>
+                    <div>
+                        <span class="collage-count" id="photoCount">0 photos</span>
+                        <button class="btn btn-secondary" style="margin-left:12px;padding:8px 16px;font-size:12px;" onclick="clearAllPhotos()">Clear All</button>
+                    </div>
+                </div>
+                <div class="collage-upload-zone" id="uploadZone" onclick="document.getElementById('photoFileInput').click()">
+                    <input type="file" id="photoFileInput" multiple accept="image/*" style="display:none">
+                    <div class="collage-upload-icon">&#x1F5BC;&#xFE0F;</div>
+                    <div class="collage-upload-title">Drop photos here or click to browse</div>
+                    <div class="collage-upload-sub">JPG, PNG, GIF, WEBP &mdash; images are stored in your browser</div>
+                </div>
+                <div id="collageGrid" class="collage-grid"></div>
+                <div id="collageEmpty" class="collage-empty" style="display:none;">
+                    <div class="collage-empty-icon">&#x1F4F8;</div>
+                    <div class="collage-empty-text">No photos yet</div>
+                    <div class="collage-empty-sub">Click the upload area above to add your first event photos.</div>
+                </div>
+            </div>
         </div>
 
         <div id="impactView" style="display:none;">
             <div class="impact-container">
-                <div class="thermometer-section">
-                    <h2 style="font-family: 'Playfair Display', serif; color: #2C3E50; text-align: center; margin-bottom: 30px; font-size: 2em;">Total Community Impact</h2>
-                    <div class="thermometer-wrapper">
-                        <div class="thermometer">
-                            <div class="thermometer-fill" id="thermometerFill"></div>
-                            <div class="thermometer-bulb"></div>
-                        </div>
-                        <div class="thermometer-labels">
-                            <div class="thermometer-label">0</div>
-                            <div class="thermometer-label">50</div>
-                            <div class="thermometer-label">100</div>
-                            <div class="thermometer-label">150</div>
-                            <div class="thermometer-label">200</div>
-                            <div class="thermometer-label">250</div>
+                <div class="org-chart-section">
+                    <div class="org-chart-header">
+                        <h2>Who We've Served</h2>
+                        <div class="sort-toggle">
+                            <button class="sort-btn" id="sortByImpact" onclick="setOrgSort('impact')">By participants</button>
+                            <button class="sort-btn" id="sortByEvents" onclick="setOrgSort('events')">By events</button>
+                            <button class="sort-btn active" id="sortByHours" onclick="setOrgSort('hours')">By hours</button>
                         </div>
                     </div>
-                    <div class="impact-total">
-                        <div style="font-family: 'Playfair Display', serif; font-size: 4em; font-weight: 700; color: #8B9FD9; line-height: 1;" id="totalImpactHours">0</div>
-                        <div style="font-family: 'Lato', sans-serif; font-size: 1em; color: #5A6B7C; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px;">Total Impact Hours</div>
-                        <div style="font-family: 'Lato', sans-serif; font-size: 0.9em; color: #7a5060; margin-top: 8px; font-style: italic;">Hours × Participants</div>
-                    </div>
-                </div>
-
-                <div class="impact-breakdown">
-                    <h3 style="font-family: 'Playfair Display', serif; color: #2C3E50; margin-bottom: 20px; font-size: 1.5em;">Impact by Organization</h3>
-                    <div id="orgImpactList"></div>
+                    <div class="org-bar-list" id="orgBarList"></div>
                 </div>
 
                 <div class="impact-insights">
-                    <div class="insight-card">
-                        <div class="insight-emoji">👥</div>
-                        <div class="insight-number" id="insightAvgParticipants">0</div>
-                        <div class="insight-label">Avg Participants per Event</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-emoji">⏱️</div>
-                        <div class="insight-number" id="insightAvgHours">0</div>
-                        <div class="insight-label">Avg Hours per Event</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-emoji">💪</div>
-                        <div class="insight-number" id="insightMultiplier">0</div>
-                        <div class="insight-label">Average Impact Multiplier</div>
-                    </div>
-                    <div class="insight-card">
-                        <div class="insight-emoji">🎯</div>
-                        <div class="insight-number" id="insightBiggestEvent">-</div>
-                        <div class="insight-label">Biggest Single Event</div>
-                    </div>
+                    <div class="insight-card"><div class="insight-emoji">&#x1F465;</div><div class="insight-number" id="insightAvgParticipants">0</div><div class="insight-label">Avg Participants<br>per Event</div></div>
+                    <div class="insight-card"><div class="insight-emoji">&#x23F1;&#xFE0F;</div><div class="insight-number" id="insightAvgHours">0</div><div class="insight-label">Avg Hours<br>per Event</div></div>
+                    <div class="insight-card"><div class="insight-emoji">&#x1F4AA;</div><div class="insight-number" id="insightMultiplier">0</div><div class="insight-label">Avg Participants<br>per Hour</div></div>
+                    <div class="insight-card"><div class="insight-emoji">&#x1F3AF;</div><div class="insight-number" id="insightBiggestEvent">-</div><div class="insight-label">Biggest<br>Single Event</div></div>
+                </div>
+
+                <div class="impact-breakdown">
+                    <h3 style="font-family:'Nunito',sans-serif;color:#2C3E50;margin-bottom:20px;font-size:1.5em;font-weight:800;">Detail by Organization</h3>
+                    <div id="orgImpactList"></div>
                 </div>
             </div>
-        </div>
-
-    </div>
-
-    <div class="modal" id="eventModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Event Details</h2>
-                <button class="modal-close" onclick="closeModal()">×</button>
-            </div>
-            <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
-        // Initialize data
         let events = [];
         let editingId = null;
 
-        // Load events from localStorage
+        const FULL_HISTORY = [
+            {id: 1001, name: "Food Bank of the Rockies", organization: "Food Bank of the Rockies", date: "2022-01-15", hours: 26, participants: 8, description: "3.25 hrs/person. 7 Frnds + 1 guest.", location: "Denver, CO"},
+            {id: 1002, name: "Food for Thought", organization: "Food for Thought", date: "2022-02-18", hours: 20, participants: 10, description: "2 hrs/person. 10 Frnds.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1003, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2022-03-26", hours: 20, participants: 8, description: "2.5 hrs/person. 3 Frnds + 5 guests.", location: "Red Rocks, CO"},
+            {id: 1004, name: "Sloan's Lake Park Cleanup", organization: "Sloan's Lake Park", date: "2022-04-16", hours: 12.5, participants: 5, description: "2.5 hrs/person. 5 Frnds.", location: "Sloan's Lake Park, Denver"},
+            {id: 1005, name: "DAY OF SERVICE: Amp The Cause", organization: "Amp the Cause", date: "2022-05-20", hours: 156, participants: 24, description: "6.5 hrs/person. 24 Frnds. Doctor's Care, Sun Valley Community Center, Dumb Friends League.", location: "Multiple Denver locations"},
+            {id: 1006, name: "Sun Valley Community Center", organization: "Sun Valley Community Center", date: "2022-06-18", hours: 21, participants: 7, description: "3 hrs/person. 5 Frnds + 2 guests.", location: "Sun Valley, Denver"},
+            {id: 1007, name: "Food Bank of the Rockies", organization: "Food Bank of the Rockies", date: "2022-07-16", hours: 3.25, participants: 1, description: "3.25 hrs/person. 1 Frnd.", location: "Denver, CO"},
+            {id: 1008, name: "Operation Gratitude", organization: "Operation Gratitude", date: "2022-08-20", hours: 20, participants: 20, description: "1 hr/person. 25+ bracelets made by 20 Frnds.", location: "In-office"},
+            {id: 1009, name: "Food for Thought", organization: "Food for Thought", date: "2022-09-16", hours: 22, participants: 11, description: "2 hrs/person. 11 Frnds.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1010, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2022-10-22", hours: 10, participants: 4, description: "2.5 hrs/person. 3 Frnds + 1 guest.", location: "Red Rocks, CO"},
+            {id: 1011, name: "Holidays for Kids - Amp the Cause", organization: "Amp the Cause", date: "2022-11-19", hours: 27, participants: 9, description: "3 hrs/person. 9 Frnds. Raised over $1600 via silent auction.", location: "In-office, Denver"},
+            {id: 1012, name: "Adopt an Angel - Salvation Army", organization: "Salvation Army", date: "2022-12-10", hours: 2, participants: 20, description: "20+ Frnds adopted more than 30 angels. Over $3500 donated in gifts.", location: "Denver, CO"},
+            {id: 1013, name: "Denver Rescue Mission - Meal Service", organization: "Denver Rescue Mission", date: "2023-01-19", hours: 25, participants: 10, description: "2.5 hrs/person. Sophia, Paul, Katy, Muthia, Bella, Alex, Mark, Chris, Joey, Ali.", location: "Lawrence Street Community Center, Denver"},
+            {id: 1014, name: "Metro Caring", organization: "Metro Caring", date: "2023-02-17", hours: 21, participants: 7, description: "3 hrs/person. Mark, Joe Hendy, Laura Kroll, Ali Kuoch, Muthia, Sophia, Paul.", location: "Metro Caring, Denver"},
+            {id: 1015, name: "Safehouse Denver", organization: "Safehouse Denver", date: "2023-03-18", hours: 14, participants: 7, description: "2 hrs/person. Chelsea, Lisa, Joleen, Paul, Sophia (+1 guest), Kyra.", location: "Safehouse Denver"},
+            {id: 1016, name: "Project Angel Heart", organization: "Project Angel Heart", date: "2023-04-21", hours: 9, participants: 9, description: "1 hr/person. Chelsea, Joe H, Jordan, Chris L, Muthia, Sophia (+1), Jenifer P, Ali K.", location: "Project Angel Heart, Denver"},
+            {id: 1017, name: "Amp the Cause Community Day", organization: "Amp the Cause", date: "2023-05-20", hours: 162, participants: 27, description: "6 hrs/person. 27 volunteers across Doctors Care, There With Care, Mile High Early Learning.", location: "Multiple Denver locations"},
+            {id: 1018, name: "Colorado Pet Pantry", organization: "Colorado Pet Pantry", date: "2023-08-17", hours: 19.5, participants: 6, description: "3.25 hrs/person. Joe Hendy, Katy Angello, Ali Kuoch, Muthia, Abbie, Chris Quam.", location: "1755 South Zuni St, Denver, CO 80219"},
+            {id: 1019, name: "The Greenway Foundation", organization: "The Greenway Foundation", date: "2023-09-23", hours: 21, participants: 6, description: "3.5 hrs/person. Chelsea, Chris Q, Dan, Mark, Derek, Cally.", location: "South Platte River, Denver"},
+            {id: 1020, name: "Food Bank of the Rockies", organization: "Food Bank of the Rockies", date: "2023-10-24", hours: 16.25, participants: 5, description: "3.25 hrs/person. Joe H, Chelsea, Ali K, Miran G, Derek G.", location: "Food Bank of the Rockies, Denver"},
+            {id: 1021, name: "Food for Thought", organization: "Food for Thought", date: "2023-11-10", hours: 12, participants: 6, description: "2 hrs/person. Laura, Miran, Derek, Ali, Cliff, Joey.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1022, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2023-12-20", hours: 12.5, participants: 5, description: "2.5 hrs/person. Chelsea (+2 guests), Mark, Joey (+1), Abbie, Chris Q. Plus Adopt-an-Angel: 36 angels adopted.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1023, name: "Metro Caring", organization: "Metro Caring", date: "2024-01-25", hours: 15, participants: 6, description: "2.5 hrs/person. Joe Hendy, Ali Kuoch, Natalie Ulfig, Lisa, Chelsea, Cally Macumber.", location: "Metro Caring, Denver"},
+            {id: 1024, name: "Food For Thought", organization: "Food for Thought", date: "2024-03-01", hours: 18, participants: 9, description: "2 hrs/person. Christopher Q, Lisa, Cori, Joleen, Dan, Erin, Miran, Paul, Chelsea.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1025, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2024-03-30", hours: 15, participants: 6, description: "2.5 hrs/person. LeRoy (+1), Erin (+1), Joey (+1).", location: "Red Rocks Upper North Lot"},
+            {id: 1026, name: "Earth Day @ Montbello Central Park", organization: "Denver Parks and Rec", date: "2024-04-22", hours: 30, participants: 10, description: "3 hrs/person. Ali, Erin, Miran, Vahan, Taylor M, Joey, Paul, Chris Chin, Chelsea. Mulching, debris removal, weeding.", location: "Montbello Central Park, Denver"},
+            {id: 1027, name: "Greenway Foundation - Spring Stewardship", organization: "The Greenway Foundation", date: "2024-05-11", hours: 6, participants: 2, description: "3 hrs/person. Mark, Ali. Fishback Park restoration.", location: "Fishback Park, Downtown Denver"},
+            {id: 1028, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2024-06-29", hours: 10, participants: 4, description: "2.5 hrs/person. Mark, Joey (+2 guests).", location: "Red Rocks Upper North Lot"},
+            {id: 1029, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2024-07-26", hours: 30, participants: 12, description: "2.5 hrs/person. Chelsea, Erin, Ali, Muthia, Paul, Taylor, Cori, Joleen, LeRoy, Mark, Andy (+1). Cooking breakfast.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1030, name: "Food For Thought", organization: "Food for Thought", date: "2024-08-23", hours: 18, participants: 9, description: "2 hrs/person. Chelsea, Cori, Miran, Derek, Erin, Leroy, Ali, Joey, Paul.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1031, name: "3rd Annual Day of Service - United Way", organization: "United Way Denver", date: "2024-09-13", hours: 105, participants: 36, description: "3 hrs/person. 36 volunteers across Florence Crittenton, Mile High Behavioral Healthcare, Family Tree.", location: "Multiple Denver locations"},
+            {id: 1032, name: "Samaritan House", organization: "Samaritan House", date: "2024-10-19", hours: 12, participants: 4, description: "3 hrs/person. Paul, Cori, Kiana, Mark. Outdoor work, power wash, painting.", location: "4330 48th Avenue, Denver, CO 80205"},
+            {id: 1033, name: "Denver Rescue Mission", organization: "Denver Rescue Mission", date: "2024-11-11", hours: 21, participants: 7, description: "3 hrs/person. Paul, Mark, Lisa, Joey, C Lee, Ryan, Steve. Dinner meal service.", location: "2222 Lawrence St, Denver, CO 80205"},
+            {id: 1034, name: "Ronald McDonald House + Adopt-an-Angel", organization: "Ronald McDonald House", date: "2024-12-13", hours: 15, participants: 6, description: "2.5 hrs/person. Chelsea, Paul, Michele, Joey (+1), Ali (+2), Erin, Cole. Plus Adopt-an-Angel: 40 angels.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1035, name: "Project Angel Heart - Meal Delivery", organization: "Project Angel Heart", date: "2025-01-24", hours: 22.5, participants: 9, description: "2.5 hrs/person. Chelsea, Michele, Alison (+1), Paul, Chris Chin, Chris Quam, Jack, Steve. Meal delivery to clients.", location: "4950 Washington St Suite 200, Denver, CO 80216"},
+            {id: 1036, name: "Food For Thought", organization: "Food for Thought", date: "2025-02-28", hours: 8, participants: 4, description: "2 hrs/person. Cori, Lisa, Michele, LeRoy. Walking and bagging meals.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1037, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2025-03-29", hours: 9, participants: 3, description: "3 hrs/person. Mark, Joey, Paul.", location: "Red Rocks Upper North Lot"},
+            {id: 1038, name: "Florence Crittenton Services", organization: "Florence Crittenton Services", date: "2025-04-11", hours: 25, participants: 10, description: "2.5 hrs/person. Chelsea (+1), LeRoy, Nick, Jack, Alison, Michele, Cori, Joleen, Natalie. Sorting/organizing basic needs store.", location: "96 S. Zuni St, Denver, CO 80223"},
+            {id: 1039, name: "Denver Rescue Mission", organization: "Denver Rescue Mission", date: "2025-05-28", hours: 18, participants: 6, description: "3 hrs/person. Joey (+1), C Lee, Paul, Chelsea, Steve. Dinner meal service at Lawrence St Community Center.", location: "2222 Lawrence St, Denver, CO 80205"},
+            {id: 1040, name: "Feed the City", organization: "Feed the City / Tango Charities", date: "2025-06-29", hours: 3.5, participants: 7, description: "0.5 hrs/person. Chelsea, Mark, Chris Lee, Jabreesha, Emily, Jasmine, Paul. Making meals for people in need.", location: "14694 Orchard Pkwy Suite 400, Westminster, CO"},
+            {id: 1041, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2025-07-25", hours: 32.5, participants: 13, description: "2.5 hrs/person. Chelsea, Leah, Erin (+1), Dave, Anne (+1), Taylor, Andy (+1), Chris Q, Lamont, Laura D. Cooking breakfast.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1042, name: "Greenway Foundation", organization: "The Greenway Foundation", date: "2025-08-06", hours: 4, participants: 2, description: "2 hrs/person. Paul, Mark. Cleaning up the riverside trail at Commons Park.", location: "Commons Park, Denver"},
+            {id: 1043, name: "4th Annual Day of Service - United Way", organization: "United Way Denver", date: "2025-09-19", hours: 129, participants: 43, description: "3 hrs/person. 43 volunteers across WeeCycle, Florence Crittenton, Family Tree, Mile High Behavioral Healthcare, Thorne Nature Experience.", location: "Multiple Denver/Boulder locations"},
+            {id: 1044, name: "Food For Thought", organization: "Food for Thought", date: "2025-10-24", hours: 8, participants: 4, description: "2 hrs/person. Chelsea, Dave, Joleen, Paul.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1045, name: "Metro Caring", organization: "Metro Caring", date: "2025-11-25", hours: 15, participants: 6, description: "2.5 hrs/person. Chelsea, Laura D, Joey, Dave L, Paul, Mark.", location: "Metro Caring, Denver"},
+            {id: 1046, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2025-12-19", hours: 30, participants: 12, description: "2.5 hrs/person. Chelsea, Erin, Alison, Andy (+2), Natalie, Leah, Nick, Paul, Bella, Vienna. Cooking breakfast.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1047, name: "Adopt an Angel - Salvation Army", organization: "Salvation Army", date: "2025-12-01", hours: 2, participants: 26, description: "48 angels adopted by 26 team members. Chelsea (6), Alison (6), Paul (2), Jabreesha (5), and 22 others.", location: "Salvation Army, Denver"},
+            {id: 1048, name: "Food for Thought", organization: "Food for Thought", date: "2026-01-30", hours: 4, participants: 2, description: "2 hrs/person. Joey, Dave. Walking and bagging meals.", location: "1600 W. Colfax Ave, Denver, CO 80204"},
+            {id: 1049, name: "Denver Rescue Mission", organization: "Denver Rescue Mission", date: "2026-02-19", hours: 12, participants: 6, description: "2 hrs/person. Mark, Steve, Chelsea, Dave, Paul, Alex. Providing warm meals to families in need.", location: "2222 Lawrence St, Denver, CO 80205"},
+            {id: 1050, name: "Friends of Red Rocks", organization: "Friends of Red Rocks", date: "2026-03-28", hours: 9, participants: 3, description: "3 hrs/person. Joey (+1), Dave.", location: "Red Rocks Upper North Lot"},
+            {id: 1051, name: "Denver Parks and Rec - Earth Day", organization: "Denver Parks and Rec", date: "2026-04-22", hours: 45, participants: 15, description: "3 hrs/person. Chelsea, Mark, Dave, Joey, Taylor, Alison, Erin, Vienna, Jack, Ben, Cori, LeRoy, Nick, Bella, Chris Q.", location: "Denver Parks"},
+            {id: 1052, name: "Colorado Pet Pantry", organization: "Colorado Pet Pantry", date: "2026-05-31", hours: 18, participants: 6, description: "3 hrs/person. Chris Q, Laura D, Tiara T, Merlin M, Steve S (+1 guest).", location: "2830 S. Zuni St, Englewood, CO 80110"},
+            {id: 1053, name: "The Greenway Foundation", organization: "The Greenway Foundation", date: "2026-06-24", hours: 12, participants: 4, description: "3 hrs/person. Chelsea, Nick, Steve, Paul, Lisa. Trash pick up and riverside cleanup.", location: "Commons Park, Denver"},
+            {id: 1054, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2026-07-19", hours: 2.5, participants: 1, description: "2.5 hrs. Chelsea. Cooking breakfast for residents.", location: "1300 E. 21st Ave, Denver, CO 80205"}
+        ];
+
         function loadEvents() {
-            const stored = localStorage.getItem('volunteerEvents');
+            const stored = localStorage.getItem('volunteerEventsEnriched');
             if (stored) {
                 events = JSON.parse(stored);
+                updateStats();
+                renderEvents();
+                updateFilters();
             } else {
-                // Initialize with data from CSVs only
-                events = [
-                    // Colorado Pet Pantry - May 2026 (from CSV)
-                    {
-                        id: Date.now() + 1,
-                        name: "Colorado Pet Pantry Volunteer Day",
-                        organization: "Colorado Pet Pantry",
-                        date: "2026-05-31",
-                        hours: 3,
-                        participants: 6,
-                        description: "Frndly TV team volunteer event: Chris Q, Laura D, Tiara T, Merlin M, Steve S (with 1 guest). Total impact: 18 hours",
-                        location: "2830 S. Zuni St. Englewood, CO 80110"
-                    },
-                    // Adopt an Angel - Salvation Army December (from CSV)
-                    {
-                        id: Date.now() + 2,
-                        name: "Adopt an Angel - Holiday Gift Drive",
-                        organization: "Salvation Army",
-                        date: "2025-12-15",
-                        hours: 2,
-                        participants: 26,
-                        description: "48 angels adopted by Frndly TV team members including Chelsea (6), Alison (6), Paul (2), Cori (1), McKenna (2), Mark (1), Nick (1), John G (1), Laurie (1), Leah (2), Erin (1), LeRoy (2), Natalie (2), Taylor (1), Alex Z (1), Cliff (1), Paul (1), Lisa (1), C Lee (2), Taylor/Kiana (1), Cory (1), Joey (2), Matt Lozier (1), Jabreesha (5), Jen R (2), Dave L (1)",
-                        location: "Salvation Army Denver"
-                    }
-                ];
+                events = JSON.parse(JSON.stringify(FULL_HISTORY));
                 saveEvents();
             }
         }
 
-        // Save events to localStorage
+        function resetToFullHistory() {
+            if (confirm('Reset to full history? This will restore all 54 events from 2022-2026 and remove any custom entries.')) {
+                events = JSON.parse(JSON.stringify(FULL_HISTORY));
+                saveEvents();
+            }
+        }
+
         function saveEvents() {
-            localStorage.setItem('volunteerEvents', JSON.stringify(events));
+            localStorage.setItem('volunteerEventsEnriched', JSON.stringify(events));
             updateStats();
             renderEvents();
             updateFilters();
         }
 
-        // Update statistics
         function updateStats() {
             const totalEvents = events.length;
             const totalHours = events.reduce((sum, e) => sum + (parseFloat(e.hours) || 0), 0);
             const totalParticipants = events.reduce((sum, e) => sum + (parseInt(e.participants) || 0), 0);
             const uniqueOrgs = new Set(events.map(e => e.organization));
-
             document.getElementById('totalEvents').textContent = totalEvents;
             document.getElementById('totalHours').textContent = totalHours.toFixed(1);
             document.getElementById('totalParticipants').textContent = totalParticipants;
             document.getElementById('totalOrgs').textContent = uniqueOrgs.size;
         }
 
-        // Update filter dropdowns
         function updateFilters() {
-            // Organization filter
             const uniqueOrgs = [...new Set(events.map(e => e.organization))].sort();
             const orgFilter = document.getElementById('orgFilter');
             const currentOrgValue = orgFilter.value;
@@ -823,7 +381,6 @@
             });
             orgFilter.value = currentOrgValue;
 
-            // Year filter
             const uniqueYears = [...new Set(events.map(e => new Date(e.date).getFullYear()))].sort().reverse();
             const yearFilter = document.getElementById('yearFilter');
             const currentYearValue = yearFilter.value;
@@ -837,7 +394,6 @@
             yearFilter.value = currentYearValue;
         }
 
-        // Render events list
         function renderEvents() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const orgFilter = document.getElementById('orgFilter').value;
@@ -849,48 +405,32 @@
                     event.name.toLowerCase().includes(searchTerm) ||
                     event.organization.toLowerCase().includes(searchTerm) ||
                     (event.description && event.description.toLowerCase().includes(searchTerm));
-
                 const matchesOrg = !orgFilter || event.organization === orgFilter;
                 const matchesYear = !yearFilter || new Date(event.date).getFullYear().toString() === yearFilter;
-
                 return matchesSearch && matchesOrg && matchesYear;
             });
 
-            // Sort events
             filtered.sort((a, b) => {
                 switch(sortFilter) {
-                    case 'date-desc':
-                        return new Date(b.date) - new Date(a.date);
-                    case 'date-asc':
-                        return new Date(a.date) - new Date(b.date);
-                    case 'hours-desc':
-                        return b.hours - a.hours;
-                    case 'hours-asc':
-                        return a.hours - b.hours;
-                    default:
-                        return new Date(b.date) - new Date(a.date);
+                    case 'date-desc': return new Date(b.date) - new Date(a.date);
+                    case 'date-asc': return new Date(a.date) - new Date(b.date);
+                    case 'hours-desc': return b.hours - a.hours;
+                    case 'hours-asc': return a.hours - b.hours;
+                    default: return new Date(b.date) - new Date(a.date);
                 }
             });
 
             const eventList = document.getElementById('eventList');
             eventList.innerHTML = '';
-
             if (filtered.length === 0) {
                 eventList.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">No events found</p>';
                 return;
             }
-
             filtered.forEach(event => {
                 const eventEl = document.createElement('div');
                 eventEl.className = 'event-item';
-
                 const date = new Date(event.date + 'T00:00:00');
-                const formattedDate = date.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-
+                const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 eventEl.innerHTML = `
                     <div class="event-header">
                         <div>
@@ -904,21 +444,19 @@
                     </div>
                     <div class="event-date">${formattedDate}</div>
                     ${event.description ? `<div class="event-details">${event.description}</div>` : ''}
-                    ${event.location ? `<div class="event-details">📍 ${event.location}</div>` : ''}
+                    ${event.location ? `<div class="event-details">&#x1F4CD; ${event.location}</div>` : ''}
                     <div class="event-stats">
-                        <span>⏱️ ${event.hours} hours</span>
-                        <span>👥 ${event.participants} participants</span>
-                        <span>💪 ${(event.hours * event.participants)} total impact hours</span>
+                        <span>&#x23F1;&#xFE0F; ${event.hours} hours</span>
+                        <span>&#x1F465; ${event.participants} participants</span>
+                        <span>&#x1F4AA; ${(event.hours * event.participants).toFixed(0)} impact hours</span>
                     </div>
                 `;
                 eventList.appendChild(eventEl);
             });
         }
 
-        // Handle form submission
         document.getElementById('eventForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const event = {
                 id: editingId || Date.now(),
                 name: document.getElementById('eventName').value,
@@ -929,7 +467,6 @@
                 description: document.getElementById('description').value,
                 location: document.getElementById('location').value
             };
-
             if (editingId) {
                 const index = events.findIndex(e => e.id === editingId);
                 events[index] = event;
@@ -939,12 +476,10 @@
             } else {
                 events.push(event);
             }
-
             saveEvents();
             this.reset();
         });
 
-        // Cancel edit
         document.getElementById('cancelBtn').addEventListener('click', function() {
             editingId = null;
             document.getElementById('eventForm').reset();
@@ -952,11 +487,9 @@
             this.style.display = 'none';
         });
 
-        // Edit event
         function editEvent(id) {
             const event = events.find(e => e.id === id);
             if (!event) return;
-
             editingId = id;
             document.getElementById('eventName').value = event.name;
             document.getElementById('organization').value = event.organization;
@@ -965,15 +498,11 @@
             document.getElementById('participants').value = event.participants;
             document.getElementById('description').value = event.description || '';
             document.getElementById('location').value = event.location || '';
-
             document.getElementById('submitBtn').textContent = 'Update Event';
             document.getElementById('cancelBtn').style.display = 'inline-block';
-
-            // Scroll to form
             document.querySelector('.panel').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Delete event
         function deleteEvent(id) {
             if (confirm('Are you sure you want to delete this event?')) {
                 events = events.filter(e => e.id !== id);
@@ -981,166 +510,362 @@
             }
         }
 
-        // Search and filter handlers
         document.getElementById('searchInput').addEventListener('input', renderEvents);
         document.getElementById('orgFilter').addEventListener('change', renderEvents);
         document.getElementById('yearFilter').addEventListener('change', renderEvents);
         document.getElementById('sortFilter').addEventListener('change', renderEvents);
 
-        // Tab switching
         function switchTab(tab) {
-            const trackerView = document.getElementById('trackerView');
-            const impactView = document.getElementById('impactView');
+            const views = { tracker: 'trackerView', impact: 'impactView', timeline: 'timelineView', photos: 'photosView' };
+            const tabOrder = ['tracker', 'impact', 'timeline', 'photos'];
             const tabs = document.querySelectorAll('.tab-btn');
-
-            if (tab === 'tracker') {
-                trackerView.style.display = 'block';
-                impactView.style.display = 'none';
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                trackerView.style.display = 'none';
-                impactView.style.display = 'block';
-                tabs[0].classList.remove('active');
-                tabs[1].classList.add('active');
-                renderImpactView();
-            }
+            Object.values(views).forEach(id => document.getElementById(id).style.display = 'none');
+            tabs.forEach(t => t.classList.remove('active'));
+            document.getElementById(views[tab]).style.display = 'block';
+            tabs[tabOrder.indexOf(tab)].classList.add('active');
+            if (tab === 'impact') renderImpactView();
+            if (tab === 'timeline') renderTimeline();
+            if (tab === 'photos') renderCollage();
         }
 
-        // Render impact view
-        function renderImpactView() {
-            const totalImpact = events.reduce((sum, e) => sum + (e.hours * e.participants), 0);
-            const totalEvents = events.length;
-            const totalHours = events.reduce((sum, e) => sum + parseFloat(e.hours), 0);
-            const totalParticipants = events.reduce((sum, e) => sum + parseInt(e.participants), 0);
+        let currentOrgSort = 'hours';
 
-            // Update thermometer
-            const maxThermometer = 250;
-            const fillPercentage = Math.min((totalImpact / maxThermometer) * 100, 100);
-            document.getElementById('thermometerFill').style.height = fillPercentage + '%';
-            document.getElementById('totalImpactHours').textContent = totalImpact.toFixed(0);
+        function setOrgSort(mode) {
+            currentOrgSort = mode;
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sortBy' + mode.charAt(0).toUpperCase() + mode.slice(1)).classList.add('active');
+            renderOrgBars(buildOrgImpact());
+        }
 
-            // Organization breakdown
+        const BAR_PALETTE = [
+            'linear-gradient(90deg,#8B9FD9,#a8b8e8)',
+            'linear-gradient(90deg,#d4617a,#e08090)',
+            'linear-gradient(90deg,#6ab0c8,#8ac8e0)',
+            'linear-gradient(90deg,#9b7ecb,#b898e0)',
+            'linear-gradient(90deg,#6a9f6a,#88c088)',
+            'linear-gradient(90deg,#c87a40,#e09860)',
+            'linear-gradient(90deg,#7ab8a8,#98d0c0)',
+            'linear-gradient(90deg,#b87890,#d090a8)',
+            'linear-gradient(90deg,#8890c8,#a0a8e0)',
+            'linear-gradient(90deg,#a0b060,#c0c878)',
+        ];
+
+        function buildOrgImpact() {
             const orgImpact = {};
             events.forEach(event => {
                 if (!orgImpact[event.organization]) {
-                    orgImpact[event.organization] = {
-                        hours: 0,
-                        events: 0,
-                        participants: 0,
-                        impact: 0
-                    };
+                    orgImpact[event.organization] = { hours: 0, events: 0, participants: 0, impact: 0 };
                 }
                 orgImpact[event.organization].hours += parseFloat(event.hours);
                 orgImpact[event.organization].events += 1;
                 orgImpact[event.organization].participants += parseInt(event.participants);
                 orgImpact[event.organization].impact += event.hours * event.participants;
             });
+            return orgImpact;
+        }
 
+        function renderOrgBars(orgImpact) {
+            const sorted = Object.keys(orgImpact).sort((a, b) => orgImpact[b][currentOrgSort] - orgImpact[a][currentOrgSort]);
+            const maxVal = orgImpact[sorted[0]][currentOrgSort];
+            const unitLabel = { impact: 'participants', events: 'events', hours: 'volunteer hours' }[currentOrgSort];
+
+            const barList = document.getElementById('orgBarList');
+            barList.innerHTML = '';
+            sorted.forEach((org, i) => {
+                const data = orgImpact[org];
+                const val = data[currentOrgSort];
+                const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                const color = BAR_PALETTE[i % BAR_PALETTE.length];
+                const displayVal = currentOrgSort === 'hours' ? (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) : Math.round(val);
+                const sublabel = currentOrgSort === 'impact'
+                    ? `${data.events} events &bull; ${data.hours.toFixed(0)} hrs`
+                    : currentOrgSort === 'events'
+                        ? `${data.hours.toFixed(0)} vol. hrs`
+                        : `${data.events} events`;
+
+                const row = document.createElement('div');
+                row.className = 'org-bar-row';
+                row.innerHTML = `
+                    <div class="org-bar-label" title="${org}">${org}</div>
+                    <div class="org-bar-track">
+                        <div class="org-bar-fill" style="width:0%;background:${color}" data-pct="${pct}">
+                            <span class="org-bar-sublabel">${sublabel}</span>
+                        </div>
+                    </div>
+                    <div class="org-bar-value">${displayVal} <span style="font-family:'Nunito',sans-serif;font-size:0.65em;color:#9aadcc;">${unitLabel}</span></div>
+                `;
+                barList.appendChild(row);
+            });
+
+            // Animate bars after paint
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    barList.querySelectorAll('.org-bar-fill').forEach(bar => {
+                        bar.style.width = bar.dataset.pct + '%';
+                    });
+                });
+            });
+        }
+
+        function renderImpactView() {
+            const totalImpact = events.reduce((sum, e) => sum + (e.hours * e.participants), 0);
+            const totalEvents = events.length;
+            const totalHours = events.reduce((sum, e) => sum + parseFloat(e.hours), 0);
+            const totalParticipants = events.reduce((sum, e) => sum + parseInt(e.participants), 0);
+
+            const orgImpact = buildOrgImpact();
+            renderOrgBars(orgImpact);
+
+            // Detail list below
             const orgList = document.getElementById('orgImpactList');
             orgList.innerHTML = '';
-
-            Object.keys(orgImpact).sort((a, b) => orgImpact[b].impact - orgImpact[a].impact).forEach(org => {
+            Object.keys(orgImpact).sort((a, b) => orgImpact[b].hours - orgImpact[a].hours).forEach(org => {
                 const data = orgImpact[org];
                 const item = document.createElement('div');
                 item.className = 'org-impact-item';
                 item.innerHTML = `
                     <div>
                         <div class="org-impact-name">${org}</div>
-                        <div class="org-impact-stats">${data.events} events • ${data.participants} participants • ${data.hours.toFixed(1)} hours</div>
+                        <div class="org-impact-stats">${data.events} event${data.events !== 1 ? 's' : ''} &bull; ${data.participants} participants</div>
                     </div>
-                    <div class="org-impact-hours">${data.impact.toFixed(0)}</div>
+                    <div style="text-align:right;">
+                        <div class="org-impact-hours">${data.hours % 1 === 0 ? data.hours.toFixed(0) : data.hours.toFixed(1)}</div>
+                        <div style="font-family:'Lato',sans-serif;font-size:0.7em;color:#9aadcc;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">volunteer hours</div>
+                    </div>
                 `;
                 orgList.appendChild(item);
             });
 
-            // Insights
-            const avgParticipants = totalEvents > 0 ? (totalParticipants / totalEvents).toFixed(1) : 0;
-            const avgHours = totalEvents > 0 ? (totalHours / totalEvents).toFixed(1) : 0;
-            const avgMultiplier = totalHours > 0 ? (totalImpact / totalHours).toFixed(1) : 0;
+            document.getElementById('insightAvgParticipants').textContent = totalEvents > 0 ? (totalParticipants / totalEvents).toFixed(1) : 0;
+            document.getElementById('insightAvgHours').textContent = totalEvents > 0 ? (totalHours / totalEvents).toFixed(1) : 0;
+            document.getElementById('insightMultiplier').textContent = totalHours > 0 ? (totalImpact / totalHours).toFixed(1) + 'x' : '0x';
 
             let biggestEvent = '-';
-            let biggestImpact = 0;
+            let maxImp = 0;
             events.forEach(e => {
-                const impact = e.hours * e.participants;
-                if (impact > biggestImpact) {
-                    biggestImpact = impact;
+                if (e.hours * e.participants > maxImp) {
+                    maxImp = e.hours * e.participants;
                     biggestEvent = e.name;
                 }
             });
-            if (biggestEvent.length > 20) {
-                biggestEvent = biggestEvent.substring(0, 18) + '...';
-            }
-
-            document.getElementById('insightAvgParticipants').textContent = avgParticipants;
-            document.getElementById('insightAvgHours').textContent = avgHours;
-            document.getElementById('insightMultiplier').textContent = avgMultiplier + 'x';
-            document.getElementById('insightBiggestEvent').textContent = biggestEvent;
+            document.getElementById('insightBiggestEvent').textContent = biggestEvent.length > 20 ? biggestEvent.substring(0, 18) + '...' : biggestEvent;
         }
 
-        // Modal functions
-        function showEventModal(event) {
-            const modal = document.getElementById('eventModal');
-            const modalBody = document.getElementById('modalBody');
-
-            const date = new Date(event.date + 'T00:00:00');
-            const formattedDate = date.toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-            });
-
-            modalBody.innerHTML = `
-                <h3>${event.name}</h3>
-                <p><strong>Organization:</strong> ${event.organization}</p>
-                <p><strong>Date:</strong> ${formattedDate}</p>
-                <p><strong>Hours:</strong> ${event.hours}</p>
-                <p><strong>Participants:</strong> ${event.participants}</p>
-                <p><strong>Total Impact Hours:</strong> ${event.hours * event.participants}</p>
-                ${event.location ? `<p><strong>Location:</strong> ${event.location}</p>` : ''}
-                ${event.description ? `<p><strong>Description:</strong> ${event.description}</p>` : ''}
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-edit" onclick="closeModal(); editEvent(${event.id})">Edit</button>
-                    <button class="btn btn-delete" onclick="closeModal(); deleteEvent(${event.id})">Delete</button>
-                </div>
-            `;
-
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('eventModal').classList.remove('active');
-        }
-
-        // Export to CSV
         function exportData() {
             let csv = 'Event Name,Organization,Date,Hours,Participants,Total Impact Hours,Location,Description\n';
-
             events.forEach(event => {
-                const row = [
-                    event.name,
-                    event.organization,
-                    event.date,
-                    event.hours,
-                    event.participants,
-                    event.hours * event.participants,
-                    event.location || '',
-                    event.description || ''
-                ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
+                const row = [event.name, event.organization, event.date, event.hours, event.participants, event.hours * event.participants, event.location || '', event.description || '']
+                    .map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
                 csv += row + '\n';
             });
-
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `volunteer-tracker-${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = 'volunteer-tracker-enriched.csv';
             a.click();
-            window.URL.revokeObjectURL(url);
         }
 
-        // Initialize
+        // ---- TIMELINE ----
+        const ORG_COLORS = {};
+        const COLOR_POOL = ['#8B9FD9','#d4617a','#6ab0c8','#9b7ecb','#6a9f6a','#c87a40','#7ab8a8','#b87890','#a0b060','#c85080','#5098c8','#e0a030'];
+        function getOrgColor(org) {
+            if (!ORG_COLORS[org]) {
+                const idx = Object.keys(ORG_COLORS).length % COLOR_POOL.length;
+                ORG_COLORS[org] = COLOR_POOL[idx];
+            }
+            return ORG_COLORS[org];
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '';
+            const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const byYear = {};
+            sorted.forEach(e => {
+                const y = new Date(e.date + 'T00:00:00').getFullYear();
+                if (!byYear[y]) byYear[y] = [];
+                byYear[y].push(e);
+            });
+
+            Object.keys(byYear).sort((a, b) => b - a).forEach(year => {
+                const evts = byYear[year];
+                const yearHours = evts.reduce((s, e) => s + parseFloat(e.hours), 0);
+                const yearParticipants = evts.reduce((s, e) => s + parseInt(e.participants), 0);
+
+                const group = document.createElement('div');
+                group.className = 'timeline-year-group';
+                group.innerHTML = `
+                    <div class="timeline-year-header">
+                        <div class="timeline-year-badge">${year}</div>
+                        <div class="timeline-year-meta">${evts.length} event${evts.length !== 1 ? 's' : ''} &bull; ${yearHours % 1 === 0 ? yearHours : yearHours.toFixed(1)} hrs &bull; ${yearParticipants} participants</div>
+                        <div class="timeline-year-line"></div>
+                    </div>
+                    <div class="timeline-spine" id="spine-${year}"></div>
+                `;
+                container.appendChild(group);
+
+                const spine = group.querySelector(`#spine-${year}`);
+                evts.forEach(event => {
+                    const date = new Date(event.date + 'T00:00:00');
+                    const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    const color = getOrgColor(event.organization);
+                    const card = document.createElement('div');
+                    card.className = 'timeline-event';
+                    card.innerHTML = `
+                        <div class="timeline-card" style="border-left: 4px solid ${color}">
+                            <div class="timeline-card-top">
+                                <div class="timeline-event-title">${event.name}</div>
+                                <div class="timeline-event-date">${formattedDate}</div>
+                            </div>
+                            <div class="timeline-event-org" style="color:${color}">${event.organization}</div>
+                            <div class="timeline-event-meta">
+                                <span>&#x23F1; ${event.hours} hrs</span>
+                                <span>&#x1F465; ${event.participants} participants</span>
+                                <span>&#x1F4AA; ${(event.hours * event.participants).toFixed(0)} impact hrs</span>
+                            </div>
+                            ${event.description ? `<div class="timeline-event-desc">${event.description}</div>` : ''}
+                            ${event.location ? `<div class="timeline-event-loc">&#x1F4CD; ${event.location}</div>` : ''}
+                        </div>
+                    `;
+                    spine.appendChild(card);
+                });
+            });
+        }
+
+        // ---- PHOTO COLLAGE (IndexedDB — no 5MB storage limit) ----
+        let photos = [];
+        let photoDB = null;
+
+        function openPhotoDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open('volunteerPhotos', 1);
+                req.onupgradeneeded = e => {
+                    e.target.result.createObjectStore('photos', { keyPath: 'id' });
+                };
+                req.onsuccess = e => { photoDB = e.target.result; resolve(); };
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        function loadPhotosFromDB() {
+            return new Promise((resolve, reject) => {
+                const tx = photoDB.transaction('photos', 'readonly');
+                const req = tx.objectStore('photos').getAll();
+                req.onsuccess = e => resolve(e.target.result || []);
+                req.onerror = e => reject(e.target.error);
+            });
+        }
+
+        function savePhotosToDB() {
+            return new Promise((resolve, reject) => {
+                const tx = photoDB.transaction('photos', 'readwrite');
+                const store = tx.objectStore('photos');
+                store.clear();
+                photos.forEach(p => store.put(p));
+                tx.oncomplete = resolve;
+                tx.onerror = e => reject(e.target.error);
+            });
+        }
+
+        function renderCollage() {
+            const grid = document.getElementById('collageGrid');
+            const empty = document.getElementById('collageEmpty');
+            document.getElementById('photoCount').textContent = photos.length + ' photo' + (photos.length !== 1 ? 's' : '');
+            grid.innerHTML = '';
+            if (photos.length === 0) { empty.style.display = 'block'; return; }
+            empty.style.display = 'none';
+            photos.forEach((photo, i) => {
+                const item = document.createElement('div');
+                item.className = 'collage-item';
+                item.innerHTML = `
+                    <img class="collage-img" src="${photo.src}" alt="${photo.caption || ''}">
+                    <div class="collage-item-actions">
+                        <button class="collage-delete-btn" onclick="deletePhoto(${i})">Remove</button>
+                    </div>
+                    <textarea class="collage-caption" placeholder="Add a caption..." rows="1"
+                        onblur="updateCaption(${i}, this.value)"
+                        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+                    >${photo.caption || ''}</textarea>
+                `;
+                grid.appendChild(item);
+            });
+        }
+
+        function deletePhoto(index) {
+            photos.splice(index, 1);
+            savePhotosToDB().then(() => renderCollage());
+        }
+
+        function updateCaption(index, value) {
+            if (photos[index]) {
+                photos[index].caption = value;
+                savePhotosToDB();
+            }
+        }
+
+        function clearAllPhotos() {
+            if (photos.length === 0) return;
+            if (confirm('Remove all ' + photos.length + ' photos from the collage?')) {
+                photos = [];
+                savePhotosToDB().then(() => renderCollage());
+            }
+        }
+
+        function handlePhotoFiles(files) {
+            const readers = Array.from(files).map(file => new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => resolve({
+                    src: e.target.result,
+                    caption: '',
+                    id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9)
+                });
+                reader.readAsDataURL(file);
+            }));
+            Promise.all(readers).then(newPhotos => {
+                photos = photos.concat(newPhotos);
+                savePhotosToDB().then(() => renderCollage());
+            });
+        }
+
+        document.getElementById('photoFileInput').addEventListener('change', function() {
+            if (this.files.length) handlePhotoFiles(this.files);
+            this.value = '';
+        });
+
+        const uploadZone = document.getElementById('uploadZone');
+        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+            if (files.length) handlePhotoFiles(files);
+        });
+
+        openPhotoDB()
+            .then(() => loadPhotosFromDB())
+            .then(stored => {
+                // Migrate any photos previously saved to localStorage
+                if (stored.length === 0) {
+                    const legacy = localStorage.getItem('volunteerPhotos');
+                    if (legacy) {
+                        try {
+                            const parsed = JSON.parse(legacy);
+                            if (parsed.length) {
+                                photos = parsed.map(p => ({
+                                    ...p,
+                                    id: p.id ? String(p.id) : Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9)
+                                }));
+                                return savePhotosToDB().then(() => { localStorage.removeItem('volunteerPhotos'); });
+                            }
+                        } catch(e) {}
+                    }
+                }
+                photos = stored;
+            })
+            .catch(err => { console.warn('IndexedDB unavailable, photos will not persist:', err); photos = []; });
+
         loadEvents();
     </script>
 </body>
