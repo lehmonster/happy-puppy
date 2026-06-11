@@ -172,7 +172,8 @@
       <div id="shopping-list"></div>
       <div class="open-all-row hidden" id="fridge-open-all-row">
         <button class="btn btn-safeway" onclick="openAllInSafeway('fridge')">Open all in Safeway</button>
-        <span class="open-all-note">Opens each item in a new Safeway search tab</span>
+        <button class="btn btn-outline" id="fridge-copy-btn" onclick="copyShoppingList('fridge')">📋 Copy list</button>
+        <span class="open-all-note">Opens each item in a new Safeway tab, or copy to paste into any grocery app</span>
       </div>
     </div>
 
@@ -204,7 +205,8 @@
       <div id="recipe-shopping-list"></div>
       <div class="open-all-row hidden" id="recipe-open-all-row">
         <button class="btn btn-safeway" onclick="openAllInSafeway('recipe')">Open all in Safeway</button>
-        <span class="open-all-note">Opens each missing ingredient in a new Safeway search tab</span>
+        <button class="btn btn-outline" id="recipe-copy-btn" onclick="copyShoppingList('recipe')">📋 Copy list</button>
+        <span class="open-all-note">Opens each item in a new Safeway tab, or copy to paste into any grocery app</span>
       </div>
       <div id="have-section" class="have-ingredients hidden">
         <div class="section-title" style="margin-bottom:0.5rem">Already have</div>
@@ -475,17 +477,41 @@ Rules:
     });
   }
 
+  function copyShoppingList(source) {
+    const items = source === 'fridge' ? fridgeShoppingItems : recipeShoppingItems;
+    const text = items.map(({ item, note }) => note ? `• ${item} (${note})` : `• ${item}`).join('\n');
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById(`${source}-copy-btn`);
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  }
+
   function isUrl(str) {
     return /^https?:\/\//i.test(str.trim());
   }
 
   async function fetchRecipeFromUrl(url) {
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const resp = await fetch(proxyUrl);
-    if (!resp.ok) throw new Error(`Couldn't fetch that page (${resp.status})`);
-    const data = await resp.json();
-    const html = data.contents;
-    if (!html) throw new Error('Page came back empty');
+    let html = null;
+
+    // Try corsproxy.io first (returns raw HTML)
+    try {
+      const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`,
+        { signal: AbortSignal.timeout(8000) });
+      if (r.ok) html = await r.text();
+    } catch {}
+
+    // Try allorigins as fallback (returns JSON wrapper)
+    if (!html) {
+      try {
+        const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+          { signal: AbortSignal.timeout(8000) });
+        if (r.ok) { const d = await r.json(); html = d.contents || null; }
+      } catch {}
+    }
+
+    if (!html) return null; // caller will fall back to Claude's training knowledge
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
@@ -512,13 +538,12 @@ Rules:
       } catch {}
     }
 
-    // Fallback: strip nav/scripts/styles, send body text to Claude and let it find the recipe
+    // Strip chrome, grab body text, let Claude find the ingredients
     ['script', 'style', 'nav', 'footer', 'header', 'aside', 'iframe'].forEach(tag =>
       doc.querySelectorAll(tag).forEach(el => el.remove())
     );
     const text = (doc.body?.innerText || '').replace(/\s{3,}/g, '\n\n').trim().slice(0, 4000);
-    if (!text) throw new Error("Couldn't extract any text from that page");
-    return text;
+    return text || null;
   }
 
   async function analyzeRecipe() {
@@ -545,16 +570,15 @@ Rules:
     const recipeLabel = document.getElementById('recipe-btn-label');
     recipeBtn.disabled = true;
 
+    const originalInput = recipe;
     if (isUrl(recipe)) {
       recipeLabel.innerHTML = '<span class="spinner"></span> Fetching recipe…';
-      try {
-        recipe = await fetchRecipeFromUrl(recipe);
-      } catch (e) {
-        document.getElementById('recipe-error').textContent = 'Couldn\'t fetch that URL: ' + e.message;
-        document.getElementById('recipe-error').classList.remove('hidden');
-        recipeLabel.textContent = 'Tell me what I need';
-        recipeBtn.disabled = false;
-        return;
+      const fetched = await fetchRecipeFromUrl(recipe);
+      if (fetched) {
+        recipe = fetched;
+      } else {
+        // Proxy failed — let Claude recall the recipe from training data
+        recipe = `Recipe URL: ${originalInput}\n\n(I wasn't able to load the page directly. If you recognize this URL or can infer the dish from it, please use your knowledge of the recipe's ingredients. Otherwise, ask the user to paste the ingredient list.)`;
       }
     }
 
