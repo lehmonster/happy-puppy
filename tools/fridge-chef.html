@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FridgeChef — What can I make?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', -apple-system, sans-serif; background: #FEFDFB; color: #1a1a1a; min-height: 100vh; }
+
+    .app { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .header {
+      background: linear-gradient(135deg, #fef5fb 0%, #fff8f5 25%, #fffef8 50%, #f5fbff 75%, #f8f5ff 100%);
+      border-radius: 20px;
+      padding: 1.5rem 1.75rem 1.35rem;
+      margin-bottom: 1.75rem;
+      border: 1.5px solid rgba(153,183,245,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before { content: '✷'; position: absolute; top: 14px; right: 24px; font-size: 28px; color: #F5793B; opacity: 0.22; pointer-events: none; }
+    .header::after { content: '✨'; position: absolute; bottom: 10px; right: 68px; font-size: 17px; opacity: 0.18; pointer-events: none; }
+    .header-icon { font-size: 1.75rem; display: block; margin-bottom: 0.3rem; }
+    .header h1 { font-family: 'Playfair Display', serif; font-style: italic; font-size: 2rem; font-weight: 600; color: #F296BD; letter-spacing: -0.01em; }
+    .header p { font-family: 'Nunito', sans-serif; font-size: 0.87rem; font-style: italic; color: #267F53; margin-top: 0.25rem; }
+
+    h2 { font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: #2a2030; }
+    p { font-size: 0.9rem; color: #555; line-height: 1.6; }
+
+    .card { background: #fff; border: 1px solid rgba(153,183,245,0.2); border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 1px 4px rgba(153,183,245,0.08); }
+
+    .api-section label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #333; }
+    .api-section input { width: 100%; padding: 0.6rem 0.85rem; border: 1.5px solid rgba(153,183,245,0.35); border-radius: 8px; font-size: 0.9rem; font-family: 'Nunito', inherit; outline: none; }
+    .api-section input:focus { border-color: #99B7F5; box-shadow: 0 0 0 3px rgba(153,183,245,0.2); }
+    .api-note { font-size: 0.78rem; color: #888; margin-top: 0.4rem; }
+    .api-note a { color: #99B7F5; }
+
+    .upload-zone { border: 2px dashed rgba(153,183,245,0.4); border-radius: 14px; padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .upload-zone:hover, .upload-zone.dragover { border-color: #99B7F5; background: rgba(153,183,245,0.06); }
+    .upload-zone .icon { font-size: 2.5rem; display: block; margin-bottom: 0.6rem; }
+    .upload-zone .primary { font-weight: 600; font-size: 0.95rem; color: #333; }
+    .upload-zone .secondary { font-size: 0.82rem; color: #888; margin-top: 0.25rem; }
+
+    .preview-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+    .preview-item { position: relative; }
+    .preview-item img { width: 110px; height: 90px; object-fit: cover; border-radius: 9px; border: 1px solid rgba(153,183,245,0.25); display: block; }
+    .preview-item .remove-btn { position: absolute; top: -7px; right: -7px; width: 22px; height: 22px; background: #F296BD; color: #fff; border: none; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.65rem 1.4rem; border-radius: 10px; font-size: 0.9rem; font-weight: 700; cursor: pointer; border: none; transition: opacity 0.15s, transform 0.1s; font-family: 'Nunito', inherit; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: #0c0810; color: #f0e8f4; }
+    .btn-primary:hover { background: #1a1020; }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .btn-outline { background: transparent; color: #7a5080; border: 1.5px solid rgba(153,183,245,0.5); }
+    .btn-outline:hover { background: rgba(153,183,245,0.07); }
+    .btn-safeway { background: #003087; color: #fff; font-size: 0.85rem; }
+    .btn-safeway:hover { background: #001d55; }
+
+    .analyze-row { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; flex-wrap: wrap; }
+
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(240,232,244,0.35); border-top-color: #f0e8f4; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #status-msg, #recipe-status { font-size: 0.85rem; color: #666; font-style: italic; }
+
+    .section-title { font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #99B7F5; margin-bottom: 0.75rem; }
+
+    .ingredients-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .ingredient-tag { background: rgba(38,127,83,0.1); color: #267F53; border-radius: 20px; padding: 0.3rem 0.75rem; font-size: 0.82rem; font-weight: 600; }
+
+    .meal-card { background: #fff; border: 1px solid rgba(153,183,245,0.18); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 0.9rem; box-shadow: 0 1px 3px rgba(153,183,245,0.07); }
+    .meal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .meal-name { font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; }
+    .meal-badge { font-family: 'Nunito', sans-serif; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+    .badge-easy { background: rgba(38,127,83,0.12); color: #267F53; }
+    .badge-medium { background: rgba(245,121,59,0.12); color: #c0631b; }
+    .badge-hard { background: rgba(242,150,189,0.15); color: #b0345a; }
+    .meal-desc { font-size: 0.85rem; color: #666; margin-top: 0.35rem; line-height: 1.5; }
+    .meal-missing { margin-top: 0.6rem; font-size: 0.82rem; color: #F5793B; }
+    .meal-missing span { font-weight: 700; }
+
+    .shopping-item { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid rgba(153,183,245,0.12); gap: 1rem; }
+    .shopping-item:last-child { border-bottom: none; }
+    .shopping-item-name { font-size: 0.9rem; font-weight: 600; flex: 1; }
+    .shopping-item-note { font-size: 0.78rem; color: #888; margin-top: 0.1rem; }
+    .store-links { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .store-btn { padding: 0.3rem 0.7rem; border-radius: 7px; font-size: 0.75rem; font-weight: 700; text-decoration: none; border: 1.5px solid; transition: opacity 0.15s; font-family: 'Nunito', sans-serif; }
+    .store-target { background: #fff; color: #cc0000; border-color: #cc0000; }
+    .store-target:hover { background: #fff5f5; }
+    .store-safeway { background: #fff; color: #003087; border-color: #003087; }
+    .store-safeway:hover { background: #f0f3ff; }
+
+    .recipe-divider { display: flex; align-items: center; gap: 0.75rem; margin: 2rem 0 1.5rem; }
+    .recipe-divider::before, .recipe-divider::after { content: ''; flex: 1; height: 1px; background: rgba(153,183,245,0.2); }
+    .recipe-divider span { font-family: 'Playfair Display', serif; font-style: italic; color: #F296BD; font-size: 1rem; white-space: nowrap; }
+
+    .recipe-section textarea { width: 100%; min-height: 130px; padding: 0.8rem 1rem; border: 1.5px solid rgba(153,183,245,0.35); border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 0.9rem; resize: vertical; outline: none; line-height: 1.6; color: #2a2030; }
+    .recipe-section textarea:focus { border-color: #99B7F5; box-shadow: 0 0 0 3px rgba(153,183,245,0.15); }
+
+    .fridge-ctx-note { font-size: 0.8rem; color: #267F53; font-style: italic; background: rgba(38,127,83,0.07); border-radius: 8px; padding: 0.45rem 0.85rem; margin-bottom: 1rem; display: inline-block; }
+    .no-fridge-note { font-size: 0.8rem; color: #888; font-style: italic; background: rgba(153,183,245,0.1); border-radius: 8px; padding: 0.45rem 0.85rem; margin-bottom: 1rem; display: inline-block; }
+
+    .open-all-row { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid rgba(153,183,245,0.15); display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .open-all-note { font-size: 0.78rem; color: #888; font-style: italic; }
+
+    .have-ingredients { margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid rgba(153,183,245,0.15); }
+
+    .hidden { display: none !important; }
+    .results-section { margin-top: 0.5rem; }
+
+    .error-box { background: rgba(242,150,189,0.1); border: 1px solid rgba(242,150,189,0.4); border-radius: 10px; padding: 0.9rem 1.1rem; color: #a32d2d; font-size: 0.88rem; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <span class="header-icon">🍳</span>
+    <h1>FridgeChef</h1>
+    <p>Snap your fridge & pantry — get meal ideas + a smart shopping list</p>
+  </div>
+
+  <div class="card api-section" id="api-card">
+    <h2>Setup — Anthropic API key</h2>
+    <p style="margin-bottom:0.9rem;">Your key is used locally (never sent anywhere except Anthropic's API). Saved in your browser for next time.</p>
+    <label for="api-key-input">API key</label>
+    <input type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" />
+    <div class="api-note">Get a key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> → API keys. Stays in this browser only.</div>
+  </div>
+
+  <div class="card">
+    <h2>📷 Upload photos</h2>
+    <p style="margin-bottom:1rem;">Add one or more photos of your fridge, pantry, or countertops.</p>
+
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+      <span class="icon">📁</span>
+      <div class="primary">Click to add photos</div>
+      <div class="secondary">or drag & drop — JPG, PNG, WEBP</div>
+    </div>
+    <input type="file" id="file-input" accept="image/*" multiple style="display:none" />
+
+    <div class="preview-grid" id="preview-grid"></div>
+
+    <div class="analyze-row">
+      <button class="btn btn-primary" id="analyze-btn" onclick="analyze()" disabled>
+        <span id="btn-label">Analyze my fridge</span>
+      </button>
+      <span id="status-msg"></span>
+    </div>
+
+    <div id="error-box" class="error-box hidden"></div>
+  </div>
+
+  <div id="results-section" class="hidden results-section">
+
+    <div class="card" id="ingredients-card">
+      <div class="section-title">Ingredients detected</div>
+      <div class="ingredients-list" id="ingredients-list"></div>
+    </div>
+
+    <div id="meals-section">
+      <div class="section-title" style="padding-left:0.25rem;">Meals you can make</div>
+      <div id="meals-list"></div>
+    </div>
+
+    <div class="card hidden" id="shopping-card">
+      <h2>🛒 Shopping list from fridge scan</h2>
+      <p style="margin-bottom:1rem; font-size:0.85rem;">Items needed for the suggested meals. Click to search, or open all in Safeway at once.</p>
+      <div id="shopping-list"></div>
+      <div class="open-all-row hidden" id="fridge-open-all-row">
+        <button class="btn btn-safeway" onclick="openAllInSafeway('fridge')">Open all in Safeway</button>
+        <span class="open-all-note">Opens each item in a new Safeway search tab</span>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:1rem; margin-bottom:0.5rem;">
+      <button class="btn btn-outline" onclick="reset()">↺ Start over with new photos</button>
+    </div>
+  </div>
+
+  <div class="recipe-divider"><span>✷ Recipe Helper ✷</span></div>
+
+  <div class="card recipe-section">
+    <h2>🧾 What am I missing for this recipe?</h2>
+    <p style="margin-bottom:1rem;">Paste a recipe or just a dish name — I'll compare it against your detected fridge ingredients and tell you exactly what to grab at the store.</p>
+    <div id="fridge-ctx" class="no-fridge-note">💡 No fridge scan yet — I'll assume basic pantry staples only. Scan your fridge above for a smarter comparison.</div>
+    <textarea id="recipe-input" placeholder="e.g. Chicken Tikka Masala  —  or paste a full recipe with an ingredient list..."></textarea>
+    <div class="analyze-row">
+      <button class="btn btn-primary" id="recipe-btn" onclick="analyzeRecipe()">
+        <span id="recipe-btn-label">Find missing ingredients</span>
+      </button>
+      <span id="recipe-status"></span>
+    </div>
+    <div id="recipe-error" class="error-box hidden"></div>
+  </div>
+
+  <div id="recipe-results" class="hidden">
+    <div class="card">
+      <h2>🛒 Shopping list for your recipe</h2>
+      <p style="margin-bottom:1rem; font-size:0.85rem;">These are the ingredients you need to pick up. Open all in Safeway at once, or click individual items.</p>
+      <div id="recipe-shopping-list"></div>
+      <div class="open-all-row hidden" id="recipe-open-all-row">
+        <button class="btn btn-safeway" onclick="openAllInSafeway('recipe')">Open all in Safeway</button>
+        <span class="open-all-note">Opens each missing ingredient in a new Safeway search tab</span>
+      </div>
+      <div id="have-section" class="have-ingredients hidden">
+        <div class="section-title" style="margin-bottom:0.5rem">Already have</div>
+        <div class="ingredients-list" id="have-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const images = [];
+  let lastDetectedIngredients = [];
+  let fridgeShoppingItems = [];
+  let recipeShoppingItems = [];
+
+  const fileInput = document.getElementById('file-input');
+  const previewGrid = document.getElementById('preview-grid');
+  const analyzeBtn = document.getElementById('analyze-btn');
+  const uploadZone = document.getElementById('upload-zone');
+  const statusMsg = document.getElementById('status-msg');
+  const errorBox = document.getElementById('error-box');
+
+  const savedKey = localStorage.getItem('fc_api_key');
+  if (savedKey) {
+    document.getElementById('api-key-input').value = savedKey;
+    document.getElementById('api-card').style.display = 'none';
+  }
+
+  document.getElementById('api-key-input').addEventListener('input', function() {
+    localStorage.setItem('fc_api_key', this.value.trim());
+  });
+
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+  function handleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = e.target.result;
+        const idx = images.length;
+        images.push({ dataUrl: data, type: file.type });
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-item';
+        wrapper.id = `preview-${idx}`;
+        const img = document.createElement('img');
+        img.src = data;
+        const rm = document.createElement('button');
+        rm.className = 'remove-btn';
+        rm.innerHTML = '×';
+        rm.onclick = ev => { ev.stopPropagation(); removeImage(idx); };
+        wrapper.appendChild(img);
+        wrapper.appendChild(rm);
+        previewGrid.appendChild(wrapper);
+        analyzeBtn.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function removeImage(idx) {
+    images[idx] = null;
+    const el = document.getElementById(`preview-${idx}`);
+    if (el) el.remove();
+    if (images.every(i => i === null)) analyzeBtn.disabled = true;
+  }
+
+  function getApiKey() {
+    return document.getElementById('api-key-input').value.trim();
+  }
+
+  function setLoading(loading, msg) {
+    const label = document.getElementById('btn-label');
+    if (loading) {
+      label.innerHTML = '<span class="spinner"></span> ' + (msg || 'Analyzing…');
+      analyzeBtn.disabled = true;
+    } else {
+      label.textContent = 'Analyze my fridge';
+      analyzeBtn.disabled = images.filter(Boolean).length === 0;
+    }
+    statusMsg.textContent = '';
+  }
+
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.remove('hidden'); }
+  function hideError() { errorBox.classList.add('hidden'); }
+
+  function updateFridgeCtxNote() {
+    const el = document.getElementById('fridge-ctx');
+    if (lastDetectedIngredients.length > 0) {
+      el.className = 'fridge-ctx-note';
+      el.textContent = `✓ Fridge scanned — comparing against ${lastDetectedIngredients.length} detected ingredient${lastDetectedIngredients.length === 1 ? '' : 's'}.`;
+    } else {
+      el.className = 'no-fridge-note';
+      el.textContent = "💡 No fridge scan yet — I'll assume basic pantry staples only. Scan your fridge above for a smarter comparison.";
+    }
+  }
+
+  async function analyze() {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      document.getElementById('api-card').style.display = '';
+      document.getElementById('api-key-input').focus();
+      showError('Please enter your Anthropic API key first.');
+      return;
+    }
+    localStorage.setItem('fc_api_key', apiKey);
+
+    const validImages = images.filter(Boolean);
+    if (validImages.length === 0) { showError('Please upload at least one photo.'); return; }
+
+    hideError();
+    setLoading(true, 'Reading your fridge…');
+    document.getElementById('results-section').classList.add('hidden');
+
+    const content = [{
+      type: 'text',
+      text: `You are a helpful cooking assistant. Analyze the provided photo(s) of a fridge and/or pantry.
+
+Return a JSON object with this exact structure:
+{
+  "ingredients": ["list", "of", "ingredients", "you", "can", "see"],
+  "meals": [
+    {
+      "name": "Meal Name",
+      "description": "1-2 sentence description",
+      "difficulty": "Easy" | "Medium" | "Hard",
+      "missingIngredients": ["item1", "item2"]
+    }
+  ],
+  "shoppingList": [
+    { "item": "Ingredient name", "note": "optional context" }
+  ]
+}
+
+Rules:
+- List all visible ingredients in "ingredients".
+- Suggest 4-6 realistic meals. Prefer meals where only 0-3 items are missing.
+- "missingIngredients" = items needed for that meal NOT visible in the photos.
+- "shoppingList" = deduplicated union of all missingIngredients.
+- Respond with ONLY raw JSON, no markdown fences, no explanation.`
+    }];
+
+    validImages.forEach(img => {
+      const base64 = img.dataUrl.split(',')[1];
+      const mediaType = img.type === 'image/png' ? 'image/png' : img.type === 'image/webp' ? 'image/webp' : 'image/jpeg';
+      content.push({ type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } });
+    });
+
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({ model: 'claude-opus-4-8', max_tokens: 2048, messages: [{ role: 'user', content }] })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || `API error ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const raw = data.content[0].text.trim();
+      let parsed;
+      try { parsed = JSON.parse(raw); }
+      catch {
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('Could not parse response. Try again.');
+        parsed = JSON.parse(match[0]);
+      }
+
+      lastDetectedIngredients = parsed.ingredients || [];
+      updateFridgeCtxNote();
+      renderResults(parsed);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      showError('Error: ' + e.message);
+    }
+  }
+
+  function renderResults({ ingredients, meals, shoppingList }) {
+    const section = document.getElementById('results-section');
+    section.classList.remove('hidden');
+
+    const ingList = document.getElementById('ingredients-list');
+    ingList.innerHTML = '';
+    (ingredients || []).forEach(ing => {
+      const tag = document.createElement('span');
+      tag.className = 'ingredient-tag';
+      tag.textContent = ing;
+      ingList.appendChild(tag);
+    });
+
+    const mealsList = document.getElementById('meals-list');
+    mealsList.innerHTML = '';
+    (meals || []).forEach(meal => {
+      const diffClass = meal.difficulty === 'Easy' ? 'badge-easy' : meal.difficulty === 'Hard' ? 'badge-hard' : 'badge-medium';
+      const missingHtml = meal.missingIngredients && meal.missingIngredients.length
+        ? `<div class="meal-missing">Needs: <span>${meal.missingIngredients.join(', ')}</span></div>`
+        : `<div style="margin-top:0.5rem; font-size:0.82rem; color:#267F53; font-weight:700;">✓ You have everything!</div>`;
+      const card = document.createElement('div');
+      card.className = 'meal-card';
+      card.innerHTML = `
+        <div class="meal-header">
+          <div class="meal-name">${meal.name}</div>
+          <span class="meal-badge ${diffClass}">${meal.difficulty}</span>
+        </div>
+        <div class="meal-desc">${meal.description}</div>
+        ${missingHtml}
+      `;
+      mealsList.appendChild(card);
+    });
+
+    fridgeShoppingItems = shoppingList || [];
+    const shopCard = document.getElementById('shopping-card');
+    const shopList = document.getElementById('shopping-list');
+    const openAllRow = document.getElementById('fridge-open-all-row');
+    shopList.innerHTML = '';
+
+    if (fridgeShoppingItems.length > 0) {
+      shopCard.classList.remove('hidden');
+      openAllRow.classList.remove('hidden');
+      renderShoppingItems(shopList, fridgeShoppingItems);
+    } else {
+      shopCard.classList.add('hidden');
+      openAllRow.classList.add('hidden');
+    }
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function renderShoppingItems(container, items) {
+    items.forEach(({ item, note }) => {
+      const q = encodeURIComponent(item);
+      const row = document.createElement('div');
+      row.className = 'shopping-item';
+      row.innerHTML = `
+        <div>
+          <div class="shopping-item-name">${item}</div>
+          ${note ? `<div class="shopping-item-note">${note}</div>` : ''}
+        </div>
+        <div class="store-links">
+          <a href="https://www.target.com/s?searchTerm=${q}" target="_blank" class="store-btn store-target">Target</a>
+          <a href="https://www.safeway.com/shop/search-results.html?q=${q}" target="_blank" class="store-btn store-safeway">Safeway</a>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function openAllInSafeway(source) {
+    const items = source === 'fridge' ? fridgeShoppingItems : recipeShoppingItems;
+    items.forEach(({ item }) => {
+      window.open(`https://www.safeway.com/shop/search-results.html?q=${encodeURIComponent(item)}`, '_blank');
+    });
+  }
+
+  async function analyzeRecipe() {
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      document.getElementById('api-card').style.display = '';
+      document.getElementById('api-key-input').focus();
+      document.getElementById('recipe-error').textContent = 'Please enter your Anthropic API key first.';
+      document.getElementById('recipe-error').classList.remove('hidden');
+      return;
+    }
+
+    const recipe = document.getElementById('recipe-input').value.trim();
+    if (!recipe) {
+      document.getElementById('recipe-error').textContent = 'Please paste a recipe or dish name first.';
+      document.getElementById('recipe-error').classList.remove('hidden');
+      return;
+    }
+
+    document.getElementById('recipe-error').classList.add('hidden');
+    document.getElementById('recipe-results').classList.add('hidden');
+
+    const recipeBtn = document.getElementById('recipe-btn');
+    const recipeLabel = document.getElementById('recipe-btn-label');
+    recipeLabel.innerHTML = '<span class="spinner"></span> Checking ingredients…';
+    recipeBtn.disabled = true;
+
+    const fridgeContext = lastDetectedIngredients.length > 0
+      ? `The user currently has these ingredients available in their fridge/pantry:\n${lastDetectedIngredients.join(', ')}`
+      : `The user hasn't scanned their fridge. Assume they have only basic pantry staples: salt, pepper, oil, basic spices, water.`;
+
+    const prompt = `You are a helpful cooking assistant.
+
+${fridgeContext}
+
+The user wants to make:
+${recipe}
+
+Return a JSON object with this exact structure:
+{
+  "recipeName": "Name of the dish",
+  "haveIngredients": ["ingredients they already have"],
+  "missingIngredients": [
+    { "item": "Ingredient name", "note": "quantity or context like '2 cups' or 'for the sauce'" }
+  ]
+}
+
+Rules:
+- "haveIngredients" = ingredients the recipe needs that match what's in their fridge/pantry.
+- "missingIngredients" = everything else they need to buy. Include quantities if evident.
+- Be smart about equivalents (e.g. "chicken breast" covers "chicken").
+- Respond with ONLY raw JSON, no markdown fences, no explanation.`;
+
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-allow-browser': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }]
+        })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error?.message || `API error ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const raw = data.content[0].text.trim();
+      let parsed;
+      try { parsed = JSON.parse(raw); }
+      catch {
+        const match = raw.match(/\{[\s\S]*\}/);
+        if (!match) throw new Error('Could not parse response. Try again.');
+        parsed = JSON.parse(match[0]);
+      }
+
+      recipeShoppingItems = parsed.missingIngredients || [];
+
+      const resultsDiv = document.getElementById('recipe-results');
+      const shopList = document.getElementById('recipe-shopping-list');
+      const openAllRow = document.getElementById('recipe-open-all-row');
+      const haveSection = document.getElementById('have-section');
+      const haveList = document.getElementById('have-list');
+      shopList.innerHTML = '';
+
+      if (recipeShoppingItems.length === 0) {
+        shopList.innerHTML = `<div style="color:#267F53; font-weight:700; padding:0.5rem 0; font-size:0.95rem;">✓ You already have everything for ${parsed.recipeName || 'this recipe'}!</div>`;
+        openAllRow.classList.add('hidden');
+      } else {
+        renderShoppingItems(shopList, recipeShoppingItems);
+        openAllRow.classList.remove('hidden');
+      }
+
+      if (parsed.haveIngredients && parsed.haveIngredients.length > 0) {
+        haveList.innerHTML = parsed.haveIngredients.map(i => `<span class="ingredient-tag">${i}</span>`).join('');
+        haveSection.classList.remove('hidden');
+      } else {
+        haveSection.classList.add('hidden');
+      }
+
+      resultsDiv.classList.remove('hidden');
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    } catch (e) {
+      document.getElementById('recipe-error').textContent = 'Error: ' + e.message;
+      document.getElementById('recipe-error').classList.remove('hidden');
+    } finally {
+      recipeLabel.textContent = 'Find missing ingredients';
+      recipeBtn.disabled = false;
+    }
+  }
+
+  function reset() {
+    images.length = 0;
+    lastDetectedIngredients = [];
+    previewGrid.innerHTML = '';
+    analyzeBtn.disabled = true;
+    document.getElementById('results-section').classList.add('hidden');
+    hideError();
+    fileInput.value = '';
+    updateFridgeCtxNote();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
