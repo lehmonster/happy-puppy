@@ -582,11 +582,12 @@ Rules:
       }
     }
 
-    recipeLabel.innerHTML = '<span class="spinner"></span> Checking ingredients…';
+    recipeLabel.innerHTML = '<span class="spinner"></span> Building your list…';
 
-    const fridgeContext = lastDetectedIngredients.length > 0
+    const hasFridge = lastDetectedIngredients.length > 0;
+    const fridgeContext = hasFridge
       ? `The user currently has these ingredients available in their fridge/pantry:\n${lastDetectedIngredients.join(', ')}`
-      : `The user hasn't scanned their fridge. Assume they have only basic pantry staples: salt, pepper, oil, basic spices, water.`;
+      : `The user has NOT scanned their fridge. Treat them as having NOTHING — list every single ingredient needed to make this dish from scratch. Do NOT assume they have any pantry staples.`;
 
     const prompt = `You are a helpful cooking assistant.
 
@@ -598,11 +599,13 @@ ${recipe}
 Return a JSON object with this exact structure:
 {
   "recipeName": "Name of the dish",
-  "haveIngredients": ["ingredients they already have"],
+  "haveIngredients": ["ingredients they already have — EMPTY ARRAY if no fridge scan"],
   "missingIngredients": [
-    { "item": "Ingredient name", "note": "quantity or context like '2 cups' or 'for the sauce'" }
+    { "item": "Ingredient name", "note": "quantity or prep note like '2 cups' or 'thinly sliced'" }
   ]
 }
+
+${!hasFridge ? 'IMPORTANT: haveIngredients must be an empty array. missingIngredients must include every ingredient for the dish.' : ''}
 
 Rules:
 - "haveIngredients" = ingredients the recipe needs that match what's in their fridge/pantry.
@@ -669,8 +672,15 @@ Rules:
       resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     } catch (e) {
-      document.getElementById('recipe-error').textContent = 'Error: ' + e.message;
+      const msg = e.message === 'Failed to fetch'
+        ? 'Couldn\'t reach the API — check your API key above, or try opening this file in a browser tab (not a local file).'
+        : 'Error: ' + e.message;
+      document.getElementById('recipe-error').textContent = msg;
       document.getElementById('recipe-error').classList.remove('hidden');
+      if (e.message === 'Failed to fetch') {
+        document.getElementById('api-card').style.display = '';
+        document.getElementById('api-key-input').focus();
+      }
     } finally {
       recipeLabel.textContent = 'Tell me what I need';
       recipeBtn.disabled = false;
