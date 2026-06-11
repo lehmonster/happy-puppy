@@ -187,7 +187,7 @@
     <h2>🧾 Got a recipe? Let's see what's actually missing.</h2>
     <p style="margin-bottom:1rem;">Paste a dish name or full recipe — I'll check it against your fridge and tell you what to go get.</p>
     <div id="fridge-ctx" class="no-fridge-note">💡 No fridge scan yet — assuming you've got basically nothing, which is probably accurate.</div>
-    <textarea id="recipe-input" placeholder="e.g. Chicken Tikka Masala  —  or paste a full recipe, I'll sort it out"></textarea>
+    <textarea id="recipe-input" placeholder="e.g. Chicken Tikka Masala  —  paste a full recipe, a dish name, or drop in a URL"></textarea>
     <div class="analyze-row">
       <button class="btn btn-primary" id="recipe-btn" onclick="analyzeRecipe()">
         <span id="recipe-btn-label">Tell me what I need</span>
@@ -475,6 +475,52 @@ Rules:
     });
   }
 
+  function isUrl(str) {
+    return /^https?:\/\//i.test(str.trim());
+  }
+
+  async function fetchRecipeFromUrl(url) {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error(`Couldn't fetch that page (${resp.status})`);
+    const data = await resp.json();
+    const html = data.contents;
+    if (!html) throw new Error('Page came back empty');
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+
+    // Try JSON-LD schema.org/Recipe first — most recipe sites embed this
+    const scripts = doc.querySelectorAll('script[type="application/ld+json"]');
+    for (const script of scripts) {
+      try {
+        const json = JSON.parse(script.textContent);
+        const candidates = Array.isArray(json) ? json : [json];
+        for (const item of candidates) {
+          const nodes = item['@graph'] ? item['@graph'] : [item];
+          for (const node of nodes) {
+            const type = node['@type'];
+            if (type === 'Recipe' || (Array.isArray(type) && type.includes('Recipe'))) {
+              const name = node.name || 'Recipe';
+              const ingredients = node.recipeIngredient || [];
+              if (ingredients.length > 0) {
+                return `Recipe: ${name}\n\nIngredients:\n${ingredients.join('\n')}`;
+              }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    // Fallback: strip nav/scripts/styles, send body text to Claude and let it find the recipe
+    ['script', 'style', 'nav', 'footer', 'header', 'aside', 'iframe'].forEach(tag =>
+      doc.querySelectorAll(tag).forEach(el => el.remove())
+    );
+    const text = (doc.body?.innerText || '').replace(/\s{3,}/g, '\n\n').trim().slice(0, 4000);
+    if (!text) throw new Error("Couldn't extract any text from that page");
+    return text;
+  }
+
   async function analyzeRecipe() {
     const apiKey = getApiKey();
     if (!apiKey) {
@@ -485,7 +531,7 @@ Rules:
       return;
     }
 
-    const recipe = document.getElementById('recipe-input').value.trim();
+    let recipe = document.getElementById('recipe-input').value.trim();
     if (!recipe) {
       document.getElementById('recipe-error').textContent = 'Please paste a recipe or dish name first.';
       document.getElementById('recipe-error').classList.remove('hidden');
@@ -497,8 +543,22 @@ Rules:
 
     const recipeBtn = document.getElementById('recipe-btn');
     const recipeLabel = document.getElementById('recipe-btn-label');
-    recipeLabel.innerHTML = '<span class="spinner"></span> Checking ingredients…';
     recipeBtn.disabled = true;
+
+    if (isUrl(recipe)) {
+      recipeLabel.innerHTML = '<span class="spinner"></span> Fetching recipe…';
+      try {
+        recipe = await fetchRecipeFromUrl(recipe);
+      } catch (e) {
+        document.getElementById('recipe-error').textContent = 'Couldn\'t fetch that URL: ' + e.message;
+        document.getElementById('recipe-error').classList.remove('hidden');
+        recipeLabel.textContent = 'Tell me what I need';
+        recipeBtn.disabled = false;
+        return;
+      }
+    }
+
+    recipeLabel.innerHTML = '<span class="spinner"></span> Checking ingredients…';
 
     const fridgeContext = lastDetectedIngredients.length > 0
       ? `The user currently has these ingredients available in their fridge/pantry:\n${lastDetectedIngredients.join(', ')}`
