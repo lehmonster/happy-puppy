@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Projects Dashboard</title>
+    <style>
+        :root {
+            --bg: #fdf9f3;
+            --card: #ffffff;
+            --ink: #2b2233;
+            --muted: #7a6f80;
+            --border: #ece4d9;
+            --accent: #ff7a59;
+            --shadow: 0 8px 24px rgba(40, 30, 50, 0.06);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+        .subtitle {
+            color: var(--muted);
+            font-size: 18px;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .project-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--ink);
+            display: block;
+        }
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(40, 30, 50, 0.12);
+        }
+        .project-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .project-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--ink);
+        }
+        .project-desc {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .project-url {
+            font-size: 12px;
+            color: var(--accent);
+            font-family: monospace;
+            word-break: break-all;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 40px 0 20px;
+            color: var(--ink);
+            padding-left: 8px;
+            border-left: 4px solid var(--accent);
+        }
+        .quick-links {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        .quick-links h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        .quick-links a {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .quick-links a:hover {
+            border-color: var(--accent);
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 My Projects</h1>
+            <p class="subtitle">All my web projects in one place</p>
+        </header>
+
+        <div class="quick-links">
+            <h3>🔗 Quick Access</h3>
+            <a href="https://lehmonster.github.io/happy-puppy/" target="_blank">Main Landing Page</a>
+            <a href="https://github.com/lehmonster/happy-puppy" target="_blank">GitHub Repository</a>
+        </div>
+
+        <h2 class="section-title">🎮 Games for Kids</h2>
+        <div class="projects-grid">
+            <a href="https://lehmonster.github.io/happy-puppy/games/" class="project-card" target="_blank">
+                <div class="project-icon">🎯</div>
+                <div class="project-title">Games Hub</div>
+                <div class="project-desc">Main landing page for all kids games</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/games/</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/games/princess.html" class="project-card" target="_blank">
+                <div class="project-icon">👑</div>
+                <div class="project-title">Princess Memory Match</div>
+                <div class="project-desc">Royal-themed memory card matching game</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/games/princess.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/games/emoji-word-match.html" class="project-card" target="_blank">
+                <div class="project-icon">🧠</div>
+                <div class="project-title">Emoji & Word Match</div>
+                <div class="project-desc">Card flip game matching emojis to words</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/games/emoji-word-match.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/games/word-adventure.html" class="project-card" target="_blank">
+                <div class="project-icon">🌟</div>
+                <div class="project-title">Word Adventure</div>
+                <div class="project-desc">Explore worlds through word matching</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/games/word-adventure.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/games/reading-quest.html" class="project-card" target="_blank">
+                <div class="project-icon">📖</div>
+                <div class="project-title">Reading Quest</div>
+                <div class="project-desc">Phonics and letter learning game</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/games/reading-quest.html</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">✈️ Travel & Planning Tools</h2>
+        <div class="projects-grid">
+            <a href="https://lehmonster.github.io/happy-puppy/travel/packing-pinterest.html" class="project-card" target="_blank">
+                <div class="project-icon">📸</div>
+                <div class="project-title">Pinterest Packing List</div>
+                <div class="project-desc">Photo upload + AI styling suggestions</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/travel/packing-pinterest.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/travel/packing-list.html" class="project-card" target="_blank">
+                <div class="project-icon">✅</div>
+                <div class="project-title">Simple Packing List</div>
+                <div class="project-desc">Quick packing checklist tool</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/travel/packing-list.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/travel/schedule.html" class="project-card" target="_blank">
+                <div class="project-icon">📅</div>
+                <div class="project-title">Travel Schedule</div>
+                <div class="project-desc">Family trip scheduler</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/travel/schedule.html</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">🛠️ Personal Tools & Dashboards</h2>
+        <div class="projects-grid">
+            <a href="https://lehmonster.github.io/happy-puppy/prose-and-rose/" class="project-card" target="_blank">
+                <div class="project-icon">📚</div>
+                <div class="project-title">Prose &amp; Rosé</div>
+                <div class="project-desc">Interactive dashboard tracking 420 books across 6 years with visual analytics, genre breakdowns, top authors, literary themes, and curated TBR recommendations</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/prose-and-rose/</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/tools/reading-dashboard-full.html" class="project-card" target="_blank">
+                <div class="project-icon">📖</div>
+                <div class="project-title">Reading Dashboard (Alt)</div>
+                <div class="project-desc">Alternative view of the reading dashboard</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/tools/reading-dashboard-full.html</div>
+            </a>
+
+            <a href="https://lehmonster.github.io/happy-puppy/tools/gift-genius.html" class="project-card" target="_blank">
+                <div class="project-icon">🎁</div>
+                <div class="project-title">Gift Genius</div>
+                <div class="project-desc">Gift idea tracker (password-protected)</div>
+                <div class="project-url">lehmonster.github.io/happy-puppy/tools/gift-genius.html</div>
+            </a>
+
+            <a href="file:///C:/Users/ChelseaTaylor/volunteer-tracker.html" class="project-card" target="_blank">
+                <div class="project-icon">🤝</div>
+                <div class="project-title">Volunteer Impact Tracker</div>
+                <div class="project-desc">Track community engagement events with stats, impact thermometer, and CSV export (Local file)</div>
+                <div class="project-url">file:///C:/Users/ChelseaTaylor/volunteer-tracker.html</div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
