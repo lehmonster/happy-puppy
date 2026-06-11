@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FridgeChef — What can I make?</title>
+  <title>Good Enough Grill — It's Fine, Eat It</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -119,8 +119,8 @@
 
   <div class="header">
     <span class="header-icon">🍳</span>
-    <h1>FridgeChef</h1>
-    <p>Snap your fridge & pantry — get meal ideas + a smart shopping list</p>
+    <h1>Good Enough Grill</h1>
+    <p>snap your fridge, see what you can pull off</p>
   </div>
 
   <div class="card api-section" id="api-card">
@@ -137,8 +137,8 @@
 
     <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
       <span class="icon">📁</span>
-      <div class="primary">Click to add photos</div>
-      <div class="secondary">or drag & drop — JPG, PNG, WEBP</div>
+      <div class="primary">Show me what you're working with</div>
+      <div class="secondary">or drag & drop — we're not picky</div>
     </div>
     <input type="file" id="file-input" accept="image/*" multiple style="display:none" />
 
@@ -146,7 +146,7 @@
 
     <div class="analyze-row">
       <button class="btn btn-primary" id="analyze-btn" onclick="analyze()" disabled>
-        <span id="btn-label">Analyze my fridge</span>
+        <span id="btn-label">Assess the damage</span>
       </button>
       <span id="status-msg"></span>
     </div>
@@ -157,17 +157,17 @@
   <div id="results-section" class="hidden results-section">
 
     <div class="card" id="ingredients-card">
-      <div class="section-title">Ingredients detected</div>
+      <div class="section-title">What you've got</div>
       <div class="ingredients-list" id="ingredients-list"></div>
     </div>
 
     <div id="meals-section">
-      <div class="section-title" style="padding-left:0.25rem;">Meals you can make</div>
+      <div class="section-title" style="padding-left:0.25rem;">What you can probably make</div>
       <div id="meals-list"></div>
     </div>
 
     <div class="card hidden" id="shopping-card">
-      <h2>🛒 Shopping list from fridge scan</h2>
+      <h2>🛒 What you're missing (naturally)</h2>
       <p style="margin-bottom:1rem; font-size:0.85rem;">Items needed for the suggested meals. Click to search, or open all in Safeway at once.</p>
       <div id="shopping-list"></div>
       <div class="open-all-row hidden" id="fridge-open-all-row">
@@ -177,20 +177,20 @@
     </div>
 
     <div style="text-align:center; margin-top:1rem; margin-bottom:0.5rem;">
-      <button class="btn btn-outline" onclick="reset()">↺ Start over with new photos</button>
+      <button class="btn btn-outline" onclick="reset()">↺ Start over</button>
     </div>
   </div>
 
   <div class="recipe-divider"><span>✷ Recipe Helper ✷</span></div>
 
   <div class="card recipe-section">
-    <h2>🧾 What am I missing for this recipe?</h2>
-    <p style="margin-bottom:1rem;">Paste a recipe or just a dish name — I'll compare it against your detected fridge ingredients and tell you exactly what to grab at the store.</p>
-    <div id="fridge-ctx" class="no-fridge-note">💡 No fridge scan yet — I'll assume basic pantry staples only. Scan your fridge above for a smarter comparison.</div>
-    <textarea id="recipe-input" placeholder="e.g. Chicken Tikka Masala  —  or paste a full recipe with an ingredient list..."></textarea>
+    <h2>🧾 Got a recipe? Let's see what's actually missing.</h2>
+    <p style="margin-bottom:1rem;">Paste a dish name or full recipe — I'll check it against your fridge and tell you what to go get.</p>
+    <div id="fridge-ctx" class="no-fridge-note">💡 No fridge scan yet — assuming you've got basically nothing, which is probably accurate.</div>
+    <textarea id="recipe-input" placeholder="e.g. Chicken Tikka Masala  —  or paste a full recipe, I'll sort it out"></textarea>
     <div class="analyze-row">
       <button class="btn btn-primary" id="recipe-btn" onclick="analyzeRecipe()">
-        <span id="recipe-btn-label">Find missing ingredients</span>
+        <span id="recipe-btn-label">Tell me what I need</span>
       </button>
       <span id="recipe-status"></span>
     </div>
@@ -199,8 +199,8 @@
 
   <div id="recipe-results" class="hidden">
     <div class="card">
-      <h2>🛒 Shopping list for your recipe</h2>
-      <p style="margin-bottom:1rem; font-size:0.85rem;">These are the ingredients you need to pick up. Open all in Safeway at once, or click individual items.</p>
+      <h2>🛒 Your grocery run</h2>
+      <p style="margin-bottom:1rem; font-size:0.85rem;">Here's what you don't have. Open all in Safeway at once, or click individual items.</p>
       <div id="recipe-shopping-list"></div>
       <div class="open-all-row hidden" id="recipe-open-all-row">
         <button class="btn btn-safeway" onclick="openAllInSafeway('recipe')">Open all in Safeway</button>
@@ -290,7 +290,7 @@
       label.innerHTML = '<span class="spinner"></span> ' + (msg || 'Analyzing…');
       analyzeBtn.disabled = true;
     } else {
-      label.textContent = 'Analyze my fridge';
+      label.textContent = 'Assess the damage';
       analyzeBtn.disabled = images.filter(Boolean).length === 0;
     }
     statusMsg.textContent = '';
@@ -567,7 +567,7 @@ Rules:
       shopList.innerHTML = '';
 
       if (recipeShoppingItems.length === 0) {
-        shopList.innerHTML = `<div style="color:#267F53; font-weight:700; padding:0.5rem 0; font-size:0.95rem;">✓ You already have everything for ${parsed.recipeName || 'this recipe'}!</div>`;
+        shopList.innerHTML = `<div style="color:#267F53; font-weight:700; padding:0.5rem 0; font-size:0.95rem;">✓ You're actually good for ${parsed.recipeName || 'this one'}. Shocking.</div>`;
         openAllRow.classList.add('hidden');
       } else {
         renderShoppingItems(shopList, recipeShoppingItems);
@@ -588,7 +588,7 @@ Rules:
       document.getElementById('recipe-error').textContent = 'Error: ' + e.message;
       document.getElementById('recipe-error').classList.remove('hidden');
     } finally {
-      recipeLabel.textContent = 'Find missing ingredients';
+      recipeLabel.textContent = 'Tell me what I need';
       recipeBtn.disabled = false;
     }
   }
