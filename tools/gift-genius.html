@@ -1,1070 +1,906 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Genius - Smart Gift Ideas & Tracker</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.95;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .tab-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .tab-btn.active {
-            background: white;
-            color: #667eea;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .question-section {
-            margin-bottom: 30px;
-        }
-
-        .question-section.hidden {
-            display: none;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 12px;
-            color: #333;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-
-        select, input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-            background: white;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .checkbox-label {
-            font-weight: normal;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            transition: background 0.3s;
-            cursor: pointer;
-        }
-
-        .checkbox-label:hover {
-            background: #e9ecef;
-        }
-
-        .checkbox-label input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        button.secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        button.secondary:hover {
-            background: #e0e0e0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .results {
-            margin-top: 30px;
-        }
-
-        .results.hidden {
-            display: none;
-        }
-
-        .results h2 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .gift-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .gift-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 25px;
-            border-radius: 15px;
-            border-left: 5px solid #667eea;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-        }
-
-        .gift-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .gift-card h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .gift-card p {
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .gift-card .meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #dee2e6;
-        }
-
-        .gift-card .price-range {
-            color: #764ba2;
-            font-weight: 700;
-            font-size: 1.1em;
-        }
-
-        .gift-card .category-tag {
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-        }
-
-        .gift-card .save-btn {
-            width: auto;
-            padding: 8px 20px;
-            margin-top: 10px;
-            font-size: 0.9em;
-        }
-
-        /* Gift Tracker Styles */
-        .tracker-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .tracker-header h2 {
-            color: #333;
-        }
-
-        .tracker-controls {
-            display: flex;
-            gap: 10px;
-        }
-
-        .tracker-controls button {
-            width: auto;
-            padding: 10px 20px;
-            margin: 0;
-        }
-
-        .gifts-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .gifts-table thead {
-            background: #667eea;
-            color: white;
-        }
-
-        .gifts-table th,
-        .gifts-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .gifts-table tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .gifts-table .actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .gifts-table .actions button {
-            width: auto;
-            padding: 6px 12px;
-            margin: 0;
-            font-size: 0.85em;
-        }
-
-        .gifts-table .delete-btn {
-            background: #dc3545;
-        }
-
-        .gifts-table .delete-btn:hover {
-            background: #c82333;
-        }
-
-        .add-gift-form {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .add-gift-form.active {
-            display: block;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            font-size: 0.9em;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group select {
-            margin-top: 0;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            color: #999;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 2em;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            opacity: 0.9;
-            font-size: 0.95em;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            .card {
-                padding: 25px;
-            }
-
-            .gift-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .tabs {
-                flex-direction: column;
-            }
-
-            .gifts-table {
-                font-size: 0.85em;
-            }
-
-            .gifts-table th,
-            .gifts-table td {
-                padding: 8px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Present Perfect — Gift Finder & Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink: #F296BD;
+    --periwinkle: #99B7F5;
+    --green: #267F53;
+    --orange: #F5793B;
+    --bg: #FEFDFB;
+    --card-bg: #ffffff;
+    --text: #2d2d2d;
+    --muted: #7a7a7a;
+    --border: rgba(153,183,245,0.3);
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(153,183,245,0.15);
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #fef5fb 0%, #fff8f5 25%, #fffef8 50%, #f5fbff 75%, #f8f5ff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px 24px;
+    text-align: center;
+  }
+  .header-emoji { font-size: 2.4rem; margin-bottom: 6px; display: block; }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    color: var(--pink);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header p { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    padding: 16px 20px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    border-radius: 12px 12px 0 0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn:hover { color: var(--pink); background: rgba(242,150,189,0.06); }
+  .tab-btn.active { color: var(--pink); border-bottom: 2px solid var(--pink); background: rgba(242,150,189,0.08); }
+
+  .tab-panel { display: none; padding: 24px 20px; max-width: 760px; margin: 0 auto; }
+  .tab-panel.active { display: block; }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--text); margin-bottom: 12px; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-primary { background: var(--pink); color: #fff; }
+  .btn-primary:hover { background: #e8809f; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(242,150,189,0.4); }
+  .btn-periwinkle { background: var(--periwinkle); color: #fff; }
+  .btn-periwinkle:hover { background: #7ea3f0; transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+  .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+  label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+  input, select, textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--periwinkle); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-group { margin-bottom: 14px; }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
+  .step-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+  .step-dot.active { background: var(--pink); transform: scale(1.2); }
+  .step-dot.done { background: var(--periwinkle); }
+
+  .step-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.3rem; color: var(--pink); margin-bottom: 6px; text-align: center; }
+  .step-subtitle { text-align: center; color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+
+  .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chip {
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text);
+  }
+  .chip:hover { border-color: var(--pink); color: var(--pink); }
+  .chip.selected { background: var(--pink); color: white; border-color: var(--pink); }
+
+  .gift-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media (max-width: 520px) { .gift-cards { grid-template-columns: 1fr; } }
+
+  .gift-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(153,183,245,0.1);
+  }
+  .gift-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(153,183,245,0.2); }
+  .gift-card-emoji { font-size: 1.8rem; margin-bottom: 8px; display: block; }
+  .gift-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+  .gift-card-price { color: var(--green); font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+  .gift-card-why { color: var(--muted); font-size: 0.82rem; line-height: 1.4; margin-bottom: 12px; }
+  .gift-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-card { background: rgba(153,183,245,0.1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-value { font-size: 1.6rem; font-weight: 700; color: var(--periwinkle); }
+  .stat-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+
+  .history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .history-grid { grid-template-columns: 1fr; } }
+
+  .history-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 16px; position: relative; box-shadow: 0 2px 10px rgba(153,183,245,0.08); }
+  .history-card-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--periwinkle));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; margin-bottom: 10px;
+  }
+  .history-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
+  .history-card-gift { color: var(--muted); font-size: 0.85rem; margin-bottom: 4px; }
+  .history-card-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+
+  .badge { padding: 3px 10px; border-radius: 50px; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .badge-pink { background: rgba(242,150,189,0.15); color: var(--pink); }
+  .badge-green { background: rgba(38,127,83,0.1); color: var(--green); }
+  .badge-periwinkle { background: rgba(153,183,245,0.2); color: #4a72d4; }
+  .badge-orange { background: rgba(245,121,59,0.12); color: var(--orange); }
+
+  .history-delete-btn { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #ccc; font-size: 1rem; cursor: pointer; transition: color 0.2s; }
+  .history-delete-btn:hover { color: var(--pink); }
+
+  .source-section { margin-bottom: 28px; }
+  .source-pub { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .source-pub-emoji { font-size: 1.4rem; }
+  .source-pub-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; color: var(--text); }
+  .source-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .source-link {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: 50px;
+    background: rgba(153,183,245,0.1); border: 1px solid var(--border);
+    color: #4a72d4; font-size: 0.84rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .source-link:hover { background: rgba(153,183,245,0.22); transform: translateY(-1px); }
+
+  .hidden { display: none !important; }
+  .text-muted { color: var(--muted); }
+  .fw-700 { font-weight: 700; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state-emoji { font-size: 2.4rem; margin-bottom: 10px; display: block; }
+  .alert { padding: 12px 16px; border-radius: 10px; font-size: 0.88rem; margin-bottom: 14px; font-weight: 500; }
+  .alert-pink { background: rgba(242,150,189,0.12); border: 1px solid rgba(242,150,189,0.3); color: #c06080; }
+  .loading-dots::after { content: '...'; animation: dots 1.2s steps(4,end) infinite; }
+  @keyframes dots { 0%,20%{content:''}30%,40%{content:'.'}50%,60%{content:'..'}70%,100%{content:'...'} }
+
+  .budget-input-wrap { position: relative; }
+  .budget-input-wrap input { padding-left: 28px; }
+  .budget-dollar { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.95rem; pointer-events: none; }
+
+  .wizard-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+
+  .interest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+  .interest-chip {
+    padding: 10px 8px; border-radius: 12px; border: 1.5px solid var(--border);
+    background: white; cursor: pointer; text-align: center;
+    font-family: 'Nunito', sans-serif; font-size: 0.8rem; font-weight: 600;
+    color: var(--text); transition: all 0.2s; line-height: 1.3;
+  }
+  .interest-chip:hover { border-color: var(--periwinkle); }
+  .interest-chip.selected { background: rgba(153,183,245,0.15); border-color: var(--periwinkle); color: #3a5ab8; }
+  .interest-chip-emoji { display: block; font-size: 1.4rem; margin-bottom: 4px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal { background: white; border-radius: var(--radius); padding: 28px; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.3rem; color: var(--pink); margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎁 Gift Genius</h1>
-            <p>Discover unique gifts & track what you've given</p>
+
+<div class="header">
+  <span class="header-emoji">🎁</span>
+  <h1>Present Perfect</h1>
+  <p>Thoughtful gift ideas for everyone you love</p>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('find',this)">✨ Find Gifts</button>
+  <button class="tab-btn" onclick="showTab('history',this)">📖 Gift History</button>
+  <button class="tab-btn" onclick="showTab('sources',this)">🔗 Gift Sources</button>
+</div>
+
+<!-- FIND GIFTS -->
+<div id="tab-find" class="tab-panel active">
+  <div class="card">
+    <div class="step-dots" id="step-dots"></div>
+
+    <!-- Step 1 -->
+    <div class="step active" id="step-1">
+      <div class="step-title">Who's the lucky person? 🥰</div>
+      <div class="step-subtitle">Tell us a little about them</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Their name</label>
+          <input type="text" id="recipient-name" placeholder="e.g. Grandma Ruth">
         </div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('generator')">Find Gifts</button>
-            <button class="tab-btn" onclick="switchTab('tracker')">Gift Tracker</button>
+        <div class="form-group">
+          <label>Occasion</label>
+          <select id="occasion">
+            <option value="">Select occasion…</option>
+            <option value="Birthday">🎂 Birthday</option>
+            <option value="Holiday">🎄 Holiday</option>
+            <option value="Mother's Day">🌸 Mother's Day</option>
+            <option value="Father's Day">👔 Father's Day</option>
+            <option value="Anniversary">💕 Anniversary</option>
+            <option value="Graduation">🎓 Graduation</option>
+            <option value="Baby Shower">🍼 Baby Shower</option>
+            <option value="Wedding">💍 Wedding</option>
+            <option value="Thank You">💐 Thank You</option>
+            <option value="Just Because">🌟 Just Because</option>
+            <option value="Other">🎁 Other</option>
+          </select>
         </div>
-
-        <!-- GIFT GENERATOR TAB -->
-        <div id="generator-tab" class="tab-content active">
-            <div class="card">
-                <div id="step1" class="question-section">
-                    <label for="recipient-name">What's their name? (Optional - helps with tracking)</label>
-                    <input type="text" id="recipient-name" placeholder="e.g., Sarah">
-
-                    <label for="relationship" style="margin-top: 20px;">Who is this gift for?</label>
-                    <select id="relationship">
-                        <option value="">Select relationship...</option>
-                        <option value="spouse">Spouse/Partner</option>
-                        <option value="parent">Parent</option>
-                        <option value="child">Child</option>
-                        <option value="sibling">Sibling</option>
-                        <option value="friend">Friend</option>
-                        <option value="coworker">Coworker</option>
-                        <option value="grandparent">Grandparent</option>
-                        <option value="other">Other Family/Friend</option>
-                    </select>
-                    <button onclick="nextStep()">Next</button>
-                </div>
-
-                <div id="step2" class="question-section hidden">
-                    <label for="gender">What's their gender?</label>
-                    <select id="gender">
-                        <option value="">Select gender...</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="any">Non-binary/Any</option>
-                    </select>
-                    <button onclick="nextStep2()">Next</button>
-                    <button class="secondary" onclick="backStep(1)">Back</button>
-                </div>
-
-                <div id="step3" class="question-section hidden">
-                    <label for="age">What's their age range?</label>
-                    <select id="age">
-                        <option value="">Select age range...</option>
-                        <option value="child">Child (0-12)</option>
-                        <option value="teen">Teen (13-17)</option>
-                        <option value="young-adult">Young Adult (18-29)</option>
-                        <option value="adult">Adult (30-49)</option>
-                        <option value="middle-age">Middle Age (50-64)</option>
-                        <option value="senior">Senior (65+)</option>
-                    </select>
-                    <button onclick="nextStep3()">Next</button>
-                    <button class="secondary" onclick="backStep(2)">Back</button>
-                </div>
-
-                <div id="step4" class="question-section hidden">
-                    <label for="budget">What's your budget?</label>
-                    <select id="budget">
-                        <option value="">Select budget...</option>
-                        <option value="under-50">Under $50</option>
-                        <option value="50-100">$50 - $100</option>
-                        <option value="100-250">$100 - $250</option>
-                        <option value="250-500">$250 - $500</option>
-                        <option value="500-plus">$500+</option>
-                    </select>
-                    <button onclick="nextStep4()">Next</button>
-                    <button class="secondary" onclick="backStep(3)">Back</button>
-                </div>
-
-                <div id="step5" class="question-section hidden">
-                    <label>What are their interests? (Select all that apply)</label>
-                    <div class="checkbox-grid">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="sports"> Sports & Fitness
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="tech"> Technology
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="cooking"> Cooking & Food
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="art"> Art & Crafts
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="reading"> Reading & Books
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="music"> Music
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="gaming"> Gaming
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="outdoors"> Outdoors & Nature
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="fashion"> Fashion & Style
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="home"> Home & Garden
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="wellness"> Wellness & Self-Care
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="interest" value="travel"> Travel & Adventure
-                        </label>
-                    </div>
-                    <button onclick="generateIdeas()">Generate Gift Ideas</button>
-                    <button class="secondary" onclick="backStep(4)">Back</button>
-                </div>
-
-                <div id="results" class="results hidden">
-                    <h2>Perfect Gift Ideas for <span id="recipient-display"></span></h2>
-                    <div id="giftGrid" class="gift-grid"></div>
-                    <button class="secondary" onclick="reset()">Start Over</button>
-                </div>
-            </div>
+      </div>
+      <div class="form-group">
+        <label>Relationship</label>
+        <div class="chip-grid" id="relationship-chips">
+          <div class="chip" data-val="partner" onclick="selectChip(this,'relationship-chips')">💑 Partner</div>
+          <div class="chip" data-val="mom" onclick="selectChip(this,'relationship-chips')">👩 Mom</div>
+          <div class="chip" data-val="dad" onclick="selectChip(this,'relationship-chips')">👨 Dad</div>
+          <div class="chip" data-val="daughter" onclick="selectChip(this,'relationship-chips')">👧 Daughter</div>
+          <div class="chip" data-val="son" onclick="selectChip(this,'relationship-chips')">👦 Son</div>
+          <div class="chip" data-val="sister" onclick="selectChip(this,'relationship-chips')">👩‍👧 Sister</div>
+          <div class="chip" data-val="brother" onclick="selectChip(this,'relationship-chips')">👦 Brother</div>
+          <div class="chip" data-val="grandparent" onclick="selectChip(this,'relationship-chips')">👴 Grandparent</div>
+          <div class="chip" data-val="friend" onclick="selectChip(this,'relationship-chips')">🧡 Friend</div>
+          <div class="chip" data-val="coworker" onclick="selectChip(this,'relationship-chips')">💼 Coworker</div>
+          <div class="chip" data-val="teacher" onclick="selectChip(this,'relationship-chips')">🍎 Teacher</div>
+          <div class="chip" data-val="other" onclick="selectChip(this,'relationship-chips')">✨ Other</div>
         </div>
-
-        <!-- GIFT TRACKER TAB -->
-        <div id="tracker-tab" class="tab-content">
-            <div class="card">
-                <div class="stats">
-                    <div class="stat-card">
-                        <h3 id="stat-total">0</h3>
-                        <p>Total Gifts Given</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="stat-people">0</h3>
-                        <p>People Gifted</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="stat-spent">$0</h3>
-                        <p>Total Spent</p>
-                    </div>
-                </div>
-
-                <div class="tracker-header">
-                    <h2>Your Gift History</h2>
-                    <div class="tracker-controls">
-                        <button onclick="toggleAddForm()">+ Add Gift</button>
-                        <button class="secondary" onclick="exportGifts()">Export CSV</button>
-                    </div>
-                </div>
-
-                <div id="add-gift-form" class="add-gift-form">
-                    <h3 style="margin-bottom: 20px;">Add a Gift</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Recipient Name *</label>
-                            <input type="text" id="gift-recipient" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Relationship</label>
-                            <select id="gift-relationship">
-                                <option value="Spouse">Spouse/Partner</option>
-                                <option value="Parent">Parent</option>
-                                <option value="Child">Child</option>
-                                <option value="Sibling">Sibling</option>
-                                <option value="Friend">Friend</option>
-                                <option value="Coworker">Coworker</option>
-                                <option value="Grandparent">Grandparent</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Gift Description *</label>
-                            <input type="text" id="gift-description" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Occasion</label>
-                            <input type="text" id="gift-occasion" placeholder="e.g., Birthday, Christmas">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Date Given</label>
-                            <input type="date" id="gift-date">
-                        </div>
-                        <div class="form-group">
-                            <label>Amount Spent</label>
-                            <input type="number" id="gift-price" placeholder="0.00" step="0.01" min="0">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <button onclick="saveGift()">Save Gift</button>
-                        <button class="secondary" onclick="toggleAddForm()">Cancel</button>
-                    </div>
-                </div>
-
-                <div id="gifts-list">
-                    <div class="empty-state">
-                        <h3>No gifts tracked yet</h3>
-                        <p>Start adding gifts you've given to keep track of your generosity!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
+      <div class="wizard-nav">
+        <span></span>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
     </div>
 
-    <script>
-        // Enhanced gift database with more unique, uncommon ideas
-        const giftDatabase = {
-            spouse: {
-                male: [
-                    { name: "Custom Star Map", desc: "Personalized print of the night sky on your special date", price: "$40-$120", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Whiskey Barrel Aging Kit", desc: "Age your own spirits at home with a mini oak barrel", price: "$60-$150", tags: ["cooking"], ages: ["adult", "middle-age"], category: "Experience" },
-                    { name: "Concert Tickets + Vinyl Record", desc: "See their favorite artist live and take home the album", price: "$100-$300", tags: ["music"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Personalized Coordinates Bracelet", desc: "Leather bracelet engraved with meaningful location coordinates", price: "$35-$85", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Smart Garden System", desc: "Indoor hydroponic garden for growing fresh herbs year-round", price: "$100-$300", tags: ["tech", "home", "cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
-                    { name: "Hot Sauce Making Kit", desc: "Create custom hot sauces with unique pepper varieties", price: "$45-$95", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
-                    { name: "Personalized Song", desc: "Commission a custom song written about your relationship", price: "$150-$500", tags: ["music"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Adventure Subscription Box", desc: "Monthly outdoor gear and trail guides for new adventures", price: "$40-$60/month", tags: ["outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
-                    { name: "Leather-Working Class", desc: "Learn to craft wallets, belts, or accessories together", price: "$120-$250", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "DNA Ancestry + Traits Test", desc: "Discover heritage, health traits, and genetic connections", price: "$99-$199", tags: ["tech"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Unique" }
-                ],
-                female: [
-                    { name: "Birth Flower Jewelry", desc: "Necklace featuring their birth month's flower in delicate detail", price: "$60-$200", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Custom Portrait Painting", desc: "Commission an artist to paint you both in a unique style", price: "$150-$600", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Perfume-Making Workshop", desc: "Create a custom fragrance blend together", price: "$120-$300", tags: ["fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Cookbook + Cooking Class", desc: "Beautiful cookbook paired with a virtual or in-person class", price: "$80-$250", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Monthly Flower Subscription", desc: "Fresh seasonal bouquets delivered to her door", price: "$40-$100/month", tags: ["home"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Subscription" },
-                    { name: "Silk Pillowcase Set", desc: "Luxurious mulberry silk for hair and skin health", price: "$50-$150", tags: ["wellness", "home"], ages: ["young-adult", "adult", "middle-age"], category: "Wellness" },
-                    { name: "Pottery Class Series", desc: "Learn to throw pottery and create functional art", price: "$150-$400", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Personalized Recipe Book", desc: "Family recipes collected and bound in a beautiful keepsake", price: "$60-$150", tags: ["cooking"], ages: ["adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Sunrise Hot Air Balloon Ride", desc: "Romantic aerial adventure at dawn", price: "$200-$500", tags: ["outdoors", "travel"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Custom Bookshelf Portrait", desc: "Artist paints you as book spines on a shelf", price: "$80-$200", tags: ["art", "reading"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" }
-                ],
-                any: [
-                    { name: "Couples Adventure Book", desc: "Guided journal with 100 adventures to experience together", price: "$25-$50", tags: ["travel", "outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Custom Puzzle of Your Photo", desc: "Turn a favorite memory into a 1000-piece puzzle", price: "$35-$80", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Wine Tasting Tour", desc: "Day trip to local vineyards with tastings and lunch", price: "$150-$400", tags: ["cooking", "travel"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Smart Mug Set", desc: "Temperature-controlled mugs that keep drinks perfect", price: "$80-$160", tags: ["tech", "cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Tech" },
-                    { name: "Escape Room at Home", desc: "Premium at-home mystery game for couples", price: "$30-$60", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Couples Massage Class", desc: "Learn professional techniques together", price: "$100-$250", tags: ["wellness"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Record Your Love Story", desc: "Professional interview service that creates an audio keepsake", price: "$200-$500", tags: ["art"], ages: ["adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Monthly Date Night Box", desc: "Curated experiences delivered with everything needed", price: "$40-$80/month", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
-                    { name: "Star-Naming Certificate", desc: "Name a star after your relationship with official registry", price: "$50-$100", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
-                    { name: "Couples Pottery Date", desc: "Private studio session to create matching pieces", price: "$120-$300", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" }
-                ]
-            },
-            // Add more categories here... (parent, child, sibling, friend, coworker, grandparent, other)
-            // For brevity, I'll add a few key ones
-            friend: {
-                male: [
-                    { name: "Jerky of the Month Club", desc: "Artisan jerky varieties delivered monthly", price: "$30-$50/month", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
-                    { name: "Portable Pizza Oven", desc: "Compact outdoor oven for perfect artisan pizzas", price: "$200-$400", tags: ["cooking", "outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
-                    { name: "Whiskey Stones Set", desc: "Chilling stones that don't dilute drinks", price: "$25-$60", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Unique" },
-                    { name: "Axe-Throwing Experience", desc: "Group session at a local axe-throwing venue", price: "$40-$80", tags: ["outdoors"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Craft Beer Brewing Kit", desc: "Everything needed to brew 5 gallons at home", price: "$80-$200", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
-                    { name: "Desk Catapult", desc: "Mini trebuchet for launching office supplies", price: "$20-$40", tags: ["gaming"], ages: ["young-adult", "adult"], category: "Unique" },
-                    { name: "Personalized Golf Balls", desc: "Custom printed golf balls with funny messages", price: "$30-$60", tags: ["sports"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Vinyl Record of Birth Year", desc: "Top hit from the year they were born", price: "$25-$60", tags: ["music"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Escape Room Gift Card", desc: "Adventure for the whole friend group", price: "$50-$150", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Bonsai Starter Kit", desc: "Everything to grow and shape a miniature tree", price: "$40-$100", tags: ["home"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "DIY" }
-                ],
-                female: [
-                    { name: "Personalized Star Map Mug", desc: "Coffee mug showing the stars on a special date", price: "$30-$50", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Monthly Self-Care Box", desc: "Curated wellness and beauty products", price: "$30-$60/month", tags: ["wellness", "fashion"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" },
-                    { name: "Wine + Paint Night", desc: "Creative evening with canvas, paints, and wine", price: "$40-$80", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Silk Sleep Mask Set", desc: "Luxurious eye mask with matching scrunchies", price: "$35-$70", tags: ["wellness"], ages: ["young-adult", "adult", "middle-age"], category: "Wellness" },
-                    { name: "Terrarium Building Kit", desc: "Create a miniature garden in glass", price: "$30-$80", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "DIY" },
-                    { name: "Macrame Workshop", desc: "Learn to create wall hangings and plant holders", price: "$60-$120", tags: ["art", "home"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Birth Flower Candle", desc: "Soy candle with their birth month's flower scent", price: "$25-$50", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Tea Blending Class", desc: "Create custom tea blends to take home", price: "$50-$100", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Experience" },
-                    { name: "Personalized Recipe Cards", desc: "Custom illustrated cards in their style", price: "$30-$70", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Succulent Subscription", desc: "New rare succulent delivered monthly", price: "$20-$40/month", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Subscription" }
-                ],
-                any: [
-                    { name: "Board Game Cafe Gift Card", desc: "Enjoy hundreds of games with food and drinks", price: "$40-$80", tags: ["gaming"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Custom Illustrated Portrait", desc: "Digital portrait in fun cartoon or watercolor style", price: "$50-$150", tags: ["art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Mystery Book Subscription", desc: "Curated thriller or mystery delivered monthly", price: "$20-$40/month", tags: ["reading"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Subscription" },
-                    { name: "Cooking Class Experience", desc: "Learn a new cuisine together", price: "$80-$200", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Custom Playlist Print", desc: "Spotify playlist as scannable artwork", price: "$30-$70", tags: ["music", "art"], ages: ["young-adult", "adult", "middle-age"], category: "Personalized" },
-                    { name: "Portable Projector", desc: "Compact projector for outdoor movie nights", price: "$80-$250", tags: ["tech"], ages: ["young-adult", "adult", "middle-age"], category: "Tech" },
-                    { name: "Gourmet Popcorn Sampler", desc: "12 unique flavors from sweet to savory", price: "$40-$80", tags: ["cooking"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Unique" },
-                    { name: "Plant Parenthood Workshop", desc: "Learn to care for houseplants", price: "$40-$90", tags: ["home"], ages: ["young-adult", "adult", "middle-age"], category: "Experience" },
-                    { name: "Custom Map Print", desc: "Personalized map of meaningful location", price: "$40-$100", tags: ["art", "travel"], ages: ["young-adult", "adult", "middle-age", "senior"], category: "Personalized" },
-                    { name: "Virtual Reality Headset", desc: "Affordable VR for gaming and experiences", price: "$200-$400", tags: ["gaming", "tech"], ages: ["young-adult", "adult"], category: "Tech" }
-                ]
-            }
-            // Truncated for space - would include all categories
-        };
+    <!-- Step 2 -->
+    <div class="step" id="step-2">
+      <div class="step-title">A bit more about them 🌸</div>
+      <div class="step-subtitle">Helps us get the vibe right</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Age range</label>
+          <select id="age-range">
+            <option value="">Select age…</option>
+            <option value="Baby (0-2)">👶 Baby (0–2)</option>
+            <option value="Toddler (3-5)">🧸 Toddler (3–5)</option>
+            <option value="Child (6-12)">🎠 Child (6–12)</option>
+            <option value="Teen (13-17)">🎮 Teen (13–17)</option>
+            <option value="Young Adult (18-29)">💃 Young Adult (18–29)</option>
+            <option value="30s">🌿 30s</option>
+            <option value="40s">🍷 40s</option>
+            <option value="50s">🌺 50s</option>
+            <option value="60s">🌅 60s</option>
+            <option value="70+">🌳 70+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Vibe / gender</label>
+          <div class="chip-grid" id="gender-chips">
+            <div class="chip" data-val="feminine" onclick="selectChip(this,'gender-chips')">🌸 Feminine</div>
+            <div class="chip" data-val="masculine" onclick="selectChip(this,'gender-chips')">⚡ Masculine</div>
+            <div class="chip" data-val="neutral" onclick="selectChip(this,'gender-chips')">🌈 Neutral</div>
+          </div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
 
-        // Gift tracking storage
-        let savedGifts = JSON.parse(localStorage.getItem('giftHistory') || '[]');
-        let currentRecipientName = '';
+    <!-- Step 3 -->
+    <div class="step" id="step-3">
+      <div class="step-title">What's the budget? 💸</div>
+      <div class="step-subtitle">No judgment — all budgets welcome</div>
+      <div class="chip-grid" id="budget-chips" style="margin-bottom:16px">
+        <div class="chip" data-val="under $25" onclick="selectChip(this,'budget-chips');document.getElementById('custom-budget').value=''">Under $25</div>
+        <div class="chip" data-val="$25–$50" onclick="selectChip(this,'budget-chips');document.getElementById('custom-budget').value=''">$25–$50</div>
+        <div class="chip" data-val="$50–$100" onclick="selectChip(this,'budget-chips');document.getElementById('custom-budget').value=''">$50–$100</div>
+        <div class="chip" data-val="$100–$200" onclick="selectChip(this,'budget-chips');document.getElementById('custom-budget').value=''">$100–$200</div>
+        <div class="chip" data-val="$200+" onclick="selectChip(this,'budget-chips');document.getElementById('custom-budget').value=''">$200+</div>
+      </div>
+      <div class="form-group">
+        <label>Or enter a specific budget</label>
+        <div class="budget-input-wrap">
+          <span class="budget-dollar">$</span>
+          <input type="number" id="custom-budget" placeholder="e.g. 75" min="1" oninput="clearChips('budget-chips')">
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
 
-        // Tab switching
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    <!-- Step 4 -->
+    <div class="step" id="step-4">
+      <div class="step-title">What do they love? 💫</div>
+      <div class="step-subtitle">Pick everything that fits (or add your own)</div>
+      <div class="interest-grid" id="interest-chips">
+        <div class="interest-chip" data-val="cooking" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🍳</span>Cooking</div>
+        <div class="interest-chip" data-val="fitness" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🏋️</span>Fitness</div>
+        <div class="interest-chip" data-val="reading" onclick="toggleInterest(this)"><span class="interest-chip-emoji">📚</span>Reading</div>
+        <div class="interest-chip" data-val="travel" onclick="toggleInterest(this)"><span class="interest-chip-emoji">✈️</span>Travel</div>
+        <div class="interest-chip" data-val="gaming" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🎮</span>Gaming</div>
+        <div class="interest-chip" data-val="beauty" onclick="toggleInterest(this)"><span class="interest-chip-emoji">💄</span>Beauty</div>
+        <div class="interest-chip" data-val="fashion" onclick="toggleInterest(this)"><span class="interest-chip-emoji">👗</span>Fashion</div>
+        <div class="interest-chip" data-val="music" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🎵</span>Music</div>
+        <div class="interest-chip" data-val="art" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🎨</span>Art</div>
+        <div class="interest-chip" data-val="outdoors" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🏕️</span>Outdoors</div>
+        <div class="interest-chip" data-val="gardening" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🌱</span>Gardening</div>
+        <div class="interest-chip" data-val="pets" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🐾</span>Pets</div>
+        <div class="interest-chip" data-val="coffee and tea" onclick="toggleInterest(this)"><span class="interest-chip-emoji">☕</span>Coffee/Tea</div>
+        <div class="interest-chip" data-val="wine" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🍷</span>Wine</div>
+        <div class="interest-chip" data-val="self-care" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🧖</span>Self-care</div>
+        <div class="interest-chip" data-val="home decor" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🏠</span>Home Decor</div>
+        <div class="interest-chip" data-val="crafts and DIY" onclick="toggleInterest(this)"><span class="interest-chip-emoji">✂️</span>Crafts</div>
+        <div class="interest-chip" data-val="photography" onclick="toggleInterest(this)"><span class="interest-chip-emoji">📷</span>Photography</div>
+        <div class="interest-chip" data-val="tech" onclick="toggleInterest(this)"><span class="interest-chip-emoji">💻</span>Tech</div>
+        <div class="interest-chip" data-val="family" onclick="toggleInterest(this)"><span class="interest-chip-emoji">👨‍👩‍👧</span>Family</div>
+        <div class="interest-chip" data-val="sports" onclick="toggleInterest(this)"><span class="interest-chip-emoji">⚽</span>Sports</div>
+        <div class="interest-chip" data-val="mindfulness" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🧘</span>Mindfulness</div>
+        <div class="interest-chip" data-val="sustainability and eco-friendly living" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🌍</span>Eco/Green</div>
+        <div class="interest-chip" data-val="baking" onclick="toggleInterest(this)"><span class="interest-chip-emoji">🧁</span>Baking</div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Add your own (comma-separated)</label>
+        <input type="text" id="custom-interests" placeholder="e.g. vintage cars, journaling, sushi">
+      </div>
+      <div class="wizard-nav">
+        <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" onclick="nextStep()">Next →</button>
+      </div>
+    </div>
 
-            event.target.classList.add('active');
-            document.getElementById(tabName + '-tab').classList.add('active');
+    <!-- Step 5 -->
+    <div class="step" id="step-5">
+      <div class="step-title">Almost there! 🎉</div>
+      <div class="step-subtitle">Any other details we should know?</div>
+      <div class="form-group">
+        <label>Anything else? (optional)</label>
+        <textarea id="extra-notes" rows="3" placeholder="e.g. They already have an Instant Pot. They love anything handmade. They're minimalist. Allergic to wool."></textarea>
+      </div>
+      <div id="generate-error" class="alert alert-pink hidden"></div>
+      <div class="wizard-nav">
+        <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+        <button class="btn btn-primary" id="generate-btn" onclick="generateGifts()">✨ Find Gifts</button>
+      </div>
+    </div>
+  </div>
 
-            if (tabName === 'tracker') {
-                loadGiftHistory();
-            }
-        }
+  <div id="results-section" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+        <div class="card-title" id="results-headline">Gift ideas</div>
+        <button class="btn btn-outline btn-sm" onclick="resetWizard()">Start over</button>
+      </div>
+      <p class="text-muted" style="font-size:0.85rem;margin-bottom:4px" id="results-subhead"></p>
+      <div id="gift-cards" class="gift-cards"></div>
+    </div>
+  </div>
+</div>
 
-        // Navigation functions
-        function nextStep() {
-            const relationship = document.getElementById('relationship').value;
-            if (!relationship) {
-                alert('Please select a relationship');
-                return;
-            }
-            currentRecipientName = document.getElementById('recipient-name').value;
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-        }
+<!-- HISTORY -->
+<div id="tab-history" class="tab-panel">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">Gifts tracked</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-people">0</div><div class="stat-label">People</div></div>
+    <div class="stat-card"><div class="stat-value" id="stat-spent">$0</div><div class="stat-label">Total spent</div></div>
+  </div>
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+    <input type="text" id="history-search" placeholder="Search by name or gift…" style="max-width:260px;margin-bottom:0" oninput="renderHistory()">
+    <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn btn-sm btn-periwinkle" onclick="openTrackModal()">+ Track a gift</button>
+  </div>
+  <div id="history-cards" class="history-grid"></div>
+  <div id="history-empty" class="empty-state hidden">
+    <span class="empty-state-emoji">🎁</span>
+    <p class="fw-700">No gifts tracked yet</p>
+    <p class="text-muted" style="font-size:0.88rem;margin-top:4px">Generate ideas above, then hit "+ Track" to save them here.</p>
+  </div>
+</div>
 
-        function nextStep2() {
-            const gender = document.getElementById('gender').value;
-            if (!gender) {
-                alert('Please select a gender');
-                return;
-            }
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('step3').classList.remove('hidden');
-        }
+<!-- SOURCES -->
+<div id="tab-sources" class="tab-panel">
+  <p class="text-muted" style="font-size:0.9rem;margin-bottom:20px">Curated gift guides from the best editors on the internet.</p>
 
-        function nextStep3() {
-            const age = document.getElementById('age').value;
-            if (!age) {
-                alert('Please select an age range');
-                return;
-            }
-            document.getElementById('step3').classList.add('hidden');
-            document.getElementById('step4').classList.remove('hidden');
-        }
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🔬</span><span class="source-pub-name">Wirecutter (NYT)</span></div>
+    <div class="source-links">
+      <a href="https://www.nytimes.com/wirecutter/gifts/" target="_blank" class="source-link">All Gifts ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/gifts-for-women/" target="_blank" class="source-link">For Women ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/gifts-for-men/" target="_blank" class="source-link">For Men ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-gifts-for-kids/" target="_blank" class="source-link">For Kids ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-gifts-for-teens/" target="_blank" class="source-link">For Teens ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/stocking-stuffer-ideas/" target="_blank" class="source-link">Stocking Stuffers ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-tech-gifts/" target="_blank" class="source-link">Tech Gifts ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-gifts-under-25/" target="_blank" class="source-link">Under $25 ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-gifts-under-50/" target="_blank" class="source-link">Under $50 ↗</a>
+      <a href="https://www.nytimes.com/wirecutter/gifts/best-last-minute-gifts/" target="_blank" class="source-link">Last Minute ↗</a>
+    </div>
+  </div>
 
-        function nextStep4() {
-            const budget = document.getElementById('budget').value;
-            if (!budget) {
-                alert('Please select a budget');
-                return;
-            }
-            document.getElementById('step4').classList.add('hidden');
-            document.getElementById('step5').classList.remove('hidden');
-        }
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🌸</span><span class="source-pub-name">The Everymom</span></div>
+    <div class="source-links">
+      <a href="https://theeverymom.com/category/birthday-gifting/" target="_blank" class="source-link">Birthday Gifting ↗</a>
+      <a href="https://theeverymom.com/category/gift-guides/" target="_blank" class="source-link">Gift Guides ↗</a>
+      <a href="https://theeverymom.com/tag/gifts-for-moms/" target="_blank" class="source-link">For Moms ↗</a>
+      <a href="https://theeverymom.com/tag/gifts-for-kids/" target="_blank" class="source-link">For Kids ↗</a>
+      <a href="https://theeverymom.com/tag/gifts-for-toddlers/" target="_blank" class="source-link">For Toddlers ↗</a>
+      <a href="https://theeverymom.com/tag/mothers-day-gifts/" target="_blank" class="source-link">Mother's Day ↗</a>
+      <a href="https://theeverymom.com/tag/holiday-gift-guide/" target="_blank" class="source-link">Holiday Guide ↗</a>
+    </div>
+  </div>
 
-        function backStep(fromStep) {
-            if (fromStep === 1) {
-                document.getElementById('step2').classList.add('hidden');
-                document.getElementById('step1').classList.remove('hidden');
-            } else if (fromStep === 2) {
-                document.getElementById('step3').classList.add('hidden');
-                document.getElementById('step2').classList.remove('hidden');
-            } else if (fromStep === 3) {
-                document.getElementById('step4').classList.add('hidden');
-                document.getElementById('step3').classList.remove('hidden');
-            } else if (fromStep === 4) {
-                document.getElementById('step5').classList.add('hidden');
-                document.getElementById('step4').classList.remove('hidden');
-            }
-        }
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">✂️</span><span class="source-pub-name">The Cut</span></div>
+    <div class="source-links">
+      <a href="https://www.thecut.com/article/best-gifts-for-women.html" target="_blank" class="source-link">For Her ↗</a>
+      <a href="https://www.thecut.com/article/best-gifts-for-men.html" target="_blank" class="source-link">For Him ↗</a>
+      <a href="https://www.thecut.com/gift-guide" target="_blank" class="source-link">Gift Guide ↗</a>
+      <a href="https://www.thecut.com/article/best-gifts-under-50.html" target="_blank" class="source-link">Under $50 ↗</a>
+    </div>
+  </div>
 
-        function generateIdeas() {
-            const relationship = document.getElementById('relationship').value;
-            const gender = document.getElementById('gender').value;
-            const age = document.getElementById('age').value;
-            const budget = document.getElementById('budget').value;
-            const interestCheckboxes = document.querySelectorAll('input[name="interest"]:checked');
-            const interests = Array.from(interestCheckboxes).map(cb => cb.value);
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🌟</span><span class="source-pub-name">Oprah Daily</span></div>
+    <div class="source-links">
+      <a href="https://www.oprahdaily.com/life/g26630612/best-gifts-for-women/" target="_blank" class="source-link">For Women ↗</a>
+      <a href="https://www.oprahdaily.com/life/g26536578/oprah-favorite-things-list/" target="_blank" class="source-link">Oprah's Faves ↗</a>
+      <a href="https://www.oprahdaily.com/life/g35708928/unique-gifts-for-women/" target="_blank" class="source-link">Unique Gifts ↗</a>
+      <a href="https://www.oprahdaily.com/life/g29063966/gifts-for-mom/" target="_blank" class="source-link">For Mom ↗</a>
+    </div>
+  </div>
 
-            if (interests.length === 0) {
-                alert('Please select at least one interest');
-                return;
-            }
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🎪</span><span class="source-pub-name">Uncommon Goods</span></div>
+    <div class="source-links">
+      <a href="https://www.uncommongoods.com/gifts" target="_blank" class="source-link">All Gifts ↗</a>
+      <a href="https://www.uncommongoods.com/gifts/personalized-gifts" target="_blank" class="source-link">Personalized ↗</a>
+      <a href="https://www.uncommongoods.com/gifts/gifts-under-50" target="_blank" class="source-link">Under $50 ↗</a>
+      <a href="https://www.uncommongoods.com/gifts/gifts-for-her" target="_blank" class="source-link">For Her ↗</a>
+      <a href="https://www.uncommongoods.com/gifts/gifts-for-him" target="_blank" class="source-link">For Him ↗</a>
+      <a href="https://www.uncommongoods.com/gifts/gifts-for-kids" target="_blank" class="source-link">For Kids ↗</a>
+    </div>
+  </div>
 
-            const gifts = giftDatabase[relationship]?.[gender] || [];
-            const giftGrid = document.getElementById('giftGrid');
-            giftGrid.innerHTML = '';
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🏡</span><span class="source-pub-name">Good Housekeeping</span></div>
+    <div class="source-links">
+      <a href="https://www.goodhousekeeping.com/holidays/gift-ideas/" target="_blank" class="source-link">Gift Ideas Hub ↗</a>
+      <a href="https://www.goodhousekeeping.com/holidays/gift-ideas/g750/gifts-for-women/" target="_blank" class="source-link">For Women ↗</a>
+      <a href="https://www.goodhousekeeping.com/holidays/gift-ideas/g26578143/best-gifts-for-men/" target="_blank" class="source-link">For Men ↗</a>
+      <a href="https://www.goodhousekeeping.com/holidays/gift-ideas/g3595/gifts-for-kids/" target="_blank" class="source-link">For Kids ↗</a>
+    </div>
+  </div>
 
-            // Budget filtering
-            const budgetRanges = {
-                'under-50': [0, 50],
-                '50-100': [50, 100],
-                '100-250': [100, 250],
-                '250-500': [250, 500],
-                '500-plus': [500, 10000]
-            };
-            const [minBudget, maxBudget] = budgetRanges[budget] || [0, 10000];
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">😎</span><span class="source-pub-name">Cool Material</span></div>
+    <div class="source-links">
+      <a href="https://coolmaterial.com/roundup/best-gifts-for-men/" target="_blank" class="source-link">Gifts for Men ↗</a>
+      <a href="https://coolmaterial.com/feature/gift-guide/" target="_blank" class="source-link">Gift Guide ↗</a>
+    </div>
+  </div>
 
-            // Score and filter gifts
-            const scoredGifts = gifts.map(gift => {
-                let score = 0;
-                const tags = gift.tags || [];
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">🏛️</span><span class="source-pub-name">Architectural Digest</span></div>
+    <div class="source-links">
+      <a href="https://www.architecturaldigest.com/gallery/gift-guide" target="_blank" class="source-link">Gift Guide ↗</a>
+      <a href="https://www.architecturaldigest.com/gallery/best-home-gifts" target="_blank" class="source-link">Home Gifts ↗</a>
+    </div>
+  </div>
 
-                // Match interests
-                interests.forEach(interest => {
-                    if (tags.includes(interest)) score += 2;
-                });
+  <div class="source-section">
+    <div class="source-pub"><span class="source-pub-emoji">👗</span><span class="source-pub-name">Refinery29</span></div>
+    <div class="source-links">
+      <a href="https://www.refinery29.com/en-us/gifts-for-women" target="_blank" class="source-link">For Women ↗</a>
+      <a href="https://www.refinery29.com/en-us/best-birthday-gifts-for-women" target="_blank" class="source-link">Birthday Gifts ↗</a>
+      <a href="https://www.refinery29.com/en-us/gifts-under-50" target="_blank" class="source-link">Under $50 ↗</a>
+    </div>
+  </div>
+</div>
 
-                // Match age
-                if (gift.ages && gift.ages.includes(age)) score += 1;
+<!-- Track Modal -->
+<div id="track-modal" class="modal-overlay hidden" onclick="closeTrackModal(event)">
+  <div class="modal">
+    <div class="modal-title">📌 Track a Gift</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Recipient</label>
+        <input type="text" id="track-name" placeholder="e.g. Mom">
+      </div>
+      <div class="form-group">
+        <label>Occasion</label>
+        <input type="text" id="track-occasion" placeholder="e.g. Birthday">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Gift</label>
+      <input type="text" id="track-gift" placeholder="e.g. Silk pillowcase set">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Amount (optional)</label>
+        <div class="budget-input-wrap">
+          <span class="budget-dollar">$</span>
+          <input type="number" id="track-amount" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="track-status">
+          <option value="idea">💡 Idea</option>
+          <option value="purchased">🛒 Purchased</option>
+          <option value="given">🎁 Given</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes (optional)</label>
+      <input type="text" id="track-notes" placeholder="e.g. From Uncommon Goods">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeTrackModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTrackEntry()">Save Gift</button>
+    </div>
+  </div>
+</div>
 
-                // Parse price range and check budget
-                const priceMatch = gift.price.match(/\$(\d+)-\$?(\d+)/);
-                if (priceMatch) {
-                    const giftMin = parseInt(priceMatch[1]);
-                    const giftMax = parseInt(priceMatch[2]);
-                    // Gift is in budget if there's any overlap
-                    if (giftMax >= minBudget && giftMin <= maxBudget) {
-                        score += 1;
-                    } else {
-                        score = 0; // Exclude if out of budget
-                    }
-                }
+<script>
+let currentStep = 1;
+const TOTAL_STEPS = 5;
 
-                return { ...gift, score };
-            });
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'history') renderHistory();
+}
 
-            // Get top matches
-            const topGifts = scoredGifts
-                .filter(g => g.score > 0)
-                .sort((a, b) => b.score - a.score)
-                .slice(0, 8);
+function renderDots() {
+  const c = document.getElementById('step-dots');
+  c.innerHTML = '';
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i === currentStep ? ' active' : i < currentStep ? ' done' : '');
+    c.appendChild(d);
+  }
+}
 
-            const displayName = currentRecipientName || 'Them';
-            document.getElementById('recipient-display').textContent = displayName;
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  currentStep = n;
+  renderDots();
+}
 
-            if (topGifts.length === 0) {
-                giftGrid.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No gifts found matching your criteria. Try adjusting your budget or interests.</p>';
-            } else {
-                topGifts.forEach(gift => {
-                    const card = document.createElement('div');
-                    card.className = 'gift-card';
-                    card.innerHTML = `
-                        <h3>${gift.name}</h3>
-                        <p>${gift.desc}</p>
-                        <div class="meta">
-                            <span class="price-range">${gift.price}</span>
-                            <span class="category-tag">${gift.category || 'Gift'}</span>
-                        </div>
-                        <button class="save-btn" onclick="saveToTracker('${gift.name.replace(/'/g, "\\'")}', '${gift.price}', '${displayName}')">
-                            Save to Tracker
-                        </button>
-                    `;
-                    giftGrid.appendChild(card);
-                });
-            }
+function nextStep() { if (currentStep < TOTAL_STEPS) showStep(currentStep + 1); }
+function prevStep() { if (currentStep > 1) showStep(currentStep - 1); }
 
-            document.getElementById('step5').classList.add('hidden');
-            document.getElementById('results').classList.remove('hidden');
-        }
+function selectChip(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('selected'));
+  el.classList.toggle('selected');
+}
 
-        function reset() {
-            document.getElementById('relationship').value = '';
-            document.getElementById('gender').value = '';
-            document.getElementById('age').value = '';
-            document.getElementById('budget').value = '';
-            document.getElementById('recipient-name').value = '';
-            document.querySelectorAll('input[name="interest"]').forEach(cb => cb.checked = false);
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('step1').classList.remove('hidden');
-            currentRecipientName = '';
-        }
+function clearChips(groupId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c => c.classList.remove('selected'));
+}
 
-        // Gift Tracker Functions
-        function toggleAddForm() {
-            const form = document.getElementById('add-gift-form');
-            form.classList.toggle('active');
-        }
+function toggleInterest(el) { el.classList.toggle('selected'); }
 
-        function saveGift() {
-            const recipient = document.getElementById('gift-recipient').value;
-            const relationship = document.getElementById('gift-relationship').value;
-            const description = document.getElementById('gift-description').value;
-            const occasion = document.getElementById('gift-occasion').value;
-            const date = document.getElementById('gift-date').value || new Date().toISOString().split('T')[0];
-            const price = parseFloat(document.getElementById('gift-price').value) || 0;
+function getSelectedChip(groupId) {
+  const sel = document.querySelector('#' + groupId + ' .chip.selected');
+  return sel ? sel.dataset.val : null;
+}
 
-            if (!recipient || !description) {
-                alert('Please fill in recipient name and gift description');
-                return;
-            }
+function getSelectedInterests() {
+  const from = [...document.querySelectorAll('#interest-chips .interest-chip.selected')].map(c => c.dataset.val);
+  const custom = document.getElementById('custom-interests').value.split(',').map(s => s.trim()).filter(Boolean);
+  return [...from, ...custom];
+}
 
-            const gift = {
-                id: Date.now(),
-                recipient,
-                relationship,
-                description,
-                occasion,
-                date,
-                price
-            };
+function getBudget() {
+  const custom = document.getElementById('custom-budget').value;
+  if (custom) return '$' + custom;
+  return getSelectedChip('budget-chips');
+}
 
-            savedGifts.push(gift);
-            localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
+async function generateGifts() {
+  const name = document.getElementById('recipient-name').value.trim() || 'them';
+  const occasion = document.getElementById('occasion').value;
+  const relationship = getSelectedChip('relationship-chips');
+  const age = document.getElementById('age-range').value;
+  const gender = getSelectedChip('gender-chips') || 'neutral';
+  const budget = getBudget();
+  const interests = getSelectedInterests();
+  const notes = document.getElementById('extra-notes').value.trim();
 
-            // Clear form
-            document.getElementById('gift-recipient').value = '';
-            document.getElementById('gift-description').value = '';
-            document.getElementById('gift-occasion').value = '';
-            document.getElementById('gift-date').value = '';
-            document.getElementById('gift-price').value = '';
-            toggleAddForm();
+  const err = document.getElementById('generate-error');
+  if (!relationship) { err.textContent = 'Please select a relationship.'; err.classList.remove('hidden'); return; }
+  if (!budget) { err.textContent = 'Please select or enter a budget.'; err.classList.remove('hidden'); return; }
+  err.classList.add('hidden');
 
-            loadGiftHistory();
-        }
+  let apiKey = localStorage.getItem('gg_api_key');
+  if (!apiKey) {
+    apiKey = prompt('Enter your Anthropic API key to generate ideas:\n\n(Saved locally, never shared)');
+    if (!apiKey) return;
+    localStorage.setItem('gg_api_key', apiKey);
+  }
 
-        function saveToTracker(giftName, price, recipientName) {
-            const relationship = document.getElementById('relationship').value;
-            const relationshipMap = {
-                'spouse': 'Spouse',
-                'parent': 'Parent',
-                'child': 'Child',
-                'sibling': 'Sibling',
-                'friend': 'Friend',
-                'coworker': 'Coworker',
-                'grandparent': 'Grandparent',
-                'other': 'Other'
-            };
+  const btn = document.getElementById('generate-btn');
+  btn.innerHTML = '<span class="loading-dots">Finding gifts</span>';
+  btn.disabled = true;
 
-            // Extract min price from range
-            const priceMatch = price.match(/\$(\d+)/);
-            const priceValue = priceMatch ? parseInt(priceMatch[1]) : 0;
+  const promptText = `You are a thoughtful gift advisor. Generate exactly 8 personalized gift ideas.
 
-            const gift = {
-                id: Date.now(),
-                recipient: recipientName,
-                relationship: relationshipMap[relationship] || 'Friend',
-                description: giftName,
-                occasion: '',
-                date: new Date().toISOString().split('T')[0],
-                price: priceValue
-            };
+Recipient: ${name}
+Relationship: ${relationship}
+Occasion: ${occasion || 'not specified'}
+Age: ${age || 'not specified'}
+Vibe: ${gender}
+Budget: ${budget}
+Interests: ${interests.length ? interests.join(', ') : 'general'}
+Extra notes: ${notes || 'none'}
 
-            savedGifts.push(gift);
-            localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
+Return ONLY a JSON array of exactly 8 objects with these keys:
+[{"emoji":"🎁","name":"Gift name","priceRange":"$X–$Y","why":"One sentence why this fits them perfectly","searchTerm":"search query"}]
 
-            alert(`Saved "${giftName}" to your gift tracker!`);
-        }
+Stay within budget. Mix practical and sentimental. Make each gift feel personal.`;
 
-        function deleteGift(id) {
-            if (confirm('Are you sure you want to delete this gift?')) {
-                savedGifts = savedGifts.filter(g => g.id !== id);
-                localStorage.setItem('giftHistory', JSON.stringify(savedGifts));
-                loadGiftHistory();
-            }
-        }
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: promptText }]
+      })
+    });
 
-        function loadGiftHistory() {
-            savedGifts = JSON.parse(localStorage.getItem('giftHistory') || '[]');
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        localStorage.removeItem('gg_api_key');
+        throw new Error('Invalid API key — please try again.');
+      }
+      throw new Error(e.error?.message || 'API error ' + res.status);
+    }
 
-            // Update stats
-            const totalGifts = savedGifts.length;
-            const uniquePeople = new Set(savedGifts.map(g => g.recipient)).size;
-            const totalSpent = savedGifts.reduce((sum, g) => sum + (g.price || 0), 0);
+    const data = await res.json();
+    const text = data.content[0].text.trim();
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error('Could not parse gift ideas — try again');
+    const gifts = JSON.parse(jsonMatch[0]);
+    renderGiftCards(gifts, name, occasion, relationship);
+  } catch (e) {
+    err.textContent = e.message.includes('Failed to fetch')
+      ? 'Could not reach the API. Check your network or try opening this in a browser (not local file).'
+      : 'Error: ' + e.message;
+    err.classList.remove('hidden');
+  } finally {
+    btn.innerHTML = '✨ Find Gifts';
+    btn.disabled = false;
+  }
+}
 
-            document.getElementById('stat-total').textContent = totalGifts;
-            document.getElementById('stat-people').textContent = uniquePeople;
-            document.getElementById('stat-spent').textContent = '$' + totalSpent.toFixed(2);
+function renderGiftCards(gifts, name, occasion, relationship) {
+  document.getElementById('results-headline').textContent = 'Ideas for ' + name;
+  document.getElementById('results-subhead').textContent = [occasion, relationship].filter(Boolean).join(' · ');
+  const grid = document.getElementById('gift-cards');
+  grid.innerHTML = '';
 
-            // Render table
-            const listDiv = document.getElementById('gifts-list');
+  gifts.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'gift-card';
+    const q = encodeURIComponent(g.searchTerm || g.name);
+    card.innerHTML = `
+      <span class="gift-card-emoji">${g.emoji || '🎁'}</span>
+      <div class="gift-card-name">${g.name}</div>
+      <div class="gift-card-price">${g.priceRange}</div>
+      <div class="gift-card-why">${g.why}</div>
+      <div class="gift-card-actions">
+        <a href="https://www.google.com/search?q=${q}" target="_blank" class="btn btn-outline btn-sm">Google</a>
+        <a href="https://www.uncommongoods.com/search?search=${q}" target="_blank" class="btn btn-outline btn-sm">UG</a>
+        <button class="btn btn-sm btn-periwinkle" onclick="openTrackModal('${esc(g.name)}','${esc(name)}','${esc(occasion||'')}')">+ Track</button>
+      </div>`;
+    grid.appendChild(card);
+  });
 
-            if (savedGifts.length === 0) {
-                listDiv.innerHTML = `
-                    <div class="empty-state">
-                        <h3>No gifts tracked yet</h3>
-                        <p>Start adding gifts you've given to keep track of your generosity!</p>
-                    </div>
-                `;
-            } else {
-                // Sort by date descending
-                savedGifts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  const section = document.getElementById('results-section');
+  section.classList.remove('hidden');
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
-                listDiv.innerHTML = `
-                    <table class="gifts-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Recipient</th>
-                                <th>Relationship</th>
-                                <th>Gift</th>
-                                <th>Occasion</th>
-                                <th>Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${savedGifts.map(gift => `
-                                <tr>
-                                    <td>${gift.date}</td>
-                                    <td>${gift.recipient}</td>
-                                    <td>${gift.relationship}</td>
-                                    <td>${gift.description}</td>
-                                    <td>${gift.occasion || '-'}</td>
-                                    <td>$${gift.price.toFixed(2)}</td>
-                                    <td class="actions">
-                                        <button class="delete-btn" onclick="deleteGift(${gift.id})">Delete</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            }
-        }
+function esc(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-        function exportGifts() {
-            if (savedGifts.length === 0) {
-                alert('No gifts to export');
-                return;
-            }
+function resetWizard() {
+  showStep(1);
+  document.getElementById('results-section').classList.add('hidden');
+  ['recipient-name','custom-budget','custom-interests','extra-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('occasion').value = '';
+  document.getElementById('age-range').value = '';
+  document.querySelectorAll('.chip.selected, .interest-chip.selected').forEach(c => c.classList.remove('selected'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-            const headers = ['Date', 'Recipient', 'Relationship', 'Gift', 'Occasion', 'Amount'];
-            const rows = savedGifts.map(g => [
-                g.date,
-                g.recipient,
-                g.relationship,
-                g.description,
-                g.occasion || '',
-                g.price.toFixed(2)
-            ]);
+// History
+function loadHistory() { return JSON.parse(localStorage.getItem('gg_history') || '[]'); }
+function saveHistory(arr) { localStorage.setItem('gg_history', JSON.stringify(arr)); }
 
-            let csv = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-            });
+function renderHistory() {
+  const all = loadHistory();
+  const q = (document.getElementById('history-search')?.value || '').toLowerCase();
+  const filtered = q ? all.filter(e => (e.name + e.gift + (e.occasion||'')).toLowerCase().includes(q)) : all;
 
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'gift-history.csv';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
+  document.getElementById('stat-total').textContent = all.length;
+  document.getElementById('stat-people').textContent = new Set(all.map(e => e.name)).size;
+  const totalSpent = all.reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+  document.getElementById('stat-spent').textContent = '$' + totalSpent.toFixed(0);
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadGiftHistory();
-        });
-    </script>
+  const grid = document.getElementById('history-cards');
+  const empty = document.getElementById('history-empty');
+
+  if (!filtered.length) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.innerHTML = '';
+
+  const BADGE = { idea: 'badge-orange', purchased: 'badge-periwinkle', given: 'badge-green' };
+  const LABEL = { idea: '💡 Idea', purchased: '🛒 Purchased', given: '🎁 Given' };
+  const AVATARS = ['🌸','🌟','💫','🌿','🍀','🌺','🌻','🌈','🦋','✨'];
+
+  [...filtered].reverse().forEach(entry => {
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    const avatar = AVATARS[(entry.name || '').charCodeAt(0) % AVATARS.length] || '🎁';
+    card.innerHTML = `
+      <button class="history-delete-btn" onclick="deleteEntry('${entry.id}')">✕</button>
+      <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--periwinkle));display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:10px">${avatar}</div>
+      <div style="font-weight:700;font-size:0.95rem;margin-bottom:2px">${entry.name}</div>
+      <div style="color:var(--muted);font-size:0.85rem;margin-bottom:4px">${entry.gift}</div>
+      ${entry.amount ? `<div style="font-size:0.85rem;color:var(--green);font-weight:600">$${parseFloat(entry.amount).toFixed(2)}</div>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        ${entry.occasion ? `<span class="badge badge-pink">${entry.occasion}</span>` : ''}
+        <span class="badge ${BADGE[entry.status] || 'badge-periwinkle'}">${LABEL[entry.status] || entry.status}</span>
+      </div>
+      ${entry.notes ? `<div style="font-size:0.8rem;color:var(--muted);margin-top:8px">${entry.notes}</div>` : ''}`;
+    grid.appendChild(card);
+  });
+}
+
+function deleteEntry(id) {
+  saveHistory(loadHistory().filter(e => e.id !== id));
+  renderHistory();
+}
+
+function openTrackModal(gift, name, occasion) {
+  document.getElementById('track-gift').value = gift || '';
+  document.getElementById('track-name').value = name || '';
+  document.getElementById('track-occasion').value = occasion || '';
+  document.getElementById('track-amount').value = '';
+  document.getElementById('track-status').value = 'idea';
+  document.getElementById('track-notes').value = '';
+  document.getElementById('track-modal').classList.remove('hidden');
+}
+
+function closeTrackModal(e) {
+  if (!e || e.target.id === 'track-modal') document.getElementById('track-modal').classList.add('hidden');
+}
+
+function saveTrackEntry() {
+  const entry = {
+    id: Date.now().toString(),
+    name: document.getElementById('track-name').value.trim() || 'Someone',
+    gift: document.getElementById('track-gift').value.trim() || 'A gift',
+    occasion: document.getElementById('track-occasion').value.trim(),
+    amount: document.getElementById('track-amount').value,
+    status: document.getElementById('track-status').value,
+    notes: document.getElementById('track-notes').value.trim(),
+    date: new Date().toISOString()
+  };
+  const arr = loadHistory();
+  arr.push(entry);
+  saveHistory(arr);
+  closeTrackModal();
+  showTab('history', document.querySelectorAll('.tab-btn')[1]);
+  renderHistory();
+}
+
+function exportCSV() {
+  const arr = loadHistory();
+  if (!arr.length) return;
+  const rows = arr.map(e => ['name','occasion','gift','amount','status','notes','date'].map(k => `"${(e[k]||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = ['Name,Occasion,Gift,Amount,Status,Notes,Date', ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'gift-history.csv';
+  a.click();
+}
+
+renderDots();
+renderHistory();
+</script>
 </body>
 </html>
