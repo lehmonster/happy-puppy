@@ -943,10 +943,13 @@ Stay within budget. Mix practical and sentimental. Make each gift feel personal.
     const gifts = JSON.parse(jsonMatch[0]);
     renderGiftCards(gifts, name, occasion, relationship);
   } catch (e) {
-    err.textContent = e.message.includes('Failed to fetch')
-      ? 'Could not reach the API. Check your network or try opening this in a browser (not local file).'
-      : 'Error: ' + e.message;
+    if (e.message.includes('Failed to fetch')) {
+      err.innerHTML = 'Network blocked — could not reach api.anthropic.com.<br><small>Likely cause: corporate firewall. Try on personal wifi or phone hotspot.<br>Raw error: ' + e.message + '</small>';
+    } else {
+      err.innerHTML = 'Error: ' + e.message;
+    }
     err.classList.remove('hidden');
+    console.error('Gift API error:', e);
   } finally {
     btn.innerHTML = '✨ Find Gifts';
     btn.disabled = false;
