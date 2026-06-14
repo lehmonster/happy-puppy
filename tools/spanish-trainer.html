@@ -3,757 +3,989 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wanderwords — Spanish Frequency Trainer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<title>Wanderwords — Spanish Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  :root {
+    --bg: #fdf9f3;
+    --card: #ffffff;
+    --ink: #2b2233;
+    --muted: #7a6f80;
+    --border: #ece4d9;
+    --accent: #ff7a59;
+    --accent2: #ffb347;
+    --green: #2ecc9a;
+    --blue: #5b8dee;
+    --red: #e05555;
+    --shadow: 0 8px 24px rgba(40,30,50,0.06);
+    --shadow-hover: 0 12px 32px rgba(40,30,50,0.12);
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
-    font-family: 'Lato', sans-serif;
-    background: #FAFCFE;
+    font-family: 'Nunito', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
     min-height: 100vh;
-    padding: 20px;
+    padding: 20px 20px 60px;
+  }
+  .container { max-width: 520px; margin: 0 auto; }
+
+  /* ── HOME HEADER ── */
+  .home-header { text-align: center; padding: 32px 0 24px; }
+  .home-flag { font-size: 2.8rem; margin-bottom: 6px; }
+  .home-title { font-size: 2.2rem; font-weight: 900; color: var(--ink); }
+  .home-sub { color: var(--muted); font-size: 0.95rem; margin-top: 4px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 13px; font-weight: 800; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 1px;
+    margin: 24px 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid var(--accent);
   }
 
-  .container { max-width: 800px; margin: 0 auto; }
-
-  /* HEADER */
-  .header {
-    background: linear-gradient(135deg, #B8D4E8 0%, #C5E0F0 40%, #DDE8F5 100%);
-    border-radius: 14px;
-    padding: 30px 32px 24px;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-    border: 1.5px solid #DDE8F5;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 200px; height: 200px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(139,159,217,0.2), transparent 70%);
-    pointer-events: none;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    color: #2C3E50;
-    font-size: 2.2em;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  .header p {
-    color: #5A6B7C;
-    font-size: 0.95em;
-    font-weight: 300;
-  }
-  .header-row {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .deck-select-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .deck-select-wrap label {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #5A6B7C;
-  }
-  .deck-select-wrap select {
-    font-family: 'Lato', sans-serif;
-    background: rgba(255,255,255,0.8);
-    border: 1.5px solid #DDE8F5;
-    color: #2C3E50;
-    padding: 7px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  /* TAB NAV */
-  .tab-nav {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .tab-btn {
-    font-family: 'Lato', sans-serif;
-    background: rgba(255,255,255,0.6);
-    color: #5A6B7C;
-    border: 1.5px solid #DDE8F5;
-    padding: 9px 20px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .tab-btn:hover { background: rgba(255,255,255,0.9); border-color: #8B9FD9; }
-  .tab-btn.active { background: white; color: #8B9FD9; border-color: #8B9FD9; }
-
-  /* STATS */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+  /* ── STAT CARDS ── */
+  .stats-row { display: flex; gap: 12px; margin-bottom: 20px; }
   .stat-card {
-    background: #FFFFFF;
-    border-radius: 12px;
-    padding: 20px 16px;
-    border: 1.5px solid #DDE8F5;
-    text-align: center;
+    flex: 1; background: var(--card); border-radius: var(--radius);
+    padding: 16px 10px; text-align: center;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border);
   }
-  .stat-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2em;
-    font-weight: 700;
-    color: #8B9FD9;
-    margin-bottom: 6px;
-  }
-  .stat-label {
-    font-family: 'Lato', sans-serif;
-    color: #6a4050;
-    font-size: 0.7em;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
+  .stat-num { font-size: 1.9rem; font-weight: 900; line-height: 1; }
+  .stat-num.c-accent { color: var(--accent); }
+  .stat-num.c-gold   { color: var(--accent2); }
+  .stat-num.c-green  { color: var(--green); }
+  .stat-num.c-blue   { color: var(--blue); }
+  .stat-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* SCREENS */
+  /* ── MODE CARDS ── */
+  .mode-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+  .mode-card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+    cursor: pointer; border: 2px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    text-decoration: none; color: var(--ink);
+  }
+  .mode-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
+  .mode-card:active { transform: translateY(1px); }
+  .mode-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; flex-shrink: 0; background: #fdf0e8;
+  }
+  .mode-icon.blue  { background: #e8f0fd; }
+  .mode-icon.green { background: #e4f8f0; }
+  .mode-icon.gold  { background: #fdf5e4; }
+  .mode-icon.pink  { background: #fde8f0; }
+  .mode-info { flex: 1; }
+  .mode-name { font-size: 1rem; font-weight: 800; margin-bottom: 2px; color: var(--ink); }
+  .mode-desc { font-size: 0.8rem; color: var(--muted); }
+  .mode-badge {
+    font-size: 0.72rem; font-weight: 800; padding: 4px 10px;
+    border-radius: 99px; flex-shrink: 0; white-space: nowrap;
+    background: #fde8d8; color: var(--accent);
+  }
+  .mode-badge.blue  { background: #ddeeff; color: var(--blue); }
+  .mode-badge.green { background: #d4f4e8; color: var(--green); }
+  .mode-badge.gold  { background: #fdf0d0; color: #b88000; }
+  .mode-badge.pink  { background: #fde0ec; color: #c0406a; }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .back-btn {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: 50%; width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; cursor: pointer; box-shadow: var(--shadow);
+    flex-shrink: 0; transition: transform 0.15s;
+    font-family: inherit;
+  }
+  .back-btn:hover { transform: scale(1.08); border-color: var(--accent); }
+  .progress-track {
+    flex: 1; height: 10px; background: var(--border);
+    border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--accent);
+    border-radius: 99px; transition: width 0.4s ease;
+  }
+  .progress-label { font-size: 0.85rem; font-weight: 700; color: var(--muted); min-width: 40px; text-align: right; }
+
+  /* ── FLASHCARD ── */
+  .fc-wrap { perspective: 1000px; height: 230px; margin: 8px 0 18px; cursor: pointer; }
+  .fc-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.45s ease; }
+  .fc-inner.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute; inset: 0;
+    background: var(--card); border-radius: 20px;
+    box-shadow: var(--shadow); backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 28px;
+    border: 2px solid var(--border);
+  }
+  .fc-face.back { transform: rotateY(180deg); }
+  .fc-cat {
+    font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1px; padding: 4px 12px; border-radius: 99px;
+    margin-bottom: 14px; background: #fde8d8; color: var(--accent);
+  }
+  .fc-word { font-size: 2.5rem; font-weight: 900; color: var(--ink); text-align: center; line-height: 1.2; }
+  .fc-hint { font-size: 0.82rem; color: var(--muted); margin-top: 10px; }
+  .fc-english { font-size: 1.55rem; font-weight: 800; color: var(--green); text-align: center; margin-bottom: 14px; }
+  .speak-btn {
+    background: #e4f8f0; color: var(--green);
+    border: none; border-radius: 99px; padding: 8px 16px;
+    font-family: inherit; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s;
+  }
+  .speak-btn:hover { background: #c8f0e0; }
+  .fc-flip-hint { text-align: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+  .rating-row { display: flex; gap: 10px; }
+  .rating-row.hidden { visibility: hidden; pointer-events: none; }
+  .rating-btn {
+    flex: 1; padding: 13px 8px; border-radius: 14px; border: 2px solid transparent;
+    font-family: inherit; font-size: 0.88rem; font-weight: 800;
+    cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .rating-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .rating-btn:active { transform: translateY(1px); }
+  .rating-btn.hard { background: #fde8e8; color: var(--red); }
+  .rating-btn.good { background: #e4f8f0; color: var(--green); }
+  .rating-btn.easy { background: #e8f0fd; color: var(--blue); }
+
+  /* ── MULTIPLE CHOICE ── */
+  .mc-question { font-size: 3.2rem; font-weight: 900; color: var(--ink); text-align: center; margin: 28px 0 24px; }
+  .mc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .mc-btn {
+    font-family: inherit; padding: 16px 12px;
+    border: 2px solid var(--border); background: var(--card);
+    color: var(--ink); border-radius: 14px; cursor: pointer;
+    font-size: 0.95rem; font-weight: 700; transition: all 0.15s; text-align: center;
+  }
+  .mc-btn:hover:not(:disabled) { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .mc-btn.correct { background: #e4f8f0; border-color: var(--green); color: #1a7a56; }
+  .mc-btn.wrong   { background: #fde8e8; border-color: var(--red);   color: #8a1a1a; }
+  .mc-btn:disabled { cursor: default; }
+
+  /* ── LISTEN & SPELL ── */
+  .listen-card {
+    background: var(--card); border-radius: 20px;
+    padding: 28px 24px; text-align: center;
+    box-shadow: var(--shadow); border: 2px solid #ddeeff; margin-bottom: 16px;
+  }
+  .listen-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 8px; }
+  .listen-english { font-size: 2rem; font-weight: 900; color: var(--ink); margin-bottom: 22px; line-height: 1.2; }
+  .big-speak-btn {
+    width: 76px; height: 76px; border-radius: 50%;
+    background: linear-gradient(135deg, #3a6ee0, var(--blue));
+    color: white; font-size: 2rem; border: none;
+    cursor: pointer; box-shadow: 0 6px 20px rgba(91,141,238,0.4);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .big-speak-btn:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(91,141,238,0.5); }
+  .big-speak-btn:active { transform: scale(0.96); }
+  .listen-input {
+    width: 100%; padding: 13px 16px; font-family: inherit; font-size: 1.1rem;
+    border: 2px solid var(--border); border-radius: 12px;
+    outline: none; transition: border-color 0.2s; margin-bottom: 10px;
+    background: var(--bg);
+  }
+  .listen-input:focus { border-color: var(--blue); background: white; }
+  .listen-input.correct { border-color: var(--green); background: #e4f8f0; }
+  .listen-input.wrong   { border-color: var(--red);   background: #fde8e8; }
+  .listen-feedback { min-height: 26px; font-weight: 800; font-size: 0.95rem; text-align: center; margin-bottom: 8px; }
+  .listen-feedback.correct { color: var(--green); }
+  .listen-feedback.wrong   { color: var(--red); }
+
+  /* ── FILL IN BLANK ── */
+  .fib-sentence {
+    font-size: 1.5rem; font-weight: 700; color: var(--ink);
+    text-align: center; margin: 20px 0 20px; line-height: 1.5;
+  }
+  .fib-input {
+    display: block; margin: 0 auto 14px; width: 260px;
+    padding: 12px 16px; font-family: inherit; font-size: 1.1rem;
+    border: 2px solid var(--border); border-radius: 12px;
+    text-align: center; outline: none; background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .fib-input:focus { border-color: var(--accent); background: white; }
+  .fib-input.correct { border-color: var(--green); background: #e4f8f0; }
+  .fib-input.wrong   { border-color: var(--red);   background: #fde8e8; }
+  .fib-feedback { text-align: center; font-weight: 800; font-size: 0.95rem; min-height: 22px; margin-bottom: 14px; }
+  .fib-feedback.correct { color: var(--green); }
+  .fib-feedback.wrong   { color: var(--red); }
+
+  /* ── SENTENCE BUILDER ── */
+  .builder-hint {
+    background: #fdf5e4; border: 2px solid #f4d88a; border-radius: 14px;
+    padding: 12px 16px; margin-bottom: 14px;
+  }
+  .builder-hint-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #b08020; margin-bottom: 4px; }
+  .builder-hint-text { font-size: 1rem; font-weight: 700; color: #7a5a10; }
+  .builder-answer-zone {
+    min-height: 58px; background: var(--card); border-radius: 14px;
+    border: 2px dashed var(--border); padding: 10px 12px;
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-content: flex-start;
+    transition: border-color 0.2s;
+  }
+  .builder-answer-zone.has-words { border-color: var(--green); border-style: solid; }
+  .bank-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+  .builder-bank { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .word-chip {
+    padding: 8px 14px; border-radius: 99px; border: 2px solid;
+    font-family: inherit; font-size: 0.92rem; font-weight: 700;
+    cursor: pointer; transition: transform 0.15s; user-select: none;
+  }
+  .word-chip:active { transform: scale(0.95); }
+  .bank-chip  { background: var(--card); border-color: var(--border); color: var(--ink); }
+  .bank-chip:hover  { border-color: var(--accent); color: var(--accent); }
+  .answer-chip { background: #e4f8f0; border-color: var(--green); color: #1a7a56; }
+  .answer-chip:hover { background: #c8f0e0; }
+  .builder-feedback { text-align: center; font-weight: 800; font-size: 0.95rem; min-height: 30px; padding: 4px 0; }
+  .builder-feedback.correct { color: var(--green); }
+  .builder-feedback.wrong   { color: var(--red); }
+
+  /* ── SRS ── */
+  .srs-word { font-size: 3.5rem; font-weight: 900; color: var(--ink); text-align: center; margin: 28px 0 10px; }
+  .srs-answer { font-size: 1.6rem; font-weight: 700; color: var(--green); text-align: center; min-height: 36px; margin-bottom: 20px; }
+  .srs-due-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); text-align: center; margin-bottom: 4px; }
+  .srs-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .srs-btn {
+    font-family: inherit; padding: 10px 22px; border: none;
+    border-radius: 12px; cursor: pointer; font-size: 0.88rem;
+    font-weight: 800; transition: transform 0.15s;
+  }
+  .srs-btn:hover { transform: translateY(-2px); }
+  .srs-1 { background: #fde8e8; color: var(--red); }
+  .srs-2 { background: #fdf0d0; color: #b08000; }
+  .srs-3 { background: #e4f8f0; color: var(--green); }
+  .srs-4 { background: #e8f0fd; color: var(--blue); }
+  .srs-next-due { font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 12px; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    width: 100%; padding: 15px; border-radius: 14px; border: none;
+    background: var(--accent); color: white;
+    font-family: inherit; font-size: 1rem; font-weight: 800;
+    cursor: pointer; transition: opacity 0.15s, transform 0.15s;
+    margin-top: 4px;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-primary.green { background: var(--green); }
+  .btn-primary.blue  { background: var(--blue); }
+  .btn-primary.faded { opacity: 0.45; cursor: default; pointer-events: none; }
+  .btn-secondary {
+    padding: 11px 24px; border-radius: 12px;
+    border: 2px solid var(--border); background: var(--bg);
+    font-family: inherit; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; color: var(--muted); transition: all 0.15s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: white; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 6px; }
+
+  /* ── RESULTS ── */
+  .results-center { text-align: center; padding: 28px 0 20px; }
+  .results-emoji { font-size: 3.5rem; margin-bottom: 10px; }
+  .results-title { font-size: 1.8rem; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+  .results-sub { color: var(--muted); font-size: 0.95rem; }
+  .results-stats { display: flex; gap: 12px; margin: 20px 0 24px; }
+  .result-stat { flex: 1; background: var(--card); border-radius: var(--radius); padding: 16px 10px; text-align: center; border: 1.5px solid var(--border); box-shadow: var(--shadow); }
+  .result-stat-num { font-size: 1.7rem; font-weight: 900; }
+  .result-stat-label { font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-top: 3px; text-transform: uppercase; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* ── SCREENS ── */
   .screen { display: none; }
   .screen.active { display: block; }
 
-  /* PANEL */
-  .panel {
-    background: #FFFFFF;
-    border-radius: 14px;
-    border: 1.5px solid #DDE8F5;
-    padding: 32px;
-    margin-bottom: 16px;
-  }
-
-  /* PROGRESS BAR */
-  .progress-wrap { margin-bottom: 20px; }
-  .progress-track {
-    height: 6px;
-    background: #EEF3F9;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%; background: #8B9FD9;
-    border-radius: 3px; transition: width .3s;
-  }
-  .progress-label {
-    font-size: 12px; color: #8B9FD9;
-    font-weight: 700; text-align: right;
-    margin-top: 4px; letter-spacing: 0.5px;
-  }
-
-  /* FLASHCARD */
-  .card-wrap { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 20px; }
-  .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .45s; }
-  .card.flipped { transform: rotateY(180deg); }
-  .card-face {
-    position: absolute; width: 100%; height: 100%;
-    backface-visibility: hidden; border-radius: 12px;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 8px;
-    border: 1.5px solid #DDE8F5;
-  }
-  .card-front { background: #F4F8FD; }
-  .card-back { background: #FFFFFF; transform: rotateY(180deg); }
-  .card-cat {
-    font-size: 11px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: #8B9FD9;
-  }
-  .card-word {
-    font-family: 'Playfair Display', serif;
-    font-size: 48px; font-weight: 700; color: #2C3E50;
-  }
-  .card-hint { font-size: 12px; color: #AABFD4; font-weight: 300; }
-  .card-meaning {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px; color: #5A6B7C; font-style: italic;
-  }
-  .flip-hint { text-align: center; font-size: 12px; color: #AABFD4; margin-bottom: 16px; font-weight: 300; }
-
-  /* BUTTONS */
-  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .btn {
-    font-family: 'Lato', sans-serif;
-    padding: 10px 28px; border: none; border-radius: 8px;
-    cursor: pointer; font-size: 13px; font-weight: 700;
-    letter-spacing: 0.5px; transition: all .15s;
-  }
-  .btn:hover { transform: translateY(-1px); }
-  .btn-skip { background: #EEF3F9; color: #5A6B7C; }
-  .btn-skip:hover { background: #DDE8F5; }
-  .btn-good { background: #8B9FD9; color: white; }
-  .btn-good:hover { background: #7A8EC8; }
-  .btn-hard { background: #F5E8EC; color: #C47A8A; }
-  .btn-hard:hover { background: #EDD5DB; }
-  .btn-next { background: #8B9FD9; color: white; }
-  .btn-next:hover { background: #7A8EC8; }
-
-  /* MULTIPLE CHOICE */
-  .mc-question {
-    font-family: 'Playfair Display', serif;
-    font-size: 52px; font-weight: 700;
-    color: #2C3E50; text-align: center;
-    margin: 32px 0 28px;
-  }
-  .mc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-  .mc-btn {
-    font-family: 'Lato', sans-serif;
-    padding: 16px 12px; border: 1.5px solid #DDE8F5;
-    background: #F4F8FD; color: #2C3E50;
-    border-radius: 10px; cursor: pointer;
-    font-size: 15px; font-weight: 400;
-    transition: all .15s; text-align: center;
-  }
-  .mc-btn:hover:not(:disabled) { border-color: #8B9FD9; background: white; }
-  .mc-btn.correct { background: #EAF5EA; border-color: #7DC47D; color: #3A7A3A; }
-  .mc-btn.wrong { background: #F5EAEA; border-color: #C47D7D; color: #7A3A3A; }
-  .mc-btn:disabled { cursor: default; }
-
-  /* FILL IN BLANK */
-  .fib-sentence {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px; color: #2C3E50;
-    text-align: center; margin: 32px 0 24px; line-height: 1.5;
-  }
-  .fib-input {
-    font-family: 'Lato', sans-serif;
-    display: block; margin: 0 auto 16px;
-    width: 260px; padding: 12px 16px;
-    background: #F4F8FD; border: 1.5px solid #DDE8F5;
-    border-radius: 8px; color: #2C3E50;
-    font-size: 18px; text-align: center; outline: none;
-    transition: border-color .15s;
-  }
-  .fib-input:focus { border-color: #8B9FD9; background: white; }
-  .fib-input.correct { border-color: #7DC47D; background: #EAF5EA; }
-  .fib-input.wrong { border-color: #C47D7D; background: #F5EAEA; }
-  .fib-feedback {
-    text-align: center; font-size: 15px;
-    min-height: 22px; margin-bottom: 16px;
-    font-weight: 700;
-  }
-  .fib-feedback.correct { color: #3A7A3A; }
-  .fib-feedback.wrong { color: #7A3A3A; }
-
-  /* SRS */
-  .srs-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: #8B9FD9;
-    text-align: center; margin-bottom: 8px;
-  }
-  .srs-word {
-    font-family: 'Playfair Display', serif;
-    font-size: 54px; font-weight: 700;
-    color: #2C3E50; text-align: center;
-    margin: 24px 0 8px;
-  }
-  .srs-answer {
-    font-family: 'Playfair Display', serif;
-    text-align: center; font-size: 24px;
-    color: #5A6B7C; font-style: italic;
-    min-height: 36px; margin-bottom: 20px;
-  }
-  .srs-reveal {
-    font-family: 'Lato', sans-serif;
-    display: block; margin: 0 auto 20px;
-    padding: 10px 32px;
-    background: #EEF3F9; color: #5A6B7C;
-    border: 1.5px solid #DDE8F5; border-radius: 8px;
-    cursor: pointer; font-size: 13px; font-weight: 700;
-    letter-spacing: 0.5px; transition: all .15s;
-  }
-  .srs-reveal:hover { background: #DDE8F5; }
-  .srs-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .srs-btn {
-    font-family: 'Lato', sans-serif;
-    padding: 10px 22px; border: none; border-radius: 8px;
-    cursor: pointer; font-size: 13px; font-weight: 700;
-    letter-spacing: 0.5px; transition: all .15s;
-  }
-  .srs-btn:hover { transform: translateY(-1px); }
-  .srs-1 { background: #F5EAEA; color: #C47D7D; }
-  .srs-2 { background: #FDF3E7; color: #C4974A; }
-  .srs-3 { background: #EAF5EA; color: #5A9A5A; }
-  .srs-4 { background: #E8F0F8; color: #5A87BF; }
-  .srs-next-due {
-    font-size: 12px; color: #AABFD4;
-    text-align: center; margin-top: 12px; font-weight: 300;
-  }
-
-  /* HOME DECK GRID */
-  .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
-  .deck-tile {
-    background: #FFFFFF; border: 1.5px solid #DDE8F5;
-    border-radius: 12px; padding: 20px 16px;
-    cursor: pointer; transition: all .2s; text-align: center;
-  }
-  .deck-tile:hover { border-color: #8B9FD9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,159,217,.15); }
-  .deck-tile .tile-icon { font-size: 28px; margin-bottom: 8px; }
-  .deck-tile h3 { font-family: 'Playfair Display', serif; font-size: 15px; color: #2C3E50; margin-bottom: 4px; }
-  .deck-tile p { font-size: 12px; color: #8B9FD9; font-weight: 300; }
-
-  @media (max-width: 520px) {
+  @media (max-width: 420px) {
     .mc-grid { grid-template-columns: 1fr; }
-    .card-word { font-size: 36px; }
-    .srs-word { font-size: 40px; }
-    .mc-question { font-size: 38px; }
+    .fc-word { font-size: 2rem; }
+    .srs-word { font-size: 2.8rem; }
+    .mc-question { font-size: 2.4rem; }
   }
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-row">
-      <div>
-        <h1>Wanderwords</h1>
-        <p>High-frequency Spanish for travelers &mdash; drill, quiz, and review.</p>
-      </div>
-      <div class="deck-select-wrap">
-        <label>Deck</label>
-        <select id="deckSelect" onchange="setDeck(this.value)">
-          <option value="all">All words</option>
-          <option value="structure">Structure words</option>
-          <option value="verbs">Verbs</option>
-          <option value="adjectives">Adjectives</option>
-          <option value="travel">Travel nouns</option>
-        </select>
-      </div>
+<!-- ══ HOME ══════════════════════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-header">
+    <div class="home-flag">🇲🇽</div>
+    <div class="home-title">Wanderwords</div>
+    <div class="home-sub" id="home-greeting">Buenos días, Chelsea</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num c-accent" id="stat-streak">0</div>
+      <div class="stat-label">🔥 Streak</div>
     </div>
-    <div class="tab-nav">
-      <button class="tab-btn active" onclick="showScreen('home')">Home</button>
-      <button class="tab-btn" onclick="showScreen('flashcard')">Flashcards</button>
-      <button class="tab-btn" onclick="showScreen('mc')">Quiz</button>
-      <button class="tab-btn" onclick="showScreen('fib')">Fill-in</button>
-      <button class="tab-btn" onclick="showScreen('srs')">Review (SRS)</button>
+    <div class="stat-card">
+      <div class="stat-num c-gold" id="stat-xp">0</div>
+      <div class="stat-label">⚡ XP Today</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num c-green" id="stat-due">0</div>
+      <div class="stat-label">📚 Due Now</div>
     </div>
   </div>
 
-  <!-- HOME -->
-  <div id="home" class="screen active">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="home-total">0</div><div class="stat-label">Total words</div></div>
-      <div class="stat-card"><div class="stat-number" id="home-known">0</div><div class="stat-label">Known</div></div>
-      <div class="stat-card"><div class="stat-number" id="home-streak">0</div><div class="stat-label">Streak</div></div>
-      <div class="stat-card"><div class="stat-number" id="home-due">0</div><div class="stat-label">SRS due</div></div>
+  <div class="section-label">Choose a mode</div>
+  <div class="mode-grid">
+    <div class="mode-card" onclick="startFlashcards()">
+      <div class="mode-icon">🃏</div>
+      <div class="mode-info">
+        <div class="mode-name">Flashcards</div>
+        <div class="mode-desc">Spaced repetition — review at the right moment</div>
+      </div>
+      <div class="mode-badge" id="badge-due">0 due</div>
     </div>
-    <div class="deck-grid">
-      <div class="deck-tile" onclick="setDeckAndGo('structure','flashcard')">
-        <div class="tile-icon">📌</div>
-        <h3>Structure Words</h3>
-        <p>Top 50 function words</p>
+    <div class="mode-card" onclick="startMC()">
+      <div class="mode-icon blue">🎯</div>
+      <div class="mode-info">
+        <div class="mode-name">Multiple Choice</div>
+        <div class="mode-desc">Pick the right translation from 4 options</div>
       </div>
-      <div class="deck-tile" onclick="setDeckAndGo('verbs','flashcard')">
-        <div class="tile-icon">&#9889;</div>
-        <h3>Core Verbs</h3>
-        <p>26 high-frequency verbs</p>
-      </div>
-      <div class="deck-tile" onclick="setDeckAndGo('adjectives','flashcard')">
-        <div class="tile-icon">&#127912;</div>
-        <h3>Adjectives</h3>
-        <p>16 common descriptors</p>
-      </div>
-      <div class="deck-tile" onclick="setDeckAndGo('travel','flashcard')">
-        <div class="tile-icon">&#9992;</div>
-        <h3>Travel Nouns</h3>
-        <p>Practical travel vocab</p>
-      </div>
-      <div class="deck-tile" onclick="setDeckAndGo('all','srs')">
-        <div class="tile-icon">&#128257;</div>
-        <h3>SRS Review</h3>
-        <p>Due cards, all decks</p>
-      </div>
-      <div class="deck-tile" onclick="setDeckAndGo('all','mc')">
-        <div class="tile-icon">&#127919;</div>
-        <h3>Random Quiz</h3>
-        <p>Multiple choice</p>
-      </div>
+      <div class="mode-badge blue">all words</div>
     </div>
-  </div>
-
-  <!-- FLASHCARD -->
-  <div id="flashcard" class="screen">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="fc-idx">1</div><div class="stat-label">Card</div></div>
-      <div class="stat-card"><div class="stat-number" id="fc-total">0</div><div class="stat-label">In deck</div></div>
-      <div class="stat-card"><div class="stat-number" id="fc-known">0</div><div class="stat-label">Known</div></div>
+    <div class="mode-card" onclick="startFIB()">
+      <div class="mode-icon gold">✏️</div>
+      <div class="mode-info">
+        <div class="mode-name">Fill in the Blank</div>
+        <div class="mode-desc">See the Spanish, type the English</div>
+      </div>
+      <div class="mode-badge gold">all words</div>
     </div>
-    <div class="panel">
-      <div class="progress-wrap">
-        <div class="progress-track"><div class="progress-fill" id="fc-progress"></div></div>
-        <div class="progress-label" id="fc-progress-label"></div>
+    <div class="mode-card" onclick="startListen()">
+      <div class="mode-icon blue">🔊</div>
+      <div class="mode-info">
+        <div class="mode-name">Listen &amp; Spell</div>
+        <div class="mode-desc">Hear the word, type it in Spanish</div>
       </div>
-      <div class="card-wrap" onclick="flipCard()">
-        <div class="card" id="fc-card">
-          <div class="card-face card-front">
-            <div class="card-cat" id="fc-cat"></div>
-            <div class="card-word" id="fc-word"></div>
-            <div class="card-hint">tap to reveal</div>
-          </div>
-          <div class="card-face card-back">
-            <div class="card-cat" id="fc-cat2"></div>
-            <div class="card-meaning" id="fc-meaning"></div>
-          </div>
-        </div>
+      <div class="mode-badge blue">10 words</div>
+    </div>
+    <div class="mode-card" onclick="startBuilder()">
+      <div class="mode-icon green">🧩</div>
+      <div class="mode-info">
+        <div class="mode-name">Build a Sentence</div>
+        <div class="mode-desc">Tap words to put the sentence in order</div>
       </div>
-      <div class="flip-hint" id="fc-flip-hint">tap the card to flip</div>
-      <div class="btn-row" id="fc-rating-btns" style="display:none">
-        <button class="btn btn-hard" onclick="rateCard(false)">Hard</button>
-        <button class="btn btn-good" onclick="rateCard(true)">Got it</button>
-      </div>
-      <div class="btn-row" id="fc-next-btn">
-        <button class="btn btn-skip" onclick="nextCard('flashcard')">Skip &rarr;</button>
-      </div>
+      <div class="mode-badge green">5 sentences</div>
     </div>
   </div>
 
-  <!-- MULTIPLE CHOICE -->
-  <div id="mc" class="screen">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="mc-score">0</div><div class="stat-label">Correct</div></div>
-      <div class="stat-card"><div class="stat-number" id="mc-total">0</div><div class="stat-label">Answered</div></div>
-      <div class="stat-card"><div class="stat-number" id="mc-pct">&mdash;</div><div class="stat-label">Accuracy</div></div>
+  <div class="divider"></div>
+  <div class="section-label">Progress</div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num c-green" id="stat-learned">0</div>
+      <div class="stat-label">Words learned</div>
     </div>
-    <div class="panel">
-      <div class="mc-question" id="mc-word"></div>
-      <div class="mc-grid" id="mc-options"></div>
-      <div class="btn-row">
-        <button class="btn btn-next" id="mc-next" style="display:none" onclick="nextCard('mc')">Next &rarr;</button>
-      </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--muted)" id="stat-total">0</div>
+      <div class="stat-label">Total words</div>
     </div>
-  </div>
-
-  <!-- FILL IN BLANK -->
-  <div id="fib" class="screen">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="fib-score">0</div><div class="stat-label">Correct</div></div>
-      <div class="stat-card"><div class="stat-number" id="fib-total">0</div><div class="stat-label">Answered</div></div>
-    </div>
-    <div class="panel">
-      <div class="fib-sentence" id="fib-sentence"></div>
-      <input class="fib-input" id="fib-input" placeholder="type the translation"
-        autocomplete="off" autocorrect="off" spellcheck="false"
-        onkeydown="if(event.key==='Enter') checkFib()" />
-      <div class="fib-feedback" id="fib-feedback"></div>
-      <div class="btn-row">
-        <button class="btn btn-skip" onclick="nextCard('fib')">Skip &rarr;</button>
-        <button class="btn btn-good" id="fib-submit" onclick="checkFib()">Check</button>
-        <button class="btn btn-next" id="fib-next" style="display:none" onclick="nextCard('fib')">Next &rarr;</button>
-      </div>
+    <div class="stat-card">
+      <div class="stat-num c-gold" id="stat-total-xp">0</div>
+      <div class="stat-label">Total XP</div>
     </div>
   </div>
-
-  <!-- SRS -->
-  <div id="srs" class="screen">
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="srs-due">0</div><div class="stat-label">Due today</div></div>
-      <div class="stat-card"><div class="stat-number" id="srs-done">0</div><div class="stat-label">Done</div></div>
-      <div class="stat-card"><div class="stat-number" id="srs-total">0</div><div class="stat-label">Total words</div></div>
-    </div>
-    <div class="panel">
-      <div class="srs-label">spanish &rarr; english</div>
-      <div class="srs-word" id="srs-word"></div>
-      <div class="srs-answer" id="srs-answer"></div>
-      <button class="srs-reveal" id="srs-reveal-btn" onclick="revealSRS()">Reveal answer</button>
-      <div class="srs-btns" id="srs-btns" style="display:none">
-        <button class="srs-btn srs-1" onclick="rateSRS(1)">Again</button>
-        <button class="srs-btn srs-2" onclick="rateSRS(2)">Hard</button>
-        <button class="srs-btn srs-3" onclick="rateSRS(3)">Good</button>
-        <button class="srs-btn srs-4" onclick="rateSRS(4)">Easy</button>
-      </div>
-      <div class="srs-next-due" id="srs-next-due"></div>
-    </div>
-  </div>
-
 </div>
 
+<!-- ══ FLASHCARD ════════════════════════════════════════════════ -->
+<div id="screen-flashcard" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="progress-track"><div class="progress-fill" id="fc-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="fc-progress-label">0/0</div>
+  </div>
+  <div class="fc-wrap" onclick="flipCard()">
+    <div class="fc-inner" id="fc-card">
+      <div class="fc-face front">
+        <div class="fc-cat" id="fc-cat">category</div>
+        <div class="fc-word" id="fc-spanish">—</div>
+        <div class="fc-hint">tap to reveal</div>
+      </div>
+      <div class="fc-face back">
+        <div class="fc-cat" id="fc-cat-back">category</div>
+        <div class="fc-english" id="fc-english">—</div>
+        <button class="speak-btn" onclick="event.stopPropagation(); speakWord(currentCard.es)">🔊 Hear it</button>
+      </div>
+    </div>
+  </div>
+  <div class="fc-flip-hint" id="fc-flip-hint">tap card to flip</div>
+  <div class="rating-row hidden" id="fc-ratings">
+    <button class="rating-btn hard" onclick="rateFC(0)">😓 Hard</button>
+    <button class="rating-btn good" onclick="rateFC(1)">😊 Good</button>
+    <button class="rating-btn easy" onclick="rateFC(2)">⚡ Easy</button>
+  </div>
+</div>
+
+<!-- ══ MULTIPLE CHOICE ══════════════════════════════════════════ -->
+<div id="screen-mc" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="progress-track"><div class="progress-fill" id="mc-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="mc-progress-label">0/0</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num c-green" id="mc-score">0</div><div class="stat-label">Correct</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--muted)" id="mc-total">0</div><div class="stat-label">Answered</div></div>
+    <div class="stat-card"><div class="stat-num c-gold" id="mc-pct">—</div><div class="stat-label">Accuracy</div></div>
+  </div>
+  <div class="mc-question" id="mc-word"></div>
+  <div class="mc-grid" id="mc-options"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="mc-next" style="display:none" onclick="nextMC()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ FILL IN BLANK ════════════════════════════════════════════ -->
+<div id="screen-fib" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="progress-track"><div class="progress-fill" id="fib-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="fib-progress-label">0/0</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num c-green" id="fib-score">0</div><div class="stat-label">Correct</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--muted)" id="fib-total">0</div><div class="stat-label">Answered</div></div>
+  </div>
+  <div class="fib-sentence" id="fib-sentence"></div>
+  <input class="fib-input" id="fib-input" placeholder="type the translation"
+    autocomplete="off" autocorrect="off" spellcheck="false"
+    onkeydown="if(event.key==='Enter') checkFIB()" />
+  <div class="fib-feedback" id="fib-feedback"></div>
+  <div class="btn-row">
+    <button class="btn-secondary" onclick="skipFIB()">Skip →</button>
+    <button class="btn-primary" id="fib-submit" onclick="checkFIB()" style="width:auto;padding:11px 28px">Check</button>
+    <button class="btn-primary" id="fib-next" style="display:none;width:auto;padding:11px 28px" onclick="nextFIB()">Next →</button>
+  </div>
+</div>
+
+<!-- ══ LISTEN & SPELL ═══════════════════════════════════════════ -->
+<div id="screen-listen" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="progress-track"><div class="progress-fill" id="ls-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="ls-progress-label">0/0</div>
+  </div>
+  <div class="listen-card">
+    <div class="listen-label">What's the Spanish word for…</div>
+    <div class="listen-english" id="ls-english">—</div>
+    <button class="big-speak-btn" onclick="speakWord(listenCards[listenIdx].es)">🔊</button>
+    <input class="listen-input" id="ls-input" type="text" placeholder="Type in Spanish…"
+      autocomplete="off" autocorrect="off" spellcheck="false"
+      onkeydown="if(event.key==='Enter') checkListen()">
+    <div class="listen-feedback" id="ls-feedback"></div>
+    <button class="btn-primary blue" id="ls-submit" onclick="checkListen()">Check</button>
+  </div>
+</div>
+
+<!-- ══ SENTENCE BUILDER ═════════════════════════════════════════ -->
+<div id="screen-builder" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <div class="progress-track"><div class="progress-fill" id="bd-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="bd-progress-label">0/0</div>
+  </div>
+  <div class="builder-hint">
+    <div class="builder-hint-label">English</div>
+    <div class="builder-hint-text" id="bd-hint">—</div>
+  </div>
+  <div class="builder-answer-zone" id="bd-answer"></div>
+  <div class="bank-label">Word bank</div>
+  <div class="builder-bank" id="bd-bank"></div>
+  <div class="builder-feedback" id="bd-feedback"></div>
+  <button class="btn-primary green faded" id="bd-check" onclick="checkBuilder()">Check</button>
+</div>
+
+<!-- ══ RESULTS ═══════════════════════════════════════════════════ -->
+<div id="screen-results" class="screen">
+  <div class="results-center">
+    <div class="results-emoji" id="res-emoji">🎉</div>
+    <div class="results-title" id="res-title">¡Bien hecho!</div>
+    <div class="results-sub" id="res-sub">Session complete</div>
+  </div>
+  <div class="results-stats">
+    <div class="result-stat">
+      <div class="result-stat-num c-gold" id="res-xp">0</div>
+      <div class="result-stat-label">XP Earned</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-num c-green" id="res-correct">0</div>
+      <div class="result-stat-label">Correct</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-num c-accent" id="res-streak">0</div>
+      <div class="result-stat-label">🔥 Streak</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="goHome()">Back to Home</button>
+</div>
+
+</div><!-- /container -->
+
 <script>
-const WORDS = [
-  {w:'de',m:'of, from',cat:'structure'},{w:'la',m:'the (f)',cat:'structure'},
-  {w:'que',m:'that, which, who',cat:'structure'},{w:'el',m:'the (m)',cat:'structure'},
-  {w:'en',m:'in, on',cat:'structure'},{w:'y',m:'and',cat:'structure'},
-  {w:'a',m:'to, at',cat:'structure'},{w:'los',m:'the (m pl)',cat:'structure'},
-  {w:'se',m:'reflexive pronoun',cat:'structure'},{w:'del',m:'of the',cat:'structure'},
-  {w:'las',m:'the (f pl)',cat:'structure'},{w:'un',m:'a, an (m)',cat:'structure'},
-  {w:'por',m:'for, by, through',cat:'structure'},{w:'con',m:'with',cat:'structure'},
-  {w:'no',m:'no, not',cat:'structure'},{w:'una',m:'a, an (f)',cat:'structure'},
-  {w:'su',m:'his, her, their',cat:'structure'},{w:'para',m:'for, in order to',cat:'structure'},
-  {w:'es',m:'is',cat:'structure'},{w:'al',m:'to the',cat:'structure'},
-  {w:'lo',m:'it, him',cat:'structure'},{w:'como',m:'as, like, how',cat:'structure'},
-  {w:'más',m:'more',cat:'structure'},{w:'pero',m:'but',cat:'structure'},
-  {w:'sus',m:'his/her/their (pl)',cat:'structure'},{w:'le',m:'to him/her',cat:'structure'},
-  {w:'ya',m:'already, now',cat:'structure'},{w:'o',m:'or',cat:'structure'},
-  {w:'este',m:'this (m)',cat:'structure'},{w:'si',m:'if',cat:'structure'},
-  {w:'me',m:'me, to me',cat:'structure'},{w:'porque',m:'because',cat:'structure'},
-  {w:'esta',m:'this (f)',cat:'structure'},{w:'entre',m:'between, among',cat:'structure'},
-  {w:'cuando',m:'when',cat:'structure'},{w:'muy',m:'very',cat:'structure'},
-  {w:'sin',m:'without',cat:'structure'},{w:'sobre',m:'about, on top of',cat:'structure'},
-  {w:'también',m:'also, too',cat:'structure'},{w:'año',m:'year',cat:'structure'},
-  {w:'hasta',m:'until, up to',cat:'structure'},{w:'desde',m:'since, from',cat:'structure'},
-  {w:'nos',m:'us, to us',cat:'structure'},{w:'durante',m:'during',cat:'structure'},
-  {w:'uno',m:'one',cat:'structure'},{w:'ni',m:'neither, nor',cat:'structure'},
-  {w:'contra',m:'against',cat:'structure'},{w:'ese',m:'that (m)',cat:'structure'},
-  {w:'había',m:'there was/were',cat:'structure'},{w:'esto',m:'this (neuter)',cat:'structure'},
-  {w:'ser',m:'to be (permanent)',cat:'verbs'},{w:'estar',m:'to be (state/location)',cat:'verbs'},
-  {w:'tener',m:'to have',cat:'verbs'},{w:'hacer',m:'to do, make',cat:'verbs'},
-  {w:'poder',m:'can, to be able to',cat:'verbs'},{w:'querer',m:'to want, love',cat:'verbs'},
-  {w:'decir',m:'to say, tell',cat:'verbs'},{w:'ir',m:'to go',cat:'verbs'},
-  {w:'ver',m:'to see',cat:'verbs'},{w:'dar',m:'to give',cat:'verbs'},
-  {w:'saber',m:'to know (fact)',cat:'verbs'},{w:'llegar',m:'to arrive',cat:'verbs'},
-  {w:'pasar',m:'to pass, happen',cat:'verbs'},{w:'hablar',m:'to speak',cat:'verbs'},
-  {w:'llevar',m:'to carry, take',cat:'verbs'},{w:'volver',m:'to return',cat:'verbs'},
-  {w:'necesitar',m:'to need',cat:'verbs'},{w:'poner',m:'to put',cat:'verbs'},
-  {w:'encontrar',m:'to find',cat:'verbs'},{w:'buscar',m:'to look for',cat:'verbs'},
-  {w:'pedir',m:'to ask for, order',cat:'verbs'},{w:'comprar',m:'to buy',cat:'verbs'},
-  {w:'pagar',m:'to pay',cat:'verbs'},{w:'ayudar',m:'to help',cat:'verbs'},
-  {w:'abrir',m:'to open',cat:'verbs'},{w:'cerrar',m:'to close',cat:'verbs'},
-  {w:'grande',m:'big',cat:'adjectives'},{w:'pequeño',m:'small',cat:'adjectives'},
-  {w:'bueno',m:'good',cat:'adjectives'},{w:'malo',m:'bad',cat:'adjectives'},
-  {w:'nuevo',m:'new',cat:'adjectives'},{w:'mismo',m:'same',cat:'adjectives'},
-  {w:'otro',m:'other',cat:'adjectives'},{w:'primero',m:'first',cat:'adjectives'},
-  {w:'último',m:'last',cat:'adjectives'},{w:'mucho',m:'a lot, many',cat:'adjectives'},
-  {w:'poco',m:'a little, few',cat:'adjectives'},{w:'todo',m:'all, every',cat:'adjectives'},
-  {w:'solo',m:'alone, only',cat:'adjectives'},{w:'mejor',m:'better, best',cat:'adjectives'},
-  {w:'peor',m:'worse, worst',cat:'adjectives'},{w:'diferente',m:'different',cat:'adjectives'},
-  {w:'persona',m:'person',cat:'travel'},{w:'gente',m:'people',cat:'travel'},
-  {w:'señor',m:'sir, Mr.',cat:'travel'},{w:'señora',m:"ma'am, Mrs.",cat:'travel'},
-  {w:'amigo',m:'friend',cat:'travel'},{w:'ciudad',m:'city',cat:'travel'},
-  {w:'país',m:'country',cat:'travel'},{w:'lugar',m:'place',cat:'travel'},
-  {w:'calle',m:'street',cat:'travel'},{w:'hotel',m:'hotel',cat:'travel'},
-  {w:'aeropuerto',m:'airport',cat:'travel'},{w:'estación',m:'station',cat:'travel'},
-  {w:'mercado',m:'market',cat:'travel'},{w:'restaurante',m:'restaurant',cat:'travel'},
-  {w:'baño',m:'bathroom',cat:'travel'},{w:'día',m:'day',cat:'travel'},
-  {w:'noche',m:'night',cat:'travel'},{w:'hora',m:'hour, time',cat:'travel'},
-  {w:'hoy',m:'today',cat:'travel'},{w:'mañana',m:'tomorrow, morning',cat:'travel'},
-  {w:'ahora',m:'now',cat:'travel'},{w:'tarde',m:'afternoon, late',cat:'travel'},
-  {w:'semana',m:'week',cat:'travel'},{w:'coche',m:'car',cat:'travel'},
-  {w:'autobús',m:'bus',cat:'travel'},{w:'tren',m:'train',cat:'travel'},
-  {w:'taxi',m:'taxi',cat:'travel'},{w:'vuelo',m:'flight',cat:'travel'},
-  {w:'billete',m:'ticket',cat:'travel'},{w:'agua',m:'water',cat:'travel'},
-  {w:'comida',m:'food',cat:'travel'},{w:'cena',m:'dinner',cat:'travel'},
-  {w:'desayuno',m:'breakfast',cat:'travel'},{w:'almuerzo',m:'lunch',cat:'travel'},
-  {w:'cerveza',m:'beer',cat:'travel'},{w:'vino',m:'wine',cat:'travel'},
-  {w:'menú',m:'menu',cat:'travel'},{w:'cuenta',m:'bill, check',cat:'travel'},
-  {w:'dinero',m:'money',cat:'travel'},{w:'precio',m:'price',cat:'travel'},
-  {w:'tarjeta',m:'card',cat:'travel'},{w:'efectivo',m:'cash',cat:'travel'},
-  {w:'ayuda',m:'help',cat:'travel'},{w:'por favor',m:'please',cat:'travel'},
-  {w:'gracias',m:'thank you',cat:'travel'},{w:'perdón',m:'excuse me, sorry',cat:'travel'},
-  {w:'cuánto',m:'how much',cat:'travel'},{w:'dónde',m:'where',cat:'travel'},
-  {w:'habla inglés',m:'do you speak English',cat:'travel'},{w:'no entiendo',m:"I don't understand",cat:'travel'},
+// ═══════════════ VOCABULARY ═══════════════════════════════════════
+const VOCAB = [
+  // Greetings
+  {id:'g1',es:'hola',en:'hello',cat:'Greetings'},
+  {id:'g2',es:'adiós',en:'goodbye',cat:'Greetings'},
+  {id:'g3',es:'gracias',en:'thank you',cat:'Greetings'},
+  {id:'g4',es:'por favor',en:'please',cat:'Greetings'},
+  {id:'g5',es:'de nada',en:"you're welcome",cat:'Greetings'},
+  {id:'g6',es:'buenos días',en:'good morning',cat:'Greetings'},
+  {id:'g7',es:'buenas noches',en:'good night',cat:'Greetings'},
+  {id:'g8',es:'perdón',en:'excuse me',cat:'Greetings'},
+  {id:'g9',es:'sí',en:'yes',cat:'Greetings'},
+  {id:'g10',es:'no',en:'no',cat:'Greetings'},
+  // Numbers
+  {id:'n1',es:'uno',en:'one',cat:'Numbers'},
+  {id:'n2',es:'dos',en:'two',cat:'Numbers'},
+  {id:'n3',es:'tres',en:'three',cat:'Numbers'},
+  {id:'n4',es:'cuatro',en:'four',cat:'Numbers'},
+  {id:'n5',es:'cinco',en:'five',cat:'Numbers'},
+  {id:'n6',es:'seis',en:'six',cat:'Numbers'},
+  {id:'n7',es:'siete',en:'seven',cat:'Numbers'},
+  {id:'n8',es:'ocho',en:'eight',cat:'Numbers'},
+  {id:'n9',es:'nueve',en:'nine',cat:'Numbers'},
+  {id:'n10',es:'diez',en:'ten',cat:'Numbers'},
+  // Food & Drink
+  {id:'f1',es:'agua',en:'water',cat:'Food'},
+  {id:'f2',es:'leche',en:'milk',cat:'Food'},
+  {id:'f3',es:'pan',en:'bread',cat:'Food'},
+  {id:'f4',es:'pollo',en:'chicken',cat:'Food'},
+  {id:'f5',es:'arroz',en:'rice',cat:'Food'},
+  {id:'f6',es:'manzana',en:'apple',cat:'Food'},
+  {id:'f7',es:'café',en:'coffee',cat:'Food'},
+  {id:'f8',es:'vino',en:'wine',cat:'Food'},
+  {id:'f9',es:'queso',en:'cheese',cat:'Food'},
+  {id:'f10',es:'cerveza',en:'beer',cat:'Food'},
+  {id:'f11',es:'cena',en:'dinner',cat:'Food'},
+  {id:'f12',es:'desayuno',en:'breakfast',cat:'Food'},
+  {id:'f13',es:'almuerzo',en:'lunch',cat:'Food'},
+  {id:'f14',es:'menú',en:'menu',cat:'Food'},
+  {id:'f15',es:'cuenta',en:'bill / check',cat:'Food'},
+  // Colors
+  {id:'c1',es:'rojo',en:'red',cat:'Colors'},
+  {id:'c2',es:'azul',en:'blue',cat:'Colors'},
+  {id:'c3',es:'verde',en:'green',cat:'Colors'},
+  {id:'c4',es:'amarillo',en:'yellow',cat:'Colors'},
+  {id:'c5',es:'blanco',en:'white',cat:'Colors'},
+  {id:'c6',es:'negro',en:'black',cat:'Colors'},
+  {id:'c7',es:'naranja',en:'orange',cat:'Colors'},
+  {id:'c8',es:'morado',en:'purple',cat:'Colors'},
+  // Core Verbs
+  {id:'v1',es:'hablar',en:'to speak',cat:'Verbs'},
+  {id:'v2',es:'comer',en:'to eat',cat:'Verbs'},
+  {id:'v3',es:'beber',en:'to drink',cat:'Verbs'},
+  {id:'v4',es:'ir',en:'to go',cat:'Verbs'},
+  {id:'v5',es:'querer',en:'to want',cat:'Verbs'},
+  {id:'v6',es:'tener',en:'to have',cat:'Verbs'},
+  {id:'v7',es:'ser',en:'to be (permanent)',cat:'Verbs'},
+  {id:'v8',es:'estar',en:'to be (state/location)',cat:'Verbs'},
+  {id:'v9',es:'hacer',en:'to do / make',cat:'Verbs'},
+  {id:'v10',es:'poder',en:'can / to be able',cat:'Verbs'},
+  {id:'v11',es:'saber',en:'to know',cat:'Verbs'},
+  {id:'v12',es:'venir',en:'to come',cat:'Verbs'},
+  {id:'v13',es:'ver',en:'to see',cat:'Verbs'},
+  {id:'v14',es:'dar',en:'to give',cat:'Verbs'},
+  {id:'v15',es:'llegar',en:'to arrive',cat:'Verbs'},
+  {id:'v16',es:'pagar',en:'to pay',cat:'Verbs'},
+  {id:'v17',es:'comprar',en:'to buy',cat:'Verbs'},
+  {id:'v18',es:'buscar',en:'to look for',cat:'Verbs'},
+  {id:'v19',es:'pedir',en:'to order / ask for',cat:'Verbs'},
+  {id:'v20',es:'ayudar',en:'to help',cat:'Verbs'},
+  // People
+  {id:'p1',es:'madre',en:'mother',cat:'People'},
+  {id:'p2',es:'padre',en:'father',cat:'People'},
+  {id:'p3',es:'hermano',en:'brother',cat:'People'},
+  {id:'p4',es:'hermana',en:'sister',cat:'People'},
+  {id:'p5',es:'amigo',en:'friend (male)',cat:'People'},
+  {id:'p6',es:'amiga',en:'friend (female)',cat:'People'},
+  {id:'p7',es:'señor',en:'sir / Mr.',cat:'People'},
+  {id:'p8',es:'señora',en:"ma'am / Mrs.",cat:'People'},
+  {id:'p9',es:'gente',en:'people',cat:'People'},
+  // Places & Travel
+  {id:'pl1',es:'hotel',en:'hotel',cat:'Travel'},
+  {id:'pl2',es:'aeropuerto',en:'airport',cat:'Travel'},
+  {id:'pl3',es:'estación',en:'station',cat:'Travel'},
+  {id:'pl4',es:'restaurante',en:'restaurant',cat:'Travel'},
+  {id:'pl5',es:'mercado',en:'market',cat:'Travel'},
+  {id:'pl6',es:'baño',en:'bathroom',cat:'Travel'},
+  {id:'pl7',es:'ciudad',en:'city',cat:'Travel'},
+  {id:'pl8',es:'playa',en:'beach',cat:'Travel'},
+  {id:'pl9',es:'calle',en:'street',cat:'Travel'},
+  {id:'pl10',es:'país',en:'country',cat:'Travel'},
+  {id:'pl11',es:'tren',en:'train',cat:'Travel'},
+  {id:'pl12',es:'autobús',en:'bus',cat:'Travel'},
+  {id:'pl13',es:'taxi',en:'taxi',cat:'Travel'},
+  {id:'pl14',es:'billete',en:'ticket',cat:'Travel'},
+  {id:'pl15',es:'vuelo',en:'flight',cat:'Travel'},
+  {id:'pl16',es:'dinero',en:'money',cat:'Travel'},
+  {id:'pl17',es:'tarjeta',en:'card',cat:'Travel'},
+  {id:'pl18',es:'efectivo',en:'cash',cat:'Travel'},
+  // Essentials
+  {id:'e1',es:'bien',en:'well / good',cat:'Essentials'},
+  {id:'e2',es:'mucho',en:'a lot / very',cat:'Essentials'},
+  {id:'e3',es:'poco',en:'a little',cat:'Essentials'},
+  {id:'e4',es:'hoy',en:'today',cat:'Essentials'},
+  {id:'e5',es:'mañana',en:'tomorrow / morning',cat:'Essentials'},
+  {id:'e6',es:'ahora',en:'now',cat:'Essentials'},
+  {id:'e7',es:'ayuda',en:'help',cat:'Essentials'},
+  {id:'e8',es:'necesito',en:'I need',cat:'Essentials'},
+  {id:'e9',es:'no entiendo',en:"I don't understand",cat:'Essentials'},
+  {id:'e10',es:'cuánto',en:'how much',cat:'Essentials'},
+  {id:'e11',es:'dónde',en:'where',cat:'Essentials'},
+  {id:'e12',es:'habla inglés',en:'do you speak English',cat:'Essentials'},
+  {id:'e13',es:'más',en:'more',cat:'Essentials'},
+  {id:'e14',es:'sin',en:'without',cat:'Essentials'},
+  {id:'e15',es:'muy',en:'very',cat:'Essentials'},
 ];
 
-let currentDeck = 'all';
-let srsData = JSON.parse(localStorage.getItem('ww_srs') || '{}');
-let streak = parseInt(localStorage.getItem('ww_streak') || '0');
-let decks = {}, sessions = {}, currentScreen = 'home';
+const SENTENCES = [
+  {words:['Yo','quiero','agua'], hint:'I want water'},
+  {words:['Tengo','hambre'], hint:'I am hungry'},
+  {words:['Me','llamo','Chelsea'], hint:'My name is Chelsea'},
+  {words:['¿Dónde','está','el','baño?'], hint:'Where is the bathroom?'},
+  {words:['Necesito','ayuda'], hint:'I need help'},
+  {words:['No','entiendo'], hint:"I don't understand"},
+  {words:['Quiero','ir','a','la','playa'], hint:'I want to go to the beach'},
+  {words:['Muchas','gracias'], hint:'Thank you very much'},
+  {words:['Me','gusta','el','café'], hint:'I like coffee'},
+  {words:['¿Hablas','inglés?'], hint:'Do you speak English?'},
+  {words:['Por','favor,','más','despacio'], hint:'Please, more slowly'},
+  {words:['Buenos','días,','¿cómo','estás?'], hint:'Good morning, how are you?'},
+  {words:['¿Cuánto','cuesta?'], hint:'How much does it cost?'},
+  {words:['La','cuenta,','por','favor'], hint:'The bill, please'},
+  {words:['Quiero','una','mesa','para','dos'], hint:'I want a table for two'},
+];
 
-function saveSRS() { localStorage.setItem('ww_srs', JSON.stringify(srsData)); }
-function getDeck() { return currentDeck === 'all' ? [...WORDS] : WORDS.filter(w => w.cat === currentDeck); }
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+// ═══════════════ STATE ════════════════════════════════════════════
+const STORE = 'wanderwords-v1';
+let state;
+function loadState() {
+  try { state = JSON.parse(localStorage.getItem(STORE)) || defaultState(); }
+  catch(e) { state = defaultState(); }
+}
+function defaultState() { return {streak:0,lastDate:'',totalXP:0,todayXP:0,todayDate:'',words:{}}; }
+function saveState() { localStorage.setItem(STORE, JSON.stringify(state)); }
+function todayStr() { return new Date().toISOString().slice(0,10); }
+function wordState(id) { if(!state.words[id]) state.words[id]={interval:0,ease:2.5,nextReview:0,reps:0}; return state.words[id]; }
+function dueWords() { const now=Date.now(); return VOCAB.filter(w=>wordState(w.id).nextReview<=now); }
+function learnedCount() { return VOCAB.filter(w=>wordState(w.id).reps>0).length; }
+
+function updateStreak(xp) {
+  const today=todayStr();
+  if(state.todayDate!==today){state.todayXP=0;state.todayDate=today;}
+  state.todayXP+=xp; state.totalXP+=xp;
+  if(state.lastDate!==today){
+    const yd=new Date(); yd.setDate(yd.getDate()-1);
+    const ys=yd.toISOString().slice(0,10);
+    state.streak=(state.lastDate===ys||state.lastDate==='')?(state.streak+1):1;
+    state.lastDate=today;
+  }
+  saveState();
+}
+
+// SM-2
+function applyRating(id, grade) {
+  const w=wordState(id), DAY=86400000;
+  w.reps++;
+  if(grade===0){w.interval=0.25;w.ease=Math.max(1.3,w.ease-0.2);}
+  else if(grade===1){w.interval=w.interval<1?1:Math.max(1,w.interval*w.ease);}
+  else{w.interval=w.interval<1?4:Math.max(1,w.interval*w.ease*1.3);w.ease=Math.min(3.5,w.ease+0.1);}
+  w.nextReview=Date.now()+w.interval*DAY; saveState();
+  return [0,3,5][grade];
+}
+
+// TTS
+let spanishVoice=null;
+function loadVoices(){
+  const v=speechSynthesis.getVoices();
+  spanishVoice=v.find(x=>x.lang.startsWith('es-MX'))||v.find(x=>x.lang.startsWith('es'))||null;
+}
+if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}
+function speakWord(text){
+  if(!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='es-MX'; u.rate=0.85;
+  if(spanishVoice) u.voice=spanishVoice;
+  speechSynthesis.speak(u);
+}
+
+// NAV
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goHome(){updateHomeUI();showScreen('screen-home');}
+
+function updateHomeUI(){
+  const today=todayStr();
+  if(state.todayDate!==today) state.todayXP=0;
+  const due=dueWords();
+  document.getElementById('stat-streak').textContent=state.streak;
+  document.getElementById('stat-xp').textContent=state.todayXP;
+  document.getElementById('stat-due').textContent=due.length;
+  document.getElementById('badge-due').textContent=due.length+' due';
+  document.getElementById('stat-learned').textContent=learnedCount();
+  document.getElementById('stat-total').textContent=VOCAB.length;
+  document.getElementById('stat-total-xp').textContent=state.totalXP;
+  const h=new Date().getHours();
+  document.getElementById('home-greeting').textContent=(h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches')+', Chelsea';
+}
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 
-function showScreen(name) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  document.querySelectorAll('.tab-btn')[['home','flashcard','mc','fib','srs'].indexOf(name)].classList.add('active');
-  currentScreen = name;
-  if (name !== 'home') initMode(name); else updateHomeStats();
+// ═══════════════ FLASHCARDS ═══════════════════════════════════════
+let fcQueue=[],fcIdx=0,currentCard=null,fcFlipped=false,fcXP=0,fcCorrect=0;
+
+function startFlashcards(){
+  let due=dueWords();
+  if(!due.length) due=[...VOCAB].sort((a,b)=>wordState(a.id).nextReview-wordState(b.id).nextReview).slice(0,20);
+  fcQueue=shuffle(due).slice(0,20); fcIdx=0; fcXP=0; fcCorrect=0;
+  showScreen('screen-flashcard'); showFC();
 }
-
-function setDeck(val) { currentDeck = val; decks = {}; sessions = {}; if (currentScreen !== 'home') initMode(currentScreen); }
-function setDeckAndGo(deck, mode) { currentDeck = deck; document.getElementById('deckSelect').value = deck; decks = {}; sessions = {}; showScreen(mode); }
-
-function updateHomeStats() {
-  document.getElementById('home-total').textContent = WORDS.length;
-  document.getElementById('home-known').textContent = Object.values(srsData).filter(d => d.ease >= 2.5).length;
-  document.getElementById('home-streak').textContent = streak;
-  document.getElementById('home-due').textContent = getDueCards().length;
-}
-
-function initMode(mode) {
-  if (mode === 'flashcard') {
-    if (!decks.flashcard) { decks.flashcard = shuffle(getDeck()); sessions.flashcard = {idx:0,known:0}; }
-    renderFC();
-  } else if (mode === 'mc') {
-    if (!decks.mc) { decks.mc = shuffle(getDeck()); sessions.mc = {idx:0,score:0,total:0}; }
-    renderMC();
-  } else if (mode === 'fib') {
-    if (!decks.fib) { decks.fib = shuffle(getDeck()); sessions.fib = {idx:0,score:0,total:0}; }
-    renderFIB();
-  } else if (mode === 'srs') {
-    decks.srs = shuffle(getDueCards());
-    if (!decks.srs.length) decks.srs = shuffle(getDeck());
-    sessions.srs = {done:0};
-    renderSRS();
-  }
-}
-
-// FLASHCARD
-function renderFC() {
-  const d = decks.flashcard, idx = sessions.flashcard.idx % d.length, c = d[idx];
-  document.getElementById('fc-word').textContent = c.w;
-  document.getElementById('fc-cat').textContent = c.cat;
-  document.getElementById('fc-cat2').textContent = c.cat;
-  document.getElementById('fc-meaning').textContent = c.m;
-  document.getElementById('fc-idx').textContent = idx + 1;
-  document.getElementById('fc-total').textContent = d.length;
-  document.getElementById('fc-known').textContent = sessions.flashcard.known;
-  const pct = Math.round((idx / d.length) * 100);
-  document.getElementById('fc-progress').style.width = pct + '%';
-  document.getElementById('fc-progress-label').textContent = pct + '%';
+function showFC(){
+  if(fcIdx>=fcQueue.length){showResults('flashcard');return;}
+  currentCard=fcQueue[fcIdx]; fcFlipped=false;
   document.getElementById('fc-card').classList.remove('flipped');
-  document.getElementById('fc-rating-btns').style.display = 'none';
-  document.getElementById('fc-next-btn').style.display = 'flex';
-  document.getElementById('fc-flip-hint').textContent = 'tap the card to flip';
+  document.getElementById('fc-spanish').textContent=currentCard.es;
+  document.getElementById('fc-cat').textContent=currentCard.cat;
+  document.getElementById('fc-cat-back').textContent=currentCard.cat;
+  document.getElementById('fc-english').textContent=currentCard.en;
+  document.getElementById('fc-ratings').classList.add('hidden');
+  document.getElementById('fc-flip-hint').textContent='tap card to flip';
+  const pct=(fcIdx/fcQueue.length*100).toFixed(0);
+  document.getElementById('fc-progress').style.width=pct+'%';
+  document.getElementById('fc-progress-label').textContent=fcIdx+'/'+fcQueue.length;
 }
-function flipCard() {
-  const card = document.getElementById('fc-card');
-  card.classList.toggle('flipped');
-  if (card.classList.contains('flipped')) {
-    document.getElementById('fc-rating-btns').style.display = 'flex';
-    document.getElementById('fc-next-btn').style.display = 'none';
-    document.getElementById('fc-flip-hint').textContent = 'how did you do?';
-  }
+function flipCard(){
+  if(fcFlipped)return; fcFlipped=true;
+  document.getElementById('fc-card').classList.add('flipped');
+  document.getElementById('fc-ratings').classList.remove('hidden');
+  document.getElementById('fc-flip-hint').textContent='';
+  speakWord(currentCard.es);
 }
-function rateCard(known) {
-  if (known) sessions.flashcard.known++;
-  updateSRS(decks.flashcard[sessions.flashcard.idx % decks.flashcard.length].w, known ? 3 : 1);
-  sessions.flashcard.idx++;
-  if (sessions.flashcard.idx >= decks.flashcard.length) { decks.flashcard = shuffle(getDeck()); sessions.flashcard.idx = 0; streak++; localStorage.setItem('ww_streak', streak); }
-  renderFC();
-}
-
-function nextCard(mode) {
-  if (mode === 'flashcard') { sessions.flashcard.idx = (sessions.flashcard.idx+1)%decks.flashcard.length; renderFC(); }
-  else if (mode === 'mc') { sessions.mc.idx = (sessions.mc.idx+1)%decks.mc.length; renderMC(); }
-  else if (mode === 'fib') { sessions.fib.idx = (sessions.fib.idx+1)%decks.fib.length; renderFIB(); }
-  else if (mode === 'srs') { decks.srs.shift(); if (!decks.srs.length) decks.srs = shuffle(getDeck()).slice(0,10); renderSRS(); }
+function rateFC(grade){
+  const xp=applyRating(currentCard.id,grade); fcXP+=xp;
+  if(grade>=1) fcCorrect++; fcIdx++; showFC();
 }
 
-// MULTIPLE CHOICE
-function renderMC() {
-  const c = decks.mc[sessions.mc.idx % decks.mc.length];
-  document.getElementById('mc-word').textContent = c.w;
-  document.getElementById('mc-score').textContent = sessions.mc.score;
-  document.getElementById('mc-total').textContent = sessions.mc.total;
-  document.getElementById('mc-pct').textContent = sessions.mc.total ? Math.round(sessions.mc.score/sessions.mc.total*100)+'%' : '—';
-  document.getElementById('mc-next').style.display = 'none';
-  const opts = shuffle([c.m, ...shuffle(WORDS.filter(w=>w.w!==c.w)).slice(0,3).map(w=>w.m)]);
-  const box = document.getElementById('mc-options');
-  box.innerHTML = '';
-  opts.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'mc-btn'; btn.textContent = opt;
-    btn.onclick = () => {
-      document.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
-      sessions.mc.total++;
-      if (opt === c.m) { btn.classList.add('correct'); sessions.mc.score++; updateSRS(c.w, 3); }
-      else { btn.classList.add('wrong'); document.querySelectorAll('.mc-btn').forEach(b => { if(b.textContent===c.m) b.classList.add('correct'); }); updateSRS(c.w,1); }
-      document.getElementById('mc-score').textContent = sessions.mc.score;
-      document.getElementById('mc-total').textContent = sessions.mc.total;
-      document.getElementById('mc-pct').textContent = Math.round(sessions.mc.score/sessions.mc.total*100)+'%';
-      document.getElementById('mc-next').style.display = 'block';
+// ═══════════════ MULTIPLE CHOICE ══════════════════════════════════
+let mcDeck=[],mcIdx=0,mcScore=0,mcTotal=0,mcXP=0;
+
+function startMC(){
+  mcDeck=shuffle([...VOCAB]); mcIdx=0; mcScore=0; mcTotal=0; mcXP=0;
+  showScreen('screen-mc'); showMC();
+}
+function showMC(){
+  if(mcIdx>=mcDeck.length){showResults('mc');return;}
+  const c=mcDeck[mcIdx];
+  document.getElementById('mc-word').textContent=c.es;
+  document.getElementById('mc-score').textContent=mcScore;
+  document.getElementById('mc-total').textContent=mcTotal;
+  document.getElementById('mc-pct').textContent=mcTotal?Math.round(mcScore/mcTotal*100)+'%':'—';
+  document.getElementById('mc-next').style.display='none';
+  const pct=(mcIdx/mcDeck.length*100).toFixed(0);
+  document.getElementById('mc-progress').style.width=pct+'%';
+  document.getElementById('mc-progress-label').textContent=mcIdx+'/'+mcDeck.length;
+  const opts=shuffle([c.en,...shuffle(VOCAB.filter(w=>w.id!==c.id)).slice(0,3).map(w=>w.en)]);
+  const box=document.getElementById('mc-options'); box.innerHTML='';
+  opts.forEach(opt=>{
+    const btn=document.createElement('button'); btn.className='mc-btn'; btn.textContent=opt;
+    btn.onclick=()=>{
+      document.querySelectorAll('.mc-btn').forEach(b=>b.disabled=true); mcTotal++;
+      if(opt===c.en){btn.classList.add('correct');mcScore++;mcXP+=3;applyRating(c.id,1);}
+      else{btn.classList.add('wrong');document.querySelectorAll('.mc-btn').forEach(b=>{if(b.textContent===c.en)b.classList.add('correct');});applyRating(c.id,0);}
+      document.getElementById('mc-score').textContent=mcScore;
+      document.getElementById('mc-total').textContent=mcTotal;
+      document.getElementById('mc-pct').textContent=Math.round(mcScore/mcTotal*100)+'%';
+      document.getElementById('mc-next').style.display='block';
     };
     box.appendChild(btn);
   });
 }
+function nextMC(){mcIdx++;showMC();}
 
-// FILL IN BLANK
-function renderFIB() {
-  const c = decks.fib[sessions.fib.idx % decks.fib.length];
-  document.getElementById('fib-sentence').innerHTML = '<em>“'+c.w+'”</em> means&hellip;';
-  const inp = document.getElementById('fib-input');
-  inp.value = ''; inp.className = 'fib-input'; inp.disabled = false; inp.focus();
-  document.getElementById('fib-feedback').textContent = '';
-  document.getElementById('fib-feedback').className = 'fib-feedback';
-  document.getElementById('fib-submit').style.display = 'inline-block';
-  document.getElementById('fib-next').style.display = 'none';
-  document.getElementById('fib-score').textContent = sessions.fib.score;
-  document.getElementById('fib-total').textContent = sessions.fib.total;
-}
-function checkFib() {
-  const c = decks.fib[sessions.fib.idx % decks.fib.length];
-  const inp = document.getElementById('fib-input');
-  const ans = inp.value.trim().toLowerCase(), cor = c.m.toLowerCase();
-  const ok = cor.split(/[,\/]/).map(s=>s.trim()).some(a => ans===a || (cor.includes(ans) && ans.length>2));
-  sessions.fib.total++; inp.disabled = true;
-  const fb = document.getElementById('fib-feedback');
-  if (ok) { inp.classList.add('correct'); fb.textContent='Correct!'; fb.className='fib-feedback correct'; sessions.fib.score++; updateSRS(c.w,3); }
-  else { inp.classList.add('wrong'); fb.textContent='Answer: '+c.m; fb.className='fib-feedback wrong'; updateSRS(c.w,1); }
-  document.getElementById('fib-score').textContent = sessions.fib.score;
-  document.getElementById('fib-total').textContent = sessions.fib.total;
-  document.getElementById('fib-submit').style.display = 'none';
-  document.getElementById('fib-next').style.display = 'inline-block';
-}
+// ═══════════════ FILL IN BLANK ════════════════════════════════════
+let fibDeck=[],fibIdx=0,fibScore=0,fibTotal=0,fibXP=0;
 
-// SRS
-function getSRS(w) { if(!srsData[w]) srsData[w]={interval:1,ease:2.5,due:Date.now(),reps:0}; return srsData[w]; }
-function getDueCards() { const now=Date.now(); return WORDS.filter(w=>{const d=srsData[w.w];return !d||d.due<=now;}); }
-function updateSRS(word, rating) {
-  const d = getSRS(word);
-  if (rating >= 3) { d.reps++; if(d.reps===1)d.interval=1; else if(d.reps===2)d.interval=6; else d.interval=Math.round(d.interval*d.ease); d.ease=Math.max(1.3,d.ease+(0.1-(4-rating)*(0.08+(4-rating)*0.02))); }
-  else { d.reps=0; d.interval=1; }
-  d.due = Date.now()+d.interval*86400000; saveSRS();
+function startFIB(){
+  fibDeck=shuffle([...VOCAB]); fibIdx=0; fibScore=0; fibTotal=0; fibXP=0;
+  showScreen('screen-fib'); showFIB();
 }
-function renderSRS() {
-  const deck = decks.srs;
-  document.getElementById('srs-due').textContent = getDueCards().length;
-  document.getElementById('srs-done').textContent = sessions.srs.done;
-  document.getElementById('srs-total').textContent = WORDS.length;
-  if (!deck.length) {
-    document.getElementById('srs-word').textContent = 'All done!';
-    document.getElementById('srs-answer').textContent = '';
-    document.getElementById('srs-reveal-btn').style.display = 'none';
-    document.getElementById('srs-btns').style.display = 'none';
-    document.getElementById('srs-next-due').textContent = 'Come back tomorrow for your next review.';
-    return;
+function showFIB(){
+  if(fibIdx>=fibDeck.length){showResults('fib');return;}
+  const c=fibDeck[fibIdx];
+  document.getElementById('fib-sentence').innerHTML='<em>"'+c.es+'"</em> means&hellip;';
+  const inp=document.getElementById('fib-input');
+  inp.value=''; inp.className='fib-input'; inp.disabled=false; inp.focus();
+  document.getElementById('fib-feedback').textContent='';
+  document.getElementById('fib-feedback').className='fib-feedback';
+  document.getElementById('fib-submit').style.display='inline-block';
+  document.getElementById('fib-next').style.display='none';
+  document.getElementById('fib-score').textContent=fibScore;
+  document.getElementById('fib-total').textContent=fibTotal;
+  const pct=(fibIdx/fibDeck.length*100).toFixed(0);
+  document.getElementById('fib-progress').style.width=pct+'%';
+  document.getElementById('fib-progress-label').textContent=fibIdx+'/'+fibDeck.length;
+}
+function checkFIB(){
+  const c=fibDeck[fibIdx];
+  const inp=document.getElementById('fib-input');
+  const ans=inp.value.trim().toLowerCase(), cor=c.en.toLowerCase();
+  const ok=cor.split(/[,\/]/).map(s=>s.trim()).some(a=>ans===a||(cor.includes(ans)&&ans.length>2));
+  fibTotal++; inp.disabled=true;
+  const fb=document.getElementById('fib-feedback');
+  if(ok){inp.classList.add('correct');fb.textContent='✓ Correct!';fb.className='fib-feedback correct';fibScore++;fibXP+=3;applyRating(c.id,1);}
+  else{inp.classList.add('wrong');fb.textContent='✗ Answer: '+c.en;fb.className='fib-feedback wrong';applyRating(c.id,0);}
+  document.getElementById('fib-score').textContent=fibScore;
+  document.getElementById('fib-total').textContent=fibTotal;
+  document.getElementById('fib-submit').style.display='none';
+  document.getElementById('fib-next').style.display='inline-block';
+}
+function skipFIB(){fibIdx++;showFIB();}
+function nextFIB(){fibIdx++;showFIB();}
+
+// ═══════════════ LISTEN & SPELL ═══════════════════════════════════
+let listenCards=[],listenIdx=0,listenXP=0,listenCorrect=0,listenAnswered=false;
+
+function startListen(){
+  listenCards=shuffle([...VOCAB]).slice(0,10); listenIdx=0; listenXP=0; listenCorrect=0;
+  showScreen('screen-listen'); showListen();
+}
+function showListen(){
+  if(listenIdx>=listenCards.length){showResults('listen');return;}
+  listenAnswered=false;
+  const w=listenCards[listenIdx];
+  document.getElementById('ls-english').textContent=w.en;
+  document.getElementById('ls-input').value='';
+  document.getElementById('ls-input').className='listen-input';
+  document.getElementById('ls-feedback').textContent='';
+  document.getElementById('ls-feedback').className='listen-feedback';
+  document.getElementById('ls-submit').textContent='Check';
+  document.getElementById('ls-input').disabled=false;
+  document.getElementById('ls-input').focus();
+  const pct=(listenIdx/listenCards.length*100).toFixed(0);
+  document.getElementById('ls-progress').style.width=pct+'%';
+  document.getElementById('ls-progress-label').textContent=listenIdx+'/'+listenCards.length;
+  speakWord(w.es);
+}
+function norm(s){return s.toLowerCase().trim().replace(/[áàä]/g,'a').replace(/[éèë]/g,'e').replace(/[íìï]/g,'i').replace(/[óòö]/g,'o').replace(/[úùü]/g,'u').replace(/ñ/g,'n');}
+function checkListen(){
+  if(listenAnswered){listenIdx++;showListen();return;}
+  const w=listenCards[listenIdx];
+  const ok=norm(document.getElementById('ls-input').value)===norm(w.es);
+  listenAnswered=true;
+  document.getElementById('ls-input').disabled=true;
+  document.getElementById('ls-submit').textContent='Next →';
+  if(ok){
+    listenXP+=4; listenCorrect++;
+    document.getElementById('ls-input').classList.add('correct');
+    document.getElementById('ls-feedback').textContent='✓ ¡Correcto!';
+    document.getElementById('ls-feedback').className='listen-feedback correct';
+    applyRating(w.id,1);
+  } else {
+    document.getElementById('ls-input').classList.add('wrong');
+    document.getElementById('ls-feedback').textContent='✗ It\'s "'+w.es+'"';
+    document.getElementById('ls-feedback').className='listen-feedback wrong';
+    applyRating(w.id,0); speakWord(w.es);
   }
-  document.getElementById('srs-word').textContent = deck[0].w;
-  document.getElementById('srs-answer').textContent = '';
-  document.getElementById('srs-reveal-btn').style.display = 'block';
-  document.getElementById('srs-btns').style.display = 'none';
-  document.getElementById('srs-next-due').textContent = '';
-}
-function revealSRS() {
-  document.getElementById('srs-answer').textContent = decks.srs[0].m;
-  document.getElementById('srs-reveal-btn').style.display = 'none';
-  document.getElementById('srs-btns').style.display = 'flex';
-}
-function rateSRS(rating) {
-  updateSRS(decks.srs[0].w, rating);
-  sessions.srs.done++;
-  const days = Math.round(srsData[decks.srs[0].w].interval);
-  document.getElementById('srs-next-due').textContent = 'Next review: '+(days===1?'tomorrow':'in '+days+' days');
-  setTimeout(()=>nextCard('srs'), 700);
 }
 
-updateHomeStats();
+// ═══════════════ SENTENCE BUILDER ════════════════════════════════
+let bdQueue=[],bdIdx=0,bdXP=0,bdCorrect=0,bdAnswer=[],bdBank=[],bdAnswered=false;
+
+function startBuilder(){
+  bdQueue=shuffle([...SENTENCES]).slice(0,5); bdIdx=0; bdXP=0; bdCorrect=0;
+  showScreen('screen-builder'); showBuilder();
+}
+function showBuilder(){
+  if(bdIdx>=bdQueue.length){showResults('builder');return;}
+  bdAnswered=false;
+  const s=bdQueue[bdIdx]; bdAnswer=[]; bdBank=shuffle([...s.words]);
+  document.getElementById('bd-hint').textContent=s.hint;
+  document.getElementById('bd-feedback').textContent='';
+  document.getElementById('bd-feedback').className='builder-feedback';
+  document.getElementById('bd-check').textContent='Check';
+  document.getElementById('bd-check').classList.add('faded');
+  const pct=(bdIdx/bdQueue.length*100).toFixed(0);
+  document.getElementById('bd-progress').style.width=pct+'%';
+  document.getElementById('bd-progress-label').textContent=bdIdx+'/'+bdQueue.length;
+  renderBuilder();
+}
+function renderBuilder(){
+  const az=document.getElementById('bd-answer'), bz=document.getElementById('bd-bank'), btn=document.getElementById('bd-check');
+  az.innerHTML=''; bz.innerHTML='';
+  az.classList.toggle('has-words',bdAnswer.length>0);
+  bdAnswer.forEach((w,i)=>{
+    const c=document.createElement('button'); c.className='word-chip answer-chip'; c.textContent=w;
+    if(!bdAnswered) c.onclick=()=>{bdBank.push(bdAnswer.splice(i,1)[0]);renderBuilder();};
+    az.appendChild(c);
+  });
+  bdBank.forEach((w,i)=>{
+    const c=document.createElement('button'); c.className='word-chip bank-chip'; c.textContent=w;
+    if(!bdAnswered) c.onclick=()=>{bdAnswer.push(bdBank.splice(i,1)[0]);renderBuilder();};
+    bz.appendChild(c);
+  });
+  const allIn=bdBank.length===0;
+  if(allIn&&!bdAnswered){btn.classList.remove('faded');}else if(!bdAnswered){btn.classList.add('faded');}
+}
+function checkBuilder(){
+  if(bdAnswered){bdIdx++;showBuilder();return;}
+  if(bdBank.length>0)return;
+  const s=bdQueue[bdIdx], ok=bdAnswer.join(' ')===s.words.join(' ');
+  bdAnswered=true;
+  if(ok){bdXP+=6;bdCorrect++;document.getElementById('bd-feedback').textContent='✓ ¡Perfecto!';document.getElementById('bd-feedback').className='builder-feedback correct';}
+  else{document.getElementById('bd-feedback').textContent='✗ '+s.words.join(' ');document.getElementById('bd-feedback').className='builder-feedback wrong';}
+  document.getElementById('bd-check').textContent='Next →';
+  document.getElementById('bd-check').classList.remove('faded');
+  renderBuilder();
+}
+
+// ═══════════════ RESULTS ══════════════════════════════════════════
+const RES={
+  flashcard:{total:()=>fcQueue.length,    xp:()=>fcXP,     correct:()=>fcCorrect},
+  mc:       {total:()=>mcDeck.length,     xp:()=>mcXP,     correct:()=>mcScore},
+  fib:      {total:()=>fibDeck.length,    xp:()=>fibXP,    correct:()=>fibScore},
+  listen:   {total:()=>listenCards.length,xp:()=>listenXP, correct:()=>listenCorrect},
+  builder:  {total:()=>bdQueue.length,    xp:()=>bdXP,     correct:()=>bdCorrect},
+};
+function showResults(mode){
+  const r=RES[mode], xp=r.xp(), correct=r.correct(), total=r.total();
+  updateStreak(xp);
+  const ratio=correct/total;
+  document.getElementById('res-emoji').textContent=ratio>=0.8?'🎉':ratio>=0.5?'😊':'💪';
+  document.getElementById('res-title').textContent={flashcard:'¡Bien hecho!',mc:'¡Excelente!',fib:'¡Muy bien!',listen:'¡Buen trabajo!',builder:'¡Perfecto!'}[mode];
+  document.getElementById('res-sub').textContent=correct+' of '+total+' correct';
+  document.getElementById('res-xp').textContent='+'+xp;
+  document.getElementById('res-correct').textContent=correct+'/'+total;
+  document.getElementById('res-streak').textContent=state.streak;
+  showScreen('screen-results');
+}
+
+// ═══════════════ INIT ═════════════════════════════════════════════
+loadState();
+updateHomeUI();
 </script>
 </body>
 </html>
