@@ -3,236 +3,519 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spanish Frequency Trainer</title>
+<title>Wanderwords — Spanish Frequency Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* NAV */
-  nav { display: flex; gap: 4px; padding: 16px; background: #1a1a1a; border-bottom: 1px solid #2a2a2a; flex-wrap: wrap; }
-  nav button { padding: 8px 18px; border: 1px solid #333; background: transparent; color: #aaa; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all .15s; }
-  nav button.active, nav button:hover { background: #e8e8e8; color: #111; border-color: #e8e8e8; }
-  .deck-filter { margin-left: auto; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-  .deck-filter label { font-size: 13px; color: #777; }
-  .deck-filter select { background: #222; border: 1px solid #333; color: #e8e8e8; padding: 6px 10px; border-radius: 6px; font-size: 13px; }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: #FAFCFE;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container { max-width: 800px; margin: 0 auto; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #B8D4E8 0%, #C5E0F0 40%, #DDE8F5 100%);
+    border-radius: 14px;
+    padding: 30px 32px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1.5px solid #DDE8F5;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139,159,217,0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    color: #2C3E50;
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .header p {
+    color: #5A6B7C;
+    font-size: 0.95em;
+    font-weight: 300;
+  }
+  .header-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .deck-select-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .deck-select-wrap label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5A6B7C;
+  }
+  .deck-select-wrap select {
+    font-family: 'Lato', sans-serif;
+    background: rgba(255,255,255,0.8);
+    border: 1.5px solid #DDE8F5;
+    color: #2C3E50;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* TAB NAV */
+  .tab-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    font-family: 'Lato', sans-serif;
+    background: rgba(255,255,255,0.6);
+    color: #5A6B7C;
+    border: 1.5px solid #DDE8F5;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { background: rgba(255,255,255,0.9); border-color: #8B9FD9; }
+  .tab-btn.active { background: white; color: #8B9FD9; border-color: #8B9FD9; }
+
+  /* STATS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 20px 16px;
+    border: 1.5px solid #DDE8F5;
+    text-align: center;
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2em;
+    font-weight: 700;
+    color: #8B9FD9;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-family: 'Lato', sans-serif;
+    color: #6a4050;
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
 
   /* SCREENS */
-  .screen { display: none; padding: 32px 20px; max-width: 700px; margin: 0 auto; }
+  .screen { display: none; }
   .screen.active { display: block; }
 
-  /* STATS BAR */
-  .stats-bar { display: flex; gap: 20px; margin-bottom: 28px; flex-wrap: wrap; }
-  .stat { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px 20px; text-align: center; flex: 1; min-width: 80px; }
-  .stat .n { font-size: 24px; font-weight: 700; }
-  .stat .l { font-size: 12px; color: #666; margin-top: 2px; }
+  /* PANEL */
+  .panel {
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1.5px solid #DDE8F5;
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-track {
+    height: 6px;
+    background: #EEF3F9;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: #8B9FD9;
+    border-radius: 3px; transition: width .3s;
+  }
+  .progress-label {
+    font-size: 12px; color: #8B9FD9;
+    font-weight: 700; text-align: right;
+    margin-top: 4px; letter-spacing: 0.5px;
+  }
 
   /* FLASHCARD */
-  .card-wrap { perspective: 1000px; height: 240px; cursor: pointer; margin-bottom: 24px; }
+  .card-wrap { perspective: 1000px; height: 220px; cursor: pointer; margin-bottom: 20px; }
   .card { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .45s; }
   .card.flipped { transform: rotateY(180deg); }
-  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; border: 1px solid #2a2a2a; }
-  .card-front { background: #1a1a1a; }
-  .card-back { background: #1e1e1e; transform: rotateY(180deg); }
-  .card-word { font-size: 44px; font-weight: 700; }
-  .card-hint { font-size: 13px; color: #555; }
-  .card-meaning { font-size: 28px; color: #aaa; }
-  .card-cat { font-size: 12px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-  .flip-hint { text-align: center; font-size: 13px; color: #444; margin-bottom: 18px; }
+  .card-face {
+    position: absolute; width: 100%; height: 100%;
+    backface-visibility: hidden; border-radius: 12px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px solid #DDE8F5;
+  }
+  .card-front { background: #F4F8FD; }
+  .card-back { background: #FFFFFF; transform: rotateY(180deg); }
+  .card-cat {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #8B9FD9;
+  }
+  .card-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px; font-weight: 700; color: #2C3E50;
+  }
+  .card-hint { font-size: 12px; color: #AABFD4; font-weight: 300; }
+  .card-meaning {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; color: #5A6B7C; font-style: italic;
+  }
+  .flip-hint { text-align: center; font-size: 12px; color: #AABFD4; margin-bottom: 16px; font-weight: 300; }
+
+  /* BUTTONS */
   .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .btn { padding: 10px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: opacity .15s; }
-  .btn:hover { opacity: .85; }
-  .btn-skip { background: #2a2a2a; color: #aaa; }
-  .btn-good { background: #e8e8e8; color: #111; }
-  .btn-hard { background: #3a2020; color: #e87070; }
-  .progress-bar { height: 4px; background: #2a2a2a; border-radius: 2px; margin-bottom: 24px; overflow: hidden; }
-  .progress-fill { height: 100%; background: #e8e8e8; transition: width .3s; }
+  .btn {
+    font-family: 'Lato', sans-serif;
+    padding: 10px 28px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.5px; transition: all .15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-skip { background: #EEF3F9; color: #5A6B7C; }
+  .btn-skip:hover { background: #DDE8F5; }
+  .btn-good { background: #8B9FD9; color: white; }
+  .btn-good:hover { background: #7A8EC8; }
+  .btn-hard { background: #F5E8EC; color: #C47A8A; }
+  .btn-hard:hover { background: #EDD5DB; }
+  .btn-next { background: #8B9FD9; color: white; }
+  .btn-next:hover { background: #7A8EC8; }
 
   /* MULTIPLE CHOICE */
-  .mc-question { font-size: 48px; font-weight: 700; text-align: center; margin: 40px 0 32px; }
-  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-  .mc-btn { padding: 18px; border: 1px solid #2a2a2a; background: #1a1a1a; color: #e8e8e8; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all .15s; text-align: center; }
-  .mc-btn:hover:not(:disabled) { border-color: #555; background: #222; }
-  .mc-btn.correct { background: #1a2e1a; border-color: #4a8a4a; color: #7dcc7d; }
-  .mc-btn.wrong { background: #2e1a1a; border-color: #8a4a4a; color: #cc7d7d; }
+  .mc-question {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px; font-weight: 700;
+    color: #2C3E50; text-align: center;
+    margin: 32px 0 28px;
+  }
+  .mc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .mc-btn {
+    font-family: 'Lato', sans-serif;
+    padding: 16px 12px; border: 1.5px solid #DDE8F5;
+    background: #F4F8FD; color: #2C3E50;
+    border-radius: 10px; cursor: pointer;
+    font-size: 15px; font-weight: 400;
+    transition: all .15s; text-align: center;
+  }
+  .mc-btn:hover:not(:disabled) { border-color: #8B9FD9; background: white; }
+  .mc-btn.correct { background: #EAF5EA; border-color: #7DC47D; color: #3A7A3A; }
+  .mc-btn.wrong { background: #F5EAEA; border-color: #C47D7D; color: #7A3A3A; }
   .mc-btn:disabled { cursor: default; }
-  .mc-next { display: block; margin: 0 auto; }
 
   /* FILL IN BLANK */
-  .fib-sentence { font-size: 26px; text-align: center; margin: 40px 0 28px; line-height: 1.5; }
-  .fib-blank { display: inline-block; min-width: 100px; border-bottom: 2px solid #e8e8e8; padding: 0 8px; color: transparent; }
-  .fib-input { display: block; margin: 0 auto 20px; width: 240px; padding: 12px 16px; background: #1a1a1a; border: 1px solid #333; border-radius: 8px; color: #e8e8e8; font-size: 20px; text-align: center; outline: none; }
-  .fib-input:focus { border-color: #666; }
-  .fib-input.correct { border-color: #4a8a4a; background: #1a2e1a; }
-  .fib-input.wrong { border-color: #8a4a4a; background: #2e1a1a; }
-  .fib-feedback { text-align: center; font-size: 16px; min-height: 24px; margin-bottom: 16px; }
-  .fib-feedback.correct { color: #7dcc7d; }
-  .fib-feedback.wrong { color: #cc7d7d; }
+  .fib-sentence {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px; color: #2C3E50;
+    text-align: center; margin: 32px 0 24px; line-height: 1.5;
+  }
+  .fib-input {
+    font-family: 'Lato', sans-serif;
+    display: block; margin: 0 auto 16px;
+    width: 260px; padding: 12px 16px;
+    background: #F4F8FD; border: 1.5px solid #DDE8F5;
+    border-radius: 8px; color: #2C3E50;
+    font-size: 18px; text-align: center; outline: none;
+    transition: border-color .15s;
+  }
+  .fib-input:focus { border-color: #8B9FD9; background: white; }
+  .fib-input.correct { border-color: #7DC47D; background: #EAF5EA; }
+  .fib-input.wrong { border-color: #C47D7D; background: #F5EAEA; }
+  .fib-feedback {
+    text-align: center; font-size: 15px;
+    min-height: 22px; margin-bottom: 16px;
+    font-weight: 700;
+  }
+  .fib-feedback.correct { color: #3A7A3A; }
+  .fib-feedback.wrong { color: #7A3A3A; }
 
   /* SRS */
-  .srs-label { text-align: center; font-size: 13px; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-  .srs-word { font-size: 52px; font-weight: 700; text-align: center; margin: 32px 0; }
-  .srs-reveal { display: block; margin: 0 auto 24px; padding: 12px 32px; background: #2a2a2a; color: #e8e8e8; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
-  .srs-reveal:hover { background: #333; }
-  .srs-answer { text-align: center; font-size: 26px; color: #aaa; margin-bottom: 24px; min-height: 40px; }
-  .srs-btns { display: flex; gap: 12px; justify-content: center; }
-  .srs-btn { padding: 12px 28px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; }
-  .srs-1 { background: #3a2020; color: #e87070; }
-  .srs-2 { background: #2d2820; color: #d4a84b; }
-  .srs-3 { background: #1e2820; color: #6dbf6d; }
-  .srs-4 { background: #1a2a35; color: #6db3d4; }
-  .srs-due { font-size: 13px; color: #555; text-align: center; margin-top: 8px; }
+  .srs-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: #8B9FD9;
+    text-align: center; margin-bottom: 8px;
+  }
+  .srs-word {
+    font-family: 'Playfair Display', serif;
+    font-size: 54px; font-weight: 700;
+    color: #2C3E50; text-align: center;
+    margin: 24px 0 8px;
+  }
+  .srs-answer {
+    font-family: 'Playfair Display', serif;
+    text-align: center; font-size: 24px;
+    color: #5A6B7C; font-style: italic;
+    min-height: 36px; margin-bottom: 20px;
+  }
+  .srs-reveal {
+    font-family: 'Lato', sans-serif;
+    display: block; margin: 0 auto 20px;
+    padding: 10px 32px;
+    background: #EEF3F9; color: #5A6B7C;
+    border: 1.5px solid #DDE8F5; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.5px; transition: all .15s;
+  }
+  .srs-reveal:hover { background: #DDE8F5; }
+  .srs-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .srs-btn {
+    font-family: 'Lato', sans-serif;
+    padding: 10px 22px; border: none; border-radius: 8px;
+    cursor: pointer; font-size: 13px; font-weight: 700;
+    letter-spacing: 0.5px; transition: all .15s;
+  }
+  .srs-btn:hover { transform: translateY(-1px); }
+  .srs-1 { background: #F5EAEA; color: #C47D7D; }
+  .srs-2 { background: #FDF3E7; color: #C4974A; }
+  .srs-3 { background: #EAF5EA; color: #5A9A5A; }
+  .srs-4 { background: #E8F0F8; color: #5A87BF; }
+  .srs-next-due {
+    font-size: 12px; color: #AABFD4;
+    text-align: center; margin-top: 12px; font-weight: 300;
+  }
 
-  /* HOME */
-  #home h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-  #home p { color: #666; margin-bottom: 32px; }
-  .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
-  .deck-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 20px; cursor: pointer; transition: border-color .15s; }
-  .deck-card:hover { border-color: #555; }
-  .deck-card h3 { font-size: 15px; margin-bottom: 4px; }
-  .deck-card p { font-size: 12px; color: #555; }
+  /* HOME DECK GRID */
+  .deck-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .deck-tile {
+    background: #FFFFFF; border: 1.5px solid #DDE8F5;
+    border-radius: 12px; padding: 20px 16px;
+    cursor: pointer; transition: all .2s; text-align: center;
+  }
+  .deck-tile:hover { border-color: #8B9FD9; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,159,217,.15); }
+  .deck-tile .tile-icon { font-size: 28px; margin-bottom: 8px; }
+  .deck-tile h3 { font-family: 'Playfair Display', serif; font-size: 15px; color: #2C3E50; margin-bottom: 4px; }
+  .deck-tile p { font-size: 12px; color: #8B9FD9; font-weight: 300; }
+
+  @media (max-width: 520px) {
+    .mc-grid { grid-template-columns: 1fr; }
+    .card-word { font-size: 36px; }
+    .srs-word { font-size: 40px; }
+    .mc-question { font-size: 38px; }
+  }
 </style>
 </head>
 <body>
+<div class="container">
 
-<nav>
-  <button class="active" onclick="showScreen('home')">Home</button>
-  <button onclick="showScreen('flashcard')">Flashcards</button>
-  <button onclick="showScreen('mc')">Quiz</button>
-  <button onclick="showScreen('fib')">Fill-in</button>
-  <button onclick="showScreen('srs')">SRS</button>
-  <div class="deck-filter">
-    <label>Deck:</label>
-    <select id="deckSelect" onchange="setDeck(this.value)">
-      <option value="all">All words</option>
-      <option value="structure">Structure words</option>
-      <option value="verbs">Verbs</option>
-      <option value="adjectives">Adjectives</option>
-      <option value="travel">Travel nouns</option>
-    </select>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div id="home" class="screen active">
-  <h1>Spanish Frequency Trainer</h1>
-  <p>High-frequency words, four ways to drill them.</p>
-  <div class="stats-bar">
-    <div class="stat"><div class="n" id="home-total">0</div><div class="l">Total words</div></div>
-    <div class="stat"><div class="n" id="home-known">0</div><div class="l">Known</div></div>
-    <div class="stat"><div class="n" id="home-streak">0</div><div class="l">Streak</div></div>
-    <div class="stat"><div class="n" id="home-due">0</div><div class="l">SRS due</div></div>
-  </div>
-  <div class="deck-grid">
-    <div class="deck-card" onclick="setDeckAndGo('structure','flashcard')"><h3>Structure Words</h3><p>Top 50 function words</p></div>
-    <div class="deck-card" onclick="setDeckAndGo('verbs','flashcard')"><h3>Core Verbs</h3><p>26 high-frequency verbs</p></div>
-    <div class="deck-card" onclick="setDeckAndGo('adjectives','flashcard')"><h3>Adjectives</h3><p>16 common descriptors</p></div>
-    <div class="deck-card" onclick="setDeckAndGo('travel','flashcard')"><h3>Travel Nouns</h3><p>Practical travel vocab</p></div>
-    <div class="deck-card" onclick="setDeckAndGo('all','srs')"><h3>SRS Review</h3><p>Due cards across all decks</p></div>
-    <div class="deck-card" onclick="setDeckAndGo('all','mc')"><h3>Random Quiz</h3><p>Multiple choice, all words</p></div>
-  </div>
-</div>
-
-<!-- FLASHCARD -->
-<div id="flashcard" class="screen">
-  <div class="stats-bar">
-    <div class="stat"><div class="n" id="fc-idx">1</div><div class="l">Card</div></div>
-    <div class="stat"><div class="n" id="fc-total">0</div><div class="l">Total</div></div>
-    <div class="stat"><div class="n" id="fc-known">0</div><div class="l">Known</div></div>
-  </div>
-  <div class="progress-bar"><div class="progress-fill" id="fc-progress"></div></div>
-  <div class="card-wrap" onclick="flipCard()">
-    <div class="card" id="fc-card">
-      <div class="card-face card-front">
-        <div class="card-cat" id="fc-cat"></div>
-        <div class="card-word" id="fc-word"></div>
-        <div class="card-hint">tap to reveal</div>
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <h1>Wanderwords</h1>
+        <p>High-frequency Spanish for travelers &mdash; drill, quiz, and review.</p>
       </div>
-      <div class="card-face card-back">
-        <div class="card-meaning" id="fc-meaning"></div>
-        <div class="card-cat" id="fc-notes"></div>
+      <div class="deck-select-wrap">
+        <label>Deck</label>
+        <select id="deckSelect" onchange="setDeck(this.value)">
+          <option value="all">All words</option>
+          <option value="structure">Structure words</option>
+          <option value="verbs">Verbs</option>
+          <option value="adjectives">Adjectives</option>
+          <option value="travel">Travel nouns</option>
+        </select>
+      </div>
+    </div>
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="showScreen('home')">Home</button>
+      <button class="tab-btn" onclick="showScreen('flashcard')">Flashcards</button>
+      <button class="tab-btn" onclick="showScreen('mc')">Quiz</button>
+      <button class="tab-btn" onclick="showScreen('fib')">Fill-in</button>
+      <button class="tab-btn" onclick="showScreen('srs')">Review (SRS)</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="home-total">0</div><div class="stat-label">Total words</div></div>
+      <div class="stat-card"><div class="stat-number" id="home-known">0</div><div class="stat-label">Known</div></div>
+      <div class="stat-card"><div class="stat-number" id="home-streak">0</div><div class="stat-label">Streak</div></div>
+      <div class="stat-card"><div class="stat-number" id="home-due">0</div><div class="stat-label">SRS due</div></div>
+    </div>
+    <div class="deck-grid">
+      <div class="deck-tile" onclick="setDeckAndGo('structure','flashcard')">
+        <div class="tile-icon">📌</div>
+        <h3>Structure Words</h3>
+        <p>Top 50 function words</p>
+      </div>
+      <div class="deck-tile" onclick="setDeckAndGo('verbs','flashcard')">
+        <div class="tile-icon">&#9889;</div>
+        <h3>Core Verbs</h3>
+        <p>26 high-frequency verbs</p>
+      </div>
+      <div class="deck-tile" onclick="setDeckAndGo('adjectives','flashcard')">
+        <div class="tile-icon">&#127912;</div>
+        <h3>Adjectives</h3>
+        <p>16 common descriptors</p>
+      </div>
+      <div class="deck-tile" onclick="setDeckAndGo('travel','flashcard')">
+        <div class="tile-icon">&#9992;</div>
+        <h3>Travel Nouns</h3>
+        <p>Practical travel vocab</p>
+      </div>
+      <div class="deck-tile" onclick="setDeckAndGo('all','srs')">
+        <div class="tile-icon">&#128257;</div>
+        <h3>SRS Review</h3>
+        <p>Due cards, all decks</p>
+      </div>
+      <div class="deck-tile" onclick="setDeckAndGo('all','mc')">
+        <div class="tile-icon">&#127919;</div>
+        <h3>Random Quiz</h3>
+        <p>Multiple choice</p>
       </div>
     </div>
   </div>
-  <div class="flip-hint" id="fc-flip-hint">tap the card to flip</div>
-  <div class="btn-row" id="fc-rating-btns" style="display:none">
-    <button class="btn btn-hard" onclick="rateCard(false)">Hard</button>
-    <button class="btn btn-good" onclick="rateCard(true)">Got it</button>
-  </div>
-  <div class="btn-row" id="fc-next-btn">
-    <button class="btn btn-skip" onclick="nextCard('flashcard')">Skip →</button>
-  </div>
-</div>
 
-<!-- MULTIPLE CHOICE -->
-<div id="mc" class="screen">
-  <div class="stats-bar">
-    <div class="stat"><div class="n" id="mc-score">0</div><div class="l">Correct</div></div>
-    <div class="stat"><div class="n" id="mc-total">0</div><div class="l">Answered</div></div>
-    <div class="stat"><div class="n" id="mc-pct">—</div><div class="l">Accuracy</div></div>
+  <!-- FLASHCARD -->
+  <div id="flashcard" class="screen">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="fc-idx">1</div><div class="stat-label">Card</div></div>
+      <div class="stat-card"><div class="stat-number" id="fc-total">0</div><div class="stat-label">In deck</div></div>
+      <div class="stat-card"><div class="stat-number" id="fc-known">0</div><div class="stat-label">Known</div></div>
+    </div>
+    <div class="panel">
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="fc-progress"></div></div>
+        <div class="progress-label" id="fc-progress-label"></div>
+      </div>
+      <div class="card-wrap" onclick="flipCard()">
+        <div class="card" id="fc-card">
+          <div class="card-face card-front">
+            <div class="card-cat" id="fc-cat"></div>
+            <div class="card-word" id="fc-word"></div>
+            <div class="card-hint">tap to reveal</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-cat" id="fc-cat2"></div>
+            <div class="card-meaning" id="fc-meaning"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flip-hint" id="fc-flip-hint">tap the card to flip</div>
+      <div class="btn-row" id="fc-rating-btns" style="display:none">
+        <button class="btn btn-hard" onclick="rateCard(false)">Hard</button>
+        <button class="btn btn-good" onclick="rateCard(true)">Got it</button>
+      </div>
+      <div class="btn-row" id="fc-next-btn">
+        <button class="btn btn-skip" onclick="nextCard('flashcard')">Skip &rarr;</button>
+      </div>
+    </div>
   </div>
-  <div class="mc-question" id="mc-word"></div>
-  <div class="mc-options" id="mc-options"></div>
-  <button class="btn btn-good mc-next" id="mc-next" style="display:none" onclick="nextCard('mc')">Next →</button>
-</div>
 
-<!-- FILL IN BLANK -->
-<div id="fib" class="screen">
-  <div class="stats-bar">
-    <div class="stat"><div class="n" id="fib-score">0</div><div class="l">Correct</div></div>
-    <div class="stat"><div class="n" id="fib-total">0</div><div class="l">Answered</div></div>
+  <!-- MULTIPLE CHOICE -->
+  <div id="mc" class="screen">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="mc-score">0</div><div class="stat-label">Correct</div></div>
+      <div class="stat-card"><div class="stat-number" id="mc-total">0</div><div class="stat-label">Answered</div></div>
+      <div class="stat-card"><div class="stat-number" id="mc-pct">&mdash;</div><div class="stat-label">Accuracy</div></div>
+    </div>
+    <div class="panel">
+      <div class="mc-question" id="mc-word"></div>
+      <div class="mc-grid" id="mc-options"></div>
+      <div class="btn-row">
+        <button class="btn btn-next" id="mc-next" style="display:none" onclick="nextCard('mc')">Next &rarr;</button>
+      </div>
+    </div>
   </div>
-  <div class="fib-sentence" id="fib-sentence"></div>
-  <input class="fib-input" id="fib-input" placeholder="type translation" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter') checkFib()" />
-  <div class="fib-feedback" id="fib-feedback"></div>
-  <div class="btn-row">
-    <button class="btn btn-skip" onclick="nextCard('fib')">Skip →</button>
-    <button class="btn btn-good" id="fib-submit" onclick="checkFib()">Check</button>
-    <button class="btn btn-good" id="fib-next" style="display:none" onclick="nextCard('fib')">Next →</button>
-  </div>
-</div>
 
-<!-- SRS -->
-<div id="srs" class="screen">
-  <div class="stats-bar">
-    <div class="stat"><div class="n" id="srs-due">0</div><div class="l">Due</div></div>
-    <div class="stat"><div class="n" id="srs-done">0</div><div class="l">Done today</div></div>
-    <div class="stat"><div class="n" id="srs-total">0</div><div class="l">Total</div></div>
+  <!-- FILL IN BLANK -->
+  <div id="fib" class="screen">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="fib-score">0</div><div class="stat-label">Correct</div></div>
+      <div class="stat-card"><div class="stat-number" id="fib-total">0</div><div class="stat-label">Answered</div></div>
+    </div>
+    <div class="panel">
+      <div class="fib-sentence" id="fib-sentence"></div>
+      <input class="fib-input" id="fib-input" placeholder="type the translation"
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter') checkFib()" />
+      <div class="fib-feedback" id="fib-feedback"></div>
+      <div class="btn-row">
+        <button class="btn btn-skip" onclick="nextCard('fib')">Skip &rarr;</button>
+        <button class="btn btn-good" id="fib-submit" onclick="checkFib()">Check</button>
+        <button class="btn btn-next" id="fib-next" style="display:none" onclick="nextCard('fib')">Next &rarr;</button>
+      </div>
+    </div>
   </div>
-  <div class="srs-label" id="srs-label">spanish → english</div>
-  <div class="srs-word" id="srs-word"></div>
-  <div class="srs-answer" id="srs-answer"></div>
-  <button class="srs-reveal" id="srs-reveal-btn" onclick="revealSRS()">Reveal answer</button>
-  <div class="srs-btns" id="srs-btns" style="display:none">
-    <button class="srs-btn srs-1" onclick="rateSRS(1)">Again</button>
-    <button class="srs-btn srs-2" onclick="rateSRS(2)">Hard</button>
-    <button class="srs-btn srs-3" onclick="rateSRS(3)">Good</button>
-    <button class="srs-btn srs-4" onclick="rateSRS(4)">Easy</button>
+
+  <!-- SRS -->
+  <div id="srs" class="screen">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="srs-due">0</div><div class="stat-label">Due today</div></div>
+      <div class="stat-card"><div class="stat-number" id="srs-done">0</div><div class="stat-label">Done</div></div>
+      <div class="stat-card"><div class="stat-number" id="srs-total">0</div><div class="stat-label">Total words</div></div>
+    </div>
+    <div class="panel">
+      <div class="srs-label">spanish &rarr; english</div>
+      <div class="srs-word" id="srs-word"></div>
+      <div class="srs-answer" id="srs-answer"></div>
+      <button class="srs-reveal" id="srs-reveal-btn" onclick="revealSRS()">Reveal answer</button>
+      <div class="srs-btns" id="srs-btns" style="display:none">
+        <button class="srs-btn srs-1" onclick="rateSRS(1)">Again</button>
+        <button class="srs-btn srs-2" onclick="rateSRS(2)">Hard</button>
+        <button class="srs-btn srs-3" onclick="rateSRS(3)">Good</button>
+        <button class="srs-btn srs-4" onclick="rateSRS(4)">Easy</button>
+      </div>
+      <div class="srs-next-due" id="srs-next-due"></div>
+    </div>
   </div>
-  <div class="srs-due" id="srs-next-due"></div>
+
 </div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────────────────
 const WORDS = [
-  // structure
-  {w:'de',m:'of, from',cat:'structure'},{w:'la',m:'the (f)',cat:'structure'},{w:'que',m:'that, which, who',cat:'structure'},
-  {w:'el',m:'the (m)',cat:'structure'},{w:'en',m:'in, on',cat:'structure'},{w:'y',m:'and',cat:'structure'},
-  {w:'a',m:'to, at',cat:'structure'},{w:'los',m:'the (m pl)',cat:'structure'},{w:'se',m:'reflexive pronoun',cat:'structure'},
-  {w:'del',m:'of the',cat:'structure'},{w:'las',m:'the (f pl)',cat:'structure'},{w:'un',m:'a, an (m)',cat:'structure'},
-  {w:'por',m:'for, by, through',cat:'structure'},{w:'con',m:'with',cat:'structure'},{w:'no',m:'no, not',cat:'structure'},
-  {w:'una',m:'a, an (f)',cat:'structure'},{w:'su',m:'his, her, their',cat:'structure'},{w:'para',m:'for, in order to',cat:'structure'},
-  {w:'es',m:'is',cat:'structure'},{w:'al',m:'to the',cat:'structure'},{w:'lo',m:'it, him',cat:'structure'},
-  {w:'como',m:'as, like, how',cat:'structure'},{w:'más',m:'more',cat:'structure'},{w:'pero',m:'but',cat:'structure'},
-  {w:'sus',m:'his/her/their (pl)',cat:'structure'},{w:'le',m:'to him/her',cat:'structure'},{w:'ya',m:'already, now',cat:'structure'},
-  {w:'o',m:'or',cat:'structure'},{w:'este',m:'this (m)',cat:'structure'},{w:'si',m:'if',cat:'structure'},
-  {w:'me',m:'me, to me',cat:'structure'},{w:'porque',m:'because',cat:'structure'},{w:'esta',m:'this (f)',cat:'structure'},
-  {w:'entre',m:'between, among',cat:'structure'},{w:'cuando',m:'when',cat:'structure'},{w:'muy',m:'very',cat:'structure'},
-  {w:'sin',m:'without',cat:'structure'},{w:'sobre',m:'about, on top of',cat:'structure'},{w:'también',m:'also, too',cat:'structure'},
-  {w:'año',m:'year',cat:'structure'},{w:'hasta',m:'until, up to',cat:'structure'},{w:'desde',m:'since, from',cat:'structure'},
-  {w:'nos',m:'us, to us',cat:'structure'},{w:'durante',m:'during',cat:'structure'},{w:'uno',m:'one',cat:'structure'},
-  {w:'ni',m:'neither, nor',cat:'structure'},{w:'contra',m:'against',cat:'structure'},{w:'ese',m:'that (m)',cat:'structure'},
+  {w:'de',m:'of, from',cat:'structure'},{w:'la',m:'the (f)',cat:'structure'},
+  {w:'que',m:'that, which, who',cat:'structure'},{w:'el',m:'the (m)',cat:'structure'},
+  {w:'en',m:'in, on',cat:'structure'},{w:'y',m:'and',cat:'structure'},
+  {w:'a',m:'to, at',cat:'structure'},{w:'los',m:'the (m pl)',cat:'structure'},
+  {w:'se',m:'reflexive pronoun',cat:'structure'},{w:'del',m:'of the',cat:'structure'},
+  {w:'las',m:'the (f pl)',cat:'structure'},{w:'un',m:'a, an (m)',cat:'structure'},
+  {w:'por',m:'for, by, through',cat:'structure'},{w:'con',m:'with',cat:'structure'},
+  {w:'no',m:'no, not',cat:'structure'},{w:'una',m:'a, an (f)',cat:'structure'},
+  {w:'su',m:'his, her, their',cat:'structure'},{w:'para',m:'for, in order to',cat:'structure'},
+  {w:'es',m:'is',cat:'structure'},{w:'al',m:'to the',cat:'structure'},
+  {w:'lo',m:'it, him',cat:'structure'},{w:'como',m:'as, like, how',cat:'structure'},
+  {w:'más',m:'more',cat:'structure'},{w:'pero',m:'but',cat:'structure'},
+  {w:'sus',m:'his/her/their (pl)',cat:'structure'},{w:'le',m:'to him/her',cat:'structure'},
+  {w:'ya',m:'already, now',cat:'structure'},{w:'o',m:'or',cat:'structure'},
+  {w:'este',m:'this (m)',cat:'structure'},{w:'si',m:'if',cat:'structure'},
+  {w:'me',m:'me, to me',cat:'structure'},{w:'porque',m:'because',cat:'structure'},
+  {w:'esta',m:'this (f)',cat:'structure'},{w:'entre',m:'between, among',cat:'structure'},
+  {w:'cuando',m:'when',cat:'structure'},{w:'muy',m:'very',cat:'structure'},
+  {w:'sin',m:'without',cat:'structure'},{w:'sobre',m:'about, on top of',cat:'structure'},
+  {w:'también',m:'also, too',cat:'structure'},{w:'año',m:'year',cat:'structure'},
+  {w:'hasta',m:'until, up to',cat:'structure'},{w:'desde',m:'since, from',cat:'structure'},
+  {w:'nos',m:'us, to us',cat:'structure'},{w:'durante',m:'during',cat:'structure'},
+  {w:'uno',m:'one',cat:'structure'},{w:'ni',m:'neither, nor',cat:'structure'},
+  {w:'contra',m:'against',cat:'structure'},{w:'ese',m:'that (m)',cat:'structure'},
   {w:'había',m:'there was/were',cat:'structure'},{w:'esto',m:'this (neuter)',cat:'structure'},
-  // verbs
   {w:'ser',m:'to be (permanent)',cat:'verbs'},{w:'estar',m:'to be (state/location)',cat:'verbs'},
   {w:'tener',m:'to have',cat:'verbs'},{w:'hacer',m:'to do, make',cat:'verbs'},
   {w:'poder',m:'can, to be able to',cat:'verbs'},{w:'querer',m:'to want, love',cat:'verbs'},
@@ -246,7 +529,6 @@ const WORDS = [
   {w:'pedir',m:'to ask for, order',cat:'verbs'},{w:'comprar',m:'to buy',cat:'verbs'},
   {w:'pagar',m:'to pay',cat:'verbs'},{w:'ayudar',m:'to help',cat:'verbs'},
   {w:'abrir',m:'to open',cat:'verbs'},{w:'cerrar',m:'to close',cat:'verbs'},
-  // adjectives
   {w:'grande',m:'big',cat:'adjectives'},{w:'pequeño',m:'small',cat:'adjectives'},
   {w:'bueno',m:'good',cat:'adjectives'},{w:'malo',m:'bad',cat:'adjectives'},
   {w:'nuevo',m:'new',cat:'adjectives'},{w:'mismo',m:'same',cat:'adjectives'},
@@ -255,9 +537,8 @@ const WORDS = [
   {w:'poco',m:'a little, few',cat:'adjectives'},{w:'todo',m:'all, every',cat:'adjectives'},
   {w:'solo',m:'alone, only',cat:'adjectives'},{w:'mejor',m:'better, best',cat:'adjectives'},
   {w:'peor',m:'worse, worst',cat:'adjectives'},{w:'diferente',m:'different',cat:'adjectives'},
-  // travel
   {w:'persona',m:'person',cat:'travel'},{w:'gente',m:'people',cat:'travel'},
-  {w:'señor',m:'sir, Mr.',cat:'travel'},{w:'señora',m:'ma\'am, Mrs.',cat:'travel'},
+  {w:'señor',m:'sir, Mr.',cat:'travel'},{w:'señora',m:"ma'am, Mrs.",cat:'travel'},
   {w:'amigo',m:'friend',cat:'travel'},{w:'ciudad',m:'city',cat:'travel'},
   {w:'país',m:'country',cat:'travel'},{w:'lugar',m:'place',cat:'travel'},
   {w:'calle',m:'street',cat:'travel'},{w:'hotel',m:'hotel',cat:'travel'},
@@ -280,114 +561,77 @@ const WORDS = [
   {w:'ayuda',m:'help',cat:'travel'},{w:'por favor',m:'please',cat:'travel'},
   {w:'gracias',m:'thank you',cat:'travel'},{w:'perdón',m:'excuse me, sorry',cat:'travel'},
   {w:'cuánto',m:'how much',cat:'travel'},{w:'dónde',m:'where',cat:'travel'},
-  {w:'habla inglés',m:'do you speak English',cat:'travel'},{w:'no entiendo',m:'I don\'t understand',cat:'travel'},
+  {w:'habla inglés',m:'do you speak English',cat:'travel'},{w:'no entiendo',m:"I don't understand",cat:'travel'},
 ];
 
-// ─── STATE ──────────────────────────────────────────────────────────────────
 let currentDeck = 'all';
-let sessions = { flashcard:{idx:0,known:0}, mc:{score:0,total:0}, fib:{score:0,total:0}, srs:{done:0} };
-let srsData = JSON.parse(localStorage.getItem('srs_data') || '{}');
-let streak = parseInt(localStorage.getItem('streak') || '0');
+let srsData = JSON.parse(localStorage.getItem('ww_srs') || '{}');
+let streak = parseInt(localStorage.getItem('ww_streak') || '0');
+let decks = {}, sessions = {}, currentScreen = 'home';
 
-function saveSRS() { localStorage.setItem('srs_data', JSON.stringify(srsData)); }
-
-function getDeck() {
-  if (currentDeck === 'all') return [...WORDS];
-  return WORDS.filter(w => w.cat === currentDeck);
-}
-
+function saveSRS() { localStorage.setItem('ww_srs', JSON.stringify(srsData)); }
+function getDeck() { return currentDeck === 'all' ? [...WORDS] : WORDS.filter(w => w.cat === currentDeck); }
 function shuffle(arr) {
   const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
 
-// ─── NAV ────────────────────────────────────────────────────────────────────
-let currentScreen = 'home';
-let decks = { flashcard: null, mc: null, fib: null, srs: null };
-
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(name).classList.add('active');
-  document.querySelectorAll('nav button')[['home','flashcard','mc','fib','srs'].indexOf(name)].classList.add('active');
+  document.querySelectorAll('.tab-btn')[['home','flashcard','mc','fib','srs'].indexOf(name)].classList.add('active');
   currentScreen = name;
-  if (name !== 'home') initMode(name);
-  else updateHomeStats();
+  if (name !== 'home') initMode(name); else updateHomeStats();
 }
 
-function setDeck(val) {
-  currentDeck = val;
-  decks = { flashcard: null, mc: null, fib: null, srs: null };
-  if (currentScreen !== 'home') initMode(currentScreen);
-}
+function setDeck(val) { currentDeck = val; decks = {}; sessions = {}; if (currentScreen !== 'home') initMode(currentScreen); }
+function setDeckAndGo(deck, mode) { currentDeck = deck; document.getElementById('deckSelect').value = deck; decks = {}; sessions = {}; showScreen(mode); }
 
-function setDeckAndGo(deck, mode) {
-  currentDeck = deck;
-  document.getElementById('deckSelect').value = deck;
-  decks = { flashcard: null, mc: null, fib: null, srs: null };
-  showScreen(mode);
-}
-
-// ─── HOME STATS ─────────────────────────────────────────────────────────────
 function updateHomeStats() {
-  const known = Object.values(srsData).filter(d => d.ease >= 2.5).length;
-  const due = getDueCards().length;
   document.getElementById('home-total').textContent = WORDS.length;
-  document.getElementById('home-known').textContent = known;
+  document.getElementById('home-known').textContent = Object.values(srsData).filter(d => d.ease >= 2.5).length;
   document.getElementById('home-streak').textContent = streak;
-  document.getElementById('home-due').textContent = due;
+  document.getElementById('home-due').textContent = getDueCards().length;
 }
 
-// ─── FLASHCARD ──────────────────────────────────────────────────────────────
 function initMode(mode) {
   if (mode === 'flashcard') {
-    if (!decks.flashcard) {
-      decks.flashcard = shuffle(getDeck());
-      sessions.flashcard = { idx: 0, known: 0 };
-    }
-    renderFlashcard();
+    if (!decks.flashcard) { decks.flashcard = shuffle(getDeck()); sessions.flashcard = {idx:0,known:0}; }
+    renderFC();
   } else if (mode === 'mc') {
-    if (!decks.mc) {
-      decks.mc = shuffle(getDeck());
-      sessions.mc = { score: 0, total: 0 };
-    }
+    if (!decks.mc) { decks.mc = shuffle(getDeck()); sessions.mc = {idx:0,score:0,total:0}; }
     renderMC();
   } else if (mode === 'fib') {
-    if (!decks.fib) {
-      decks.fib = shuffle(getDeck());
-      sessions.fib = { score: 0, total: 0 };
-    }
+    if (!decks.fib) { decks.fib = shuffle(getDeck()); sessions.fib = {idx:0,score:0,total:0}; }
     renderFIB();
   } else if (mode === 'srs') {
     decks.srs = shuffle(getDueCards());
     if (!decks.srs.length) decks.srs = shuffle(getDeck());
-    sessions.srs = { done: 0 };
+    sessions.srs = {done:0};
     renderSRS();
   }
 }
 
-function renderFlashcard() {
-  const deck = decks.flashcard;
-  const idx = sessions.flashcard.idx % deck.length;
-  const card = deck[idx];
-  document.getElementById('fc-word').textContent = card.w;
-  document.getElementById('fc-cat').textContent = card.cat;
-  document.getElementById('fc-meaning').textContent = card.m;
-  document.getElementById('fc-notes').textContent = '';
+// FLASHCARD
+function renderFC() {
+  const d = decks.flashcard, idx = sessions.flashcard.idx % d.length, c = d[idx];
+  document.getElementById('fc-word').textContent = c.w;
+  document.getElementById('fc-cat').textContent = c.cat;
+  document.getElementById('fc-cat2').textContent = c.cat;
+  document.getElementById('fc-meaning').textContent = c.m;
   document.getElementById('fc-idx').textContent = idx + 1;
-  document.getElementById('fc-total').textContent = deck.length;
+  document.getElementById('fc-total').textContent = d.length;
   document.getElementById('fc-known').textContent = sessions.flashcard.known;
-  document.getElementById('fc-progress').style.width = ((idx / deck.length) * 100) + '%';
+  const pct = Math.round((idx / d.length) * 100);
+  document.getElementById('fc-progress').style.width = pct + '%';
+  document.getElementById('fc-progress-label').textContent = pct + '%';
   document.getElementById('fc-card').classList.remove('flipped');
   document.getElementById('fc-rating-btns').style.display = 'none';
   document.getElementById('fc-next-btn').style.display = 'flex';
   document.getElementById('fc-flip-hint').textContent = 'tap the card to flip';
 }
-
 function flipCard() {
   const card = document.getElementById('fc-card');
   card.classList.toggle('flipped');
@@ -397,102 +641,55 @@ function flipCard() {
     document.getElementById('fc-flip-hint').textContent = 'how did you do?';
   }
 }
-
 function rateCard(known) {
   if (known) sessions.flashcard.known++;
-  const w = decks.flashcard[sessions.flashcard.idx % decks.flashcard.length].w;
-  updateSRSFromRating(w, known ? 3 : 1);
+  updateSRS(decks.flashcard[sessions.flashcard.idx % decks.flashcard.length].w, known ? 3 : 1);
   sessions.flashcard.idx++;
-  if (sessions.flashcard.idx >= decks.flashcard.length) {
-    decks.flashcard = shuffle(getDeck());
-    sessions.flashcard.idx = 0;
-    streak++;
-    localStorage.setItem('streak', streak);
-  }
-  renderFlashcard();
+  if (sessions.flashcard.idx >= decks.flashcard.length) { decks.flashcard = shuffle(getDeck()); sessions.flashcard.idx = 0; streak++; localStorage.setItem('ww_streak', streak); }
+  renderFC();
 }
 
 function nextCard(mode) {
-  if (mode === 'flashcard') {
-    sessions.flashcard.idx++;
-    if (sessions.flashcard.idx >= decks.flashcard.length) {
-      decks.flashcard = shuffle(getDeck());
-      sessions.flashcard.idx = 0;
-    }
-    renderFlashcard();
-  } else if (mode === 'mc') {
-    const d = decks.mc;
-    sessions.mc.idx = ((sessions.mc.idx || 0) + 1) % d.length;
-    renderMC();
-  } else if (mode === 'fib') {
-    const d = decks.fib;
-    sessions.fib.idx = ((sessions.fib.idx || 0) + 1) % d.length;
-    renderFIB();
-  } else if (mode === 'srs') {
-    decks.srs.shift();
-    if (!decks.srs.length) {
-      decks.srs = shuffle(getDeck()).slice(0, 10);
-    }
-    renderSRS();
-  }
+  if (mode === 'flashcard') { sessions.flashcard.idx = (sessions.flashcard.idx+1)%decks.flashcard.length; renderFC(); }
+  else if (mode === 'mc') { sessions.mc.idx = (sessions.mc.idx+1)%decks.mc.length; renderMC(); }
+  else if (mode === 'fib') { sessions.fib.idx = (sessions.fib.idx+1)%decks.fib.length; renderFIB(); }
+  else if (mode === 'srs') { decks.srs.shift(); if (!decks.srs.length) decks.srs = shuffle(getDeck()).slice(0,10); renderSRS(); }
 }
 
-// ─── MULTIPLE CHOICE ────────────────────────────────────────────────────────
+// MULTIPLE CHOICE
 function renderMC() {
-  if (!sessions.mc.idx) sessions.mc.idx = 0;
-  const deck = decks.mc;
-  const idx = sessions.mc.idx % deck.length;
-  const card = deck[idx];
-  document.getElementById('mc-word').textContent = card.w;
+  const c = decks.mc[sessions.mc.idx % decks.mc.length];
+  document.getElementById('mc-word').textContent = c.w;
   document.getElementById('mc-score').textContent = sessions.mc.score;
   document.getElementById('mc-total').textContent = sessions.mc.total;
-  document.getElementById('mc-pct').textContent = sessions.mc.total
-    ? Math.round(sessions.mc.score / sessions.mc.total * 100) + '%' : '—';
+  document.getElementById('mc-pct').textContent = sessions.mc.total ? Math.round(sessions.mc.score/sessions.mc.total*100)+'%' : '—';
   document.getElementById('mc-next').style.display = 'none';
-
-  const pool = WORDS.filter(w => w.w !== card.w);
-  const wrong = shuffle(pool).slice(0, 3).map(w => w.m);
-  const options = shuffle([card.m, ...wrong]);
-
-  const container = document.getElementById('mc-options');
-  container.innerHTML = '';
-  options.forEach(opt => {
+  const opts = shuffle([c.m, ...shuffle(WORDS.filter(w=>w.w!==c.w)).slice(0,3).map(w=>w.m)]);
+  const box = document.getElementById('mc-options');
+  box.innerHTML = '';
+  opts.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'mc-btn';
-    btn.textContent = opt;
+    btn.className = 'mc-btn'; btn.textContent = opt;
     btn.onclick = () => {
       document.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
       sessions.mc.total++;
-      if (opt === card.m) {
-        btn.classList.add('correct');
-        sessions.mc.score++;
-        updateSRSFromRating(card.w, 3);
-      } else {
-        btn.classList.add('wrong');
-        document.querySelectorAll('.mc-btn').forEach(b => { if (b.textContent === card.m) b.classList.add('correct'); });
-        updateSRSFromRating(card.w, 1);
-      }
+      if (opt === c.m) { btn.classList.add('correct'); sessions.mc.score++; updateSRS(c.w, 3); }
+      else { btn.classList.add('wrong'); document.querySelectorAll('.mc-btn').forEach(b => { if(b.textContent===c.m) b.classList.add('correct'); }); updateSRS(c.w,1); }
       document.getElementById('mc-score').textContent = sessions.mc.score;
       document.getElementById('mc-total').textContent = sessions.mc.total;
-      document.getElementById('mc-pct').textContent = Math.round(sessions.mc.score / sessions.mc.total * 100) + '%';
+      document.getElementById('mc-pct').textContent = Math.round(sessions.mc.score/sessions.mc.total*100)+'%';
       document.getElementById('mc-next').style.display = 'block';
     };
-    container.appendChild(btn);
+    box.appendChild(btn);
   });
 }
 
-// ─── FILL IN BLANK ──────────────────────────────────────────────────────────
+// FILL IN BLANK
 function renderFIB() {
-  if (!sessions.fib.idx) sessions.fib.idx = 0;
-  const deck = decks.fib;
-  const idx = sessions.fib.idx % deck.length;
-  const card = deck[idx];
-  document.getElementById('fib-sentence').textContent = `"${card.w}" means ___`;
-  const input = document.getElementById('fib-input');
-  input.value = '';
-  input.className = 'fib-input';
-  input.disabled = false;
-  input.focus();
+  const c = decks.fib[sessions.fib.idx % decks.fib.length];
+  document.getElementById('fib-sentence').innerHTML = '<em>“'+c.w+'”</em> means&hellip;';
+  const inp = document.getElementById('fib-input');
+  inp.value = ''; inp.className = 'fib-input'; inp.disabled = false; inp.focus();
   document.getElementById('fib-feedback').textContent = '';
   document.getElementById('fib-feedback').className = 'fib-feedback';
   document.getElementById('fib-submit').style.display = 'inline-block';
@@ -500,113 +697,62 @@ function renderFIB() {
   document.getElementById('fib-score').textContent = sessions.fib.score;
   document.getElementById('fib-total').textContent = sessions.fib.total;
 }
-
 function checkFib() {
-  if (!sessions.fib.idx) sessions.fib.idx = 0;
-  const deck = decks.fib;
-  const idx = sessions.fib.idx % deck.length;
-  const card = deck[idx];
-  const input = document.getElementById('fib-input');
-  const answer = input.value.trim().toLowerCase();
-  const correct = card.m.toLowerCase();
-  const alternatives = correct.split(/[,\/]/).map(s => s.trim());
-  const isCorrect = alternatives.some(a => answer === a || correct.includes(answer) && answer.length > 2);
-
-  sessions.fib.total++;
-  input.disabled = true;
+  const c = decks.fib[sessions.fib.idx % decks.fib.length];
+  const inp = document.getElementById('fib-input');
+  const ans = inp.value.trim().toLowerCase(), cor = c.m.toLowerCase();
+  const ok = cor.split(/[,\/]/).map(s=>s.trim()).some(a => ans===a || (cor.includes(ans) && ans.length>2));
+  sessions.fib.total++; inp.disabled = true;
   const fb = document.getElementById('fib-feedback');
-  if (isCorrect) {
-    input.classList.add('correct');
-    fb.textContent = 'Correct!';
-    fb.className = 'fib-feedback correct';
-    sessions.fib.score++;
-    updateSRSFromRating(card.w, 3);
-  } else {
-    input.classList.add('wrong');
-    fb.textContent = `Answer: ${card.m}`;
-    fb.className = 'fib-feedback wrong';
-    updateSRSFromRating(card.w, 1);
-  }
+  if (ok) { inp.classList.add('correct'); fb.textContent='Correct!'; fb.className='fib-feedback correct'; sessions.fib.score++; updateSRS(c.w,3); }
+  else { inp.classList.add('wrong'); fb.textContent='Answer: '+c.m; fb.className='fib-feedback wrong'; updateSRS(c.w,1); }
   document.getElementById('fib-score').textContent = sessions.fib.score;
   document.getElementById('fib-total').textContent = sessions.fib.total;
   document.getElementById('fib-submit').style.display = 'none';
   document.getElementById('fib-next').style.display = 'inline-block';
 }
 
-// ─── SRS ────────────────────────────────────────────────────────────────────
-function getSRSEntry(word) {
-  if (!srsData[word]) {
-    srsData[word] = { interval: 1, ease: 2.5, due: Date.now(), reps: 0 };
-  }
-  return srsData[word];
+// SRS
+function getSRS(w) { if(!srsData[w]) srsData[w]={interval:1,ease:2.5,due:Date.now(),reps:0}; return srsData[w]; }
+function getDueCards() { const now=Date.now(); return WORDS.filter(w=>{const d=srsData[w.w];return !d||d.due<=now;}); }
+function updateSRS(word, rating) {
+  const d = getSRS(word);
+  if (rating >= 3) { d.reps++; if(d.reps===1)d.interval=1; else if(d.reps===2)d.interval=6; else d.interval=Math.round(d.interval*d.ease); d.ease=Math.max(1.3,d.ease+(0.1-(4-rating)*(0.08+(4-rating)*0.02))); }
+  else { d.reps=0; d.interval=1; }
+  d.due = Date.now()+d.interval*86400000; saveSRS();
 }
-
-function getDueCards() {
-  const now = Date.now();
-  return WORDS.filter(w => {
-    const d = srsData[w.w];
-    return !d || d.due <= now;
-  });
-}
-
-function updateSRSFromRating(word, rating) {
-  const d = getSRSEntry(word);
-  if (rating >= 3) {
-    d.reps++;
-    if (d.reps === 1) d.interval = 1;
-    else if (d.reps === 2) d.interval = 6;
-    else d.interval = Math.round(d.interval * d.ease);
-    d.ease = Math.max(1.3, d.ease + (0.1 - (4 - rating) * (0.08 + (4 - rating) * 0.02)));
-  } else {
-    d.reps = 0;
-    d.interval = 1;
-  }
-  d.due = Date.now() + d.interval * 86400000;
-  saveSRS();
-}
-
 function renderSRS() {
   const deck = decks.srs;
-  const dueAll = getDueCards();
-  document.getElementById('srs-due').textContent = dueAll.length;
+  document.getElementById('srs-due').textContent = getDueCards().length;
   document.getElementById('srs-done').textContent = sessions.srs.done;
   document.getElementById('srs-total').textContent = WORDS.length;
-
   if (!deck.length) {
     document.getElementById('srs-word').textContent = 'All done!';
     document.getElementById('srs-answer').textContent = '';
     document.getElementById('srs-reveal-btn').style.display = 'none';
     document.getElementById('srs-btns').style.display = 'none';
-    document.getElementById('srs-next-due').textContent = 'Come back tomorrow for more.';
+    document.getElementById('srs-next-due').textContent = 'Come back tomorrow for your next review.';
     return;
   }
-  const card = deck[0];
-  document.getElementById('srs-word').textContent = card.w;
+  document.getElementById('srs-word').textContent = deck[0].w;
   document.getElementById('srs-answer').textContent = '';
   document.getElementById('srs-reveal-btn').style.display = 'block';
   document.getElementById('srs-btns').style.display = 'none';
   document.getElementById('srs-next-due').textContent = '';
-  document.getElementById('srs-label').textContent = 'spanish → english';
 }
-
 function revealSRS() {
-  const card = decks.srs[0];
-  document.getElementById('srs-answer').textContent = card.m;
+  document.getElementById('srs-answer').textContent = decks.srs[0].m;
   document.getElementById('srs-reveal-btn').style.display = 'none';
   document.getElementById('srs-btns').style.display = 'flex';
 }
-
 function rateSRS(rating) {
-  const card = decks.srs[0];
-  updateSRSFromRating(card.w, rating);
+  updateSRS(decks.srs[0].w, rating);
   sessions.srs.done++;
-  const d = srsData[card.w];
-  const days = Math.round(d.interval);
-  document.getElementById('srs-next-due').textContent = `Next review: ${days === 1 ? 'tomorrow' : 'in ' + days + ' days'}`;
-  setTimeout(() => nextCard('srs'), 800);
+  const days = Math.round(srsData[decks.srs[0].w].interval);
+  document.getElementById('srs-next-due').textContent = 'Next review: '+(days===1?'tomorrow':'in '+days+' days');
+  setTimeout(()=>nextCard('srs'), 700);
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
 updateHomeStats();
 </script>
 </body>
