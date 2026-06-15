@@ -15,9 +15,7 @@
 
     body {
       font-family: 'Poppins', 'Comic Sans MS', sans-serif;
-      background: linear-gradient(160deg, #c8f0e4, #b3e5fc, #b2dfdb, #c8f0e4);
-      background-size: 400% 400%;
-      animation: bg-breathe 10s ease-in-out infinite alternate;
+      background: #FAF6F0;
       min-height: 100vh;
       min-height: 100dvh;
       display: flex;
@@ -30,7 +28,6 @@
       user-select: none;
     }
     @media (min-width: 600px) { body { padding: 24px 20px 80px; } }
-    @keyframes bg-breathe { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 
     /* Floating decorations */
     .bg-deco { position: fixed; pointer-events: none; z-index: 0; opacity: 0.12; animation: float-up linear infinite; }
@@ -43,25 +40,18 @@
 
     h1 {
       font-size: clamp(2rem, 6vw, 3.2rem);
-      background: linear-gradient(90deg, #00897b, #0097a7, #00838f, #00897b);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: title-shift 4s linear infinite;
+      color: #1a1433;
       text-align: center;
       position: relative; z-index: 1;
-      filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.05));
       margin-bottom: 6px;
     }
-    @keyframes title-shift { to { background-position: 200% center; } }
 
-    .tagline { text-align: center; font-size: clamp(0.9rem, 2.4vw, 1.15rem); color: #00695c; margin-bottom: 22px; position: relative; z-index: 1; }
+    .tagline { text-align: center; font-size: clamp(0.9rem, 2.4vw, 1.15rem); color: #7a6f80; margin-bottom: 22px; position: relative; z-index: 1; }
 
     /* Back button */
     .back-btn {
       position: fixed; top: 12px; left: 12px;
-      background: white; border: 3px solid #4fb995;
+      background: white; border: 3px solid #1a1433;
       border-radius: 50%; width: 48px; height: 48px;
       font-size: 1.6rem; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
@@ -106,11 +96,11 @@
     .level-card .lvl-name { font-size: clamp(1.1rem, 2.8vw, 1.35rem); font-weight: 700; color: #00695c; line-height: 1.15; }
     .level-card .lvl-desc { font-size: clamp(0.8rem, 2.1vw, 0.95rem); color: #4a7a72; margin-top: 2px; }
 
-    .level-card.l1 { border-color: #4fb995; } .level-card.l1 .lvl-num { background: #4fb995; }
-    .level-card.l2 { border-color: #45b7aa; } .level-card.l2 .lvl-num { background: #45b7aa; }
-    .level-card.l3 { border-color: #39a89f; } .level-card.l3 .lvl-num { background: #39a89f; }
-    .level-card.l4 { border-color: #2d8a90; } .level-card.l4 .lvl-num { background: #2d8a90; }
-    .level-card.l5 { border-color: #1f6d80; } .level-card.l5 .lvl-num { background: #1f6d80; }
+    .level-card.l1 { border-color: #2BAE7E; } .level-card.l1 .lvl-num { background: #2BAE7E; }
+    .level-card.l2 { border-color: #00897B; } .level-card.l2 .lvl-num { background: #00897B; }
+    .level-card.l3 { border-color: #3D7CC9; } .level-card.l3 .lvl-num { background: #3D7CC9; }
+    .level-card.l4 { border-color: #6A0DAD; } .level-card.l4 .lvl-num { background: #6A0DAD; }
+    .level-card.l5 { border-color: #E8409A; } .level-card.l5 .lvl-num { background: #E8409A; }
 
     /* ── Game screen ── */
     #game-screen { gap: 18px; }
@@ -163,8 +153,8 @@
     }
     .blend-tile {
       flex: 0 0 auto;
-      background: linear-gradient(135deg, #fff9c4, #ffe082);
-      border: 4px solid #ffb300; border-radius: 16px;
+      background: #FFF0CC;
+      border: 4px solid #F5A623; border-radius: 16px;
       padding: 12px 6px 8px;
       width: clamp(58px, 18vw, 84px);
       cursor: pointer;
@@ -239,8 +229,8 @@
       font-family: inherit; font-weight: 700;
       border: 3px solid transparent; border-radius: 18px;
       cursor: pointer;
-      background: linear-gradient(135deg, #b3e5fc, #81d4fa);
-      color: #00695c;
+      background: #CCE8FF;
+      color: #1D4E8A;
       box-shadow: 0 5px 0 rgba(0,0,0,0.08);
       transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
       letter-spacing: 0.5px;
@@ -268,8 +258,8 @@
     .letter-tile {
       aspect-ratio: 1; font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 700;
       font-family: inherit; color: white;
-      background: linear-gradient(135deg, #4fb995, #2d7a5c);
-      border: 4px solid #1b4d3e; border-radius: 18px;
+      background: #2BAE7E;
+      border: 4px solid #1a7050; border-radius: 18px;
       cursor: pointer; box-shadow: 0 5px 0 rgba(0,0,0,0.12);
       transition: transform 0.1s, box-shadow 0.1s;
       touch-action: manipulation;
@@ -283,7 +273,7 @@
     #celebration-screen { gap: 18px; text-align: center; }
     .celebration-emoji { font-size: clamp(4rem, 15vw, 6rem); animation: float-bounce 1.5s ease-in-out infinite; }
     @keyframes float-bounce { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-18px) scale(1.08); } }
-    .celebration-text { font-size: clamp(1.4rem, 4vw, 2rem); color: #00695c; font-weight: 700; }
+    .celebration-text { font-size: clamp(1.4rem, 4vw, 2rem); color: #1a1433; font-weight: 700; }
     .star-row { display: flex; justify-content: center; gap: 12px; font-size: clamp(2.4rem, 9vw, 3.6rem); margin-top: 4px; }
     .star { animation: star-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
     .star:nth-child(1) { animation-delay: 0.1s; }
@@ -301,8 +291,8 @@
       touch-action: manipulation;
       min-height: 50px;
     }
-    .again-btn { background: linear-gradient(135deg, #4fb995, #2d7a5c); color: white; border: 3px solid #1b4d3e; }
-    .menu-btn  { background: white; color: #2d7a5c; border: 3px solid #4fb995; }
+    .again-btn { background: #2BAE7E; color: white; border: 3px solid #1a7050; }
+    .menu-btn  { background: white; color: #1a7050; border: 3px solid #2BAE7E; }
     .again-btn:active, .menu-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,0.12); }
   </style>
 </head>

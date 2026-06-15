@@ -10,23 +10,17 @@
 
     body {
       font-family: 'Poppins', 'Comic Sans MS', sans-serif;
-      background: linear-gradient(160deg, #e8f0ff, #f0e8ff, #e8fff0, #fff0e8);
-      background-size: 400% 400%;
-      animation: bg-breathe 10s ease-in-out infinite alternate;
+      background: #FAF6F0;
       min-height: 100vh;
       padding: 20px 12px 80px;
       position: relative;
       overflow-x: hidden;
     }
-    
+
     @media (min-width: 600px) {
       body {
         padding: 32px 20px 80px;
       }
-    }
-    @keyframes bg-breathe {
-      0%   { background-position: 0% 0%; }
-      100% { background-position: 100% 100%; }
     }
 
     /* ── Floating background sparkles ── */
@@ -47,32 +41,20 @@
     /* ── Header ── */
     h1 {
       font-size: clamp(2.2rem, 7vw, 3.6rem);
-      background: linear-gradient(90deg, #ff6b6b, #ff922b, #ffd43b, #51cf66, #339af0, #cc5de8, #ff6b6b);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: rainbow-move 3s linear infinite;
+      color: #1a1433;
       text-align: center;
       position: relative;
       z-index: 1;
-      filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.06));
       letter-spacing: 1px;
     }
-    @keyframes rainbow-move { to { background-position: 200% center; } }
 
     .tagline {
       text-align: center;
       font-size: clamp(1rem, 2.8vw, 1.3rem);
-      color: #5f7dcc;
+      color: #7a6f80;
       margin: 4px 0 28px;
-      animation: wiggle 2.5s ease-in-out infinite;
       position: relative;
       z-index: 1;
-    }
-    @keyframes wiggle {
-      0%,100% { transform: rotate(-1deg); }
-      50%     { transform: rotate(1deg); }
     }
 
     /* ── Vertical stack ── */
@@ -103,30 +85,21 @@
       overflow: hidden;
     }
 
-    .game-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--tint);
-      opacity: 0.22;
-      pointer-events: none;
-    }
-
     .game-card:hover {
       transform: translateY(-6px) rotate(-1deg);
-      box-shadow: 0 14px 0 rgba(0,0,0,0.08), 0 20px 40px rgba(0,0,0,0.12);
+      box-shadow: 0 14px 0 rgba(0,0,0,0.10), 0 20px 40px rgba(0,0,0,0.10);
     }
     .game-card:active {
       transform: translateY(4px);
       box-shadow: 0 2px 0 rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.08);
     }
 
-    /* Per-card theme: Word Adventure (Green & Blue), Princess (Pink & Purple), Emoji Match (Yellow & Orange), Reading Quest (Teal) */
-    .game-card.word     { border-color: #4fb995; --tint: linear-gradient(135deg, #e8f7f1, #fff); }
-    .game-card.reading  { border-color: #00897b; --tint: linear-gradient(135deg, #d4f1f4, #fff); }
-    .game-card.princess { border-color: #d684d7; --tint: linear-gradient(135deg, #f8ebf9, #fff); }
-    .game-card.memory   { border-color: #ffb84d; --tint: linear-gradient(135deg, #fff9e6, #fff); }
-    .game-card.packing  { border-color: #7a9cc6; --tint: linear-gradient(135deg, #e8f2ff, #fff); }
+    /* Per-card theme: flat saturated fills */
+    .game-card.word     { border-color: #2BAE7E; background: #ffffff; }
+    .game-card.reading  { border-color: #00897B; background: #ffffff; }
+    .game-card.princess { border-color: #C83EC8; background: #ffffff; }
+    .game-card.memory   { border-color: #F5A623; background: #ffffff; }
+    .game-card.packing  { border-color: #3D7CC9; background: #ffffff; }
 
     .game-emoji {
       font-size: clamp(3.2rem, 10vw, 4.5rem);
@@ -146,11 +119,11 @@
       50%     { transform: translateY(-7px) rotate(4deg); }
     }
 
-    .game-card.word     .game-emoji { background: linear-gradient(135deg, #c8f0e4, #4fb995); }
-    .game-card.reading  .game-emoji { background: linear-gradient(135deg, #b2dfdb, #4db8c4); }
-    .game-card.princess .game-emoji { background: linear-gradient(135deg, #f3d7f8, #d684d7); }
-    .game-card.packing  .game-emoji { background: linear-gradient(135deg, #b3d9ff, #7a9cc6); }
-    .game-card.memory   .game-emoji { background: linear-gradient(135deg, #ffe6b3, #ffb84d); }
+    .game-card.word     .game-emoji { background: #2BAE7E; }
+    .game-card.reading  .game-emoji { background: #00897B; }
+    .game-card.princess .game-emoji { background: #C83EC8; }
+    .game-card.packing  .game-emoji { background: #3D7CC9; }
+    .game-card.memory   .game-emoji { background: #F5A623; }
 
     .game-info {
       flex: 1;
@@ -165,11 +138,11 @@
       line-height: 1.15;
       letter-spacing: 0.5px;
     }
-    .game-card.word     .game-title { color: #2d7a5c; }
-    .game-card.reading  .game-title { color: #00695c; }
-    .game-card.princess .game-title { color: #9d3fa8; }
-    .game-card.packing  .game-title { color: #4a7ba7; }
-    .game-card.memory   .game-title { color: #d97e3a; }
+    .game-card.word     .game-title { color: #1a6648; }
+    .game-card.reading  .game-title { color: #00504A; }
+    .game-card.princess .game-title { color: #8B1A8B; }
+    .game-card.packing  .game-title { color: #1D4E8A; }
+    .game-card.memory   .game-title { color: #B8650A; }
 
     .game-desc {
       color: #666;
@@ -189,11 +162,11 @@
       0%,100% { transform: translateX(0); }
       50%     { transform: translateX(6px); }
     }
-    .game-card.word     .play-arrow { color: #2d7a5c; }
-    .game-card.reading  .play-arrow { color: #00695c; }
-    .game-card.princess .play-arrow { color: #9d3fa8; }
-    .game-card.packing  .play-arrow { color: #4a7ba7; }
-    .game-card.memory   .play-arrow { color: #d97e3a; }
+    .game-card.word     .play-arrow { color: #2BAE7E; }
+    .game-card.reading  .play-arrow { color: #00897B; }
+    .game-card.princess .play-arrow { color: #C83EC8; }
+    .game-card.packing  .play-arrow { color: #3D7CC9; }
+    .game-card.memory   .play-arrow { color: #F5A623; }
 
     /* Stagger the entrance animation so the cards pop in one after another */
     @keyframes cardIn {
@@ -213,7 +186,7 @@
       top: 20px;
       left: 20px;
       background: white;
-      border: 3px solid #5f7dcc;
+      border: 3px solid #1a1433;
       border-radius: 50%;
       width: 50px;
       height: 50px;
@@ -222,16 +195,12 @@
       justify-content: center;
       font-size: 24px;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transition: transform 0.2s;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+      transition: transform 0.15s;
       z-index: 100;
     }
-    .back-btn:hover {
-      transform: scale(1.1);
-    }
-    .back-btn:active {
-      transform: scale(0.95);
-    }
+    .back-btn:hover { transform: scale(1.08); }
+    .back-btn:active { transform: scale(0.93); }
   </style>
 </head>
 <body>
@@ -281,6 +250,15 @@
     <div class="game-info">
       <div class="game-title">Emoji &amp; Word Match</div>
       <div class="game-desc">Flip cards and find the perfect emoji-word pairs!</div>
+    </div>
+    <div class="play-arrow">▶</div>
+  </div>
+
+  <div class="game-card reading" onclick="window.location.href='reading-quest.html'">
+    <div class="game-emoji">📖</div>
+    <div class="game-info">
+      <div class="game-title">Reading Quest</div>
+      <div class="game-desc">Listen, sound it out, and read — phonics adventure!</div>
     </div>
     <div class="play-arrow">▶</div>
   </div>

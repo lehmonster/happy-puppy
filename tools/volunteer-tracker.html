@@ -100,6 +100,26 @@
         .timeline-event-meta { display: flex; gap: 14px; font-family: 'Nunito', sans-serif; font-size: 0.78em; color: #7a5060; flex-wrap: wrap; }
         .timeline-event-desc { font-family: 'Nunito', sans-serif; font-size: 0.8em; color: #5A6B7C; margin-top: 6px; line-height: 1.45; }
         .timeline-event-loc { font-family: 'Nunito', sans-serif; font-size: 0.78em; color: #9aadcc; margin-top: 4px; }
+        /* ---- Sign-Up Tab ---- */
+        .signup-container { max-width: 860px; margin: 0 auto; padding: 20px 20px 40px; }
+        .signup-hero { background: white; border-radius: 20px; padding: 28px 30px 22px; margin-bottom: 18px; border: 1.5px solid #d4ddf8; }
+        .signup-hero h2 { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.5em; font-weight: 800; margin-bottom: 6px; }
+        .signup-hero p { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.9em; line-height: 1.6; margin-bottom: 14px; }
+        .signup-excel-link { display: inline-flex; align-items: center; gap: 8px; background: #217346; color: white; text-decoration: none; padding: 10px 20px; border-radius: 30px; font-family: 'Nunito', sans-serif; font-size: 0.9em; font-weight: 700; transition: background 0.2s; }
+        .signup-excel-link:hover { background: #1a5c38; }
+        .signup-event-card { background: white; border-radius: 16px; padding: 22px 24px; margin-bottom: 14px; border: 1.5px solid #d4ddf8; border-left: 4px solid #7b8fe8; }
+        .signup-event-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+        .signup-event-title { font-family: 'Nunito', sans-serif; font-weight: 800; color: #2C3E50; font-size: 1.1em; }
+        .signup-event-date { font-family: 'Nunito', sans-serif; color: #7b8fe8; font-weight: 700; font-size: 0.85em; background: #eef2fb; padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+        .signup-event-org { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.9em; font-weight: 600; margin-bottom: 8px; }
+        .signup-event-meta { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.85em; display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+        .signup-spots { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .signup-spot-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #d4ddf8; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75em; font-weight: 700; font-family: 'Nunito', sans-serif; }
+        .signup-spot-dot.filled { background: #7b8fe8; border-color: #7b8fe8; color: white; }
+        .signup-spot-dot.open { background: #eef2fb; color: #9aadcc; }
+        .signup-spot-label { font-family: 'Nunito', sans-serif; color: #5A6B7C; font-size: 0.8em; margin-left: 4px; }
+        .signup-section-title { font-family: 'Nunito', sans-serif; font-size: 1.2em; font-weight: 800; color: #2C3E50; margin: 24px 0 12px; padding-left: 8px; border-left: 4px solid #7b8fe8; }
+        .signup-empty { text-align: center; padding: 40px 20px; background: white; border-radius: 20px; border: 1.5px solid #d4ddf8; color: #9aadcc; font-family: 'Nunito', sans-serif; }
         /* ---- Photo Collage Tab ---- */
         .collage-container { max-width: 1100px; margin: 0 auto; padding: 10px 20px 40px; }
         .collage-header { background: white; border-radius: 20px; padding: 22px 26px; margin-bottom: 18px; border: 1.5px solid #d4ddf8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
@@ -136,6 +156,7 @@
                 <button class="tab-btn" onclick="switchTab('impact')">&#x1F321;&#xFE0F; Impact</button>
                 <button class="tab-btn" onclick="switchTab('timeline')">&#x1F4C5; Timeline</button>
                 <button class="tab-btn" onclick="switchTab('photos')">&#x1F4F7; Photos</button>
+                <button class="tab-btn" onclick="switchTab('signup')">&#x270B; Sign Up</button>
             </div>
         </div>
 
@@ -240,6 +261,8 @@
             </div>
         </div>
 
+        <div id="signupView" style="display:none;"></div>
+
         <div id="impactView" style="display:none;">
             <div class="impact-container">
                 <div class="org-chart-section">
@@ -272,6 +295,10 @@
     <script>
         let events = [];
         let editingId = null;
+
+        function fmt(n) {
+            return Math.ceil(n).toLocaleString('en-US');
+        }
 
         const FULL_HISTORY = [
             {id: 1001, name: "Food Bank of the Rockies", organization: "Food Bank of the Rockies", date: "2022-01-15", hours: 26, participants: 8, description: "3.25 hrs/person. 7 Frnds + 1 guest.", location: "Denver, CO"},
@@ -362,10 +389,10 @@
             const totalHours = events.reduce((sum, e) => sum + (parseFloat(e.hours) || 0), 0);
             const totalParticipants = events.reduce((sum, e) => sum + (parseInt(e.participants) || 0), 0);
             const uniqueOrgs = new Set(events.map(e => e.organization));
-            document.getElementById('totalEvents').textContent = totalEvents;
-            document.getElementById('totalHours').textContent = totalHours.toFixed(1);
-            document.getElementById('totalParticipants').textContent = totalParticipants;
-            document.getElementById('totalOrgs').textContent = uniqueOrgs.size;
+            document.getElementById('totalEvents').textContent = fmt(totalEvents);
+            document.getElementById('totalHours').textContent = fmt(totalHours);
+            document.getElementById('totalParticipants').textContent = fmt(totalParticipants);
+            document.getElementById('totalOrgs').textContent = fmt(uniqueOrgs.size);
         }
 
         function updateFilters() {
@@ -446,9 +473,9 @@
                     ${event.description ? `<div class="event-details">${event.description}</div>` : ''}
                     ${event.location ? `<div class="event-details">&#x1F4CD; ${event.location}</div>` : ''}
                     <div class="event-stats">
-                        <span>&#x23F1;&#xFE0F; ${event.hours} hours</span>
-                        <span>&#x1F465; ${event.participants} participants</span>
-                        <span>&#x1F4AA; ${(event.hours * event.participants).toFixed(0)} impact hours</span>
+                        <span>&#x23F1;&#xFE0F; ${fmt(event.hours)} hours</span>
+                        <span>&#x1F465; ${fmt(event.participants)} participants</span>
+                        <span>&#x1F4AA; ${fmt(event.hours * event.participants)} impact hours</span>
                     </div>
                 `;
                 eventList.appendChild(eventEl);
@@ -516,8 +543,8 @@
         document.getElementById('sortFilter').addEventListener('change', renderEvents);
 
         function switchTab(tab) {
-            const views = { tracker: 'trackerView', impact: 'impactView', timeline: 'timelineView', photos: 'photosView' };
-            const tabOrder = ['tracker', 'impact', 'timeline', 'photos'];
+            const views = { tracker: 'trackerView', impact: 'impactView', timeline: 'timelineView', photos: 'photosView', signup: 'signupView' };
+            const tabOrder = ['tracker', 'impact', 'timeline', 'photos', 'signup'];
             const tabs = document.querySelectorAll('.tab-btn');
             Object.values(views).forEach(id => document.getElementById(id).style.display = 'none');
             tabs.forEach(t => t.classList.remove('active'));
@@ -526,6 +553,7 @@
             if (tab === 'impact') renderImpactView();
             if (tab === 'timeline') renderTimeline();
             if (tab === 'photos') renderCollage();
+            if (tab === 'signup') renderSignup();
         }
 
         let currentOrgSort = 'hours';
@@ -576,11 +604,11 @@
                 const val = data[currentOrgSort];
                 const pct = maxVal > 0 ? (val / maxVal) * 100 : 0;
                 const color = BAR_PALETTE[i % BAR_PALETTE.length];
-                const displayVal = currentOrgSort === 'hours' ? (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) : Math.round(val);
+                const displayVal = fmt(val);
                 const sublabel = currentOrgSort === 'impact'
-                    ? `${data.events} events &bull; ${data.hours.toFixed(0)} hrs`
+                    ? `${data.events} events &bull; ${fmt(data.hours)} hrs`
                     : currentOrgSort === 'events'
-                        ? `${data.hours.toFixed(0)} vol. hrs`
+                        ? `${fmt(data.hours)} vol. hrs`
                         : `${data.events} events`;
 
                 const row = document.createElement('div');
@@ -626,19 +654,19 @@
                 item.innerHTML = `
                     <div>
                         <div class="org-impact-name">${org}</div>
-                        <div class="org-impact-stats">${data.events} event${data.events !== 1 ? 's' : ''} &bull; ${data.participants} participants</div>
+                        <div class="org-impact-stats">${data.events} event${data.events !== 1 ? 's' : ''} &bull; ${fmt(data.participants)} participants</div>
                     </div>
                     <div style="text-align:right;">
-                        <div class="org-impact-hours">${data.hours % 1 === 0 ? data.hours.toFixed(0) : data.hours.toFixed(1)}</div>
+                        <div class="org-impact-hours">${fmt(data.hours)}</div>
                         <div style="font-family:'Lato',sans-serif;font-size:0.7em;color:#9aadcc;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">volunteer hours</div>
                     </div>
                 `;
                 orgList.appendChild(item);
             });
 
-            document.getElementById('insightAvgParticipants').textContent = totalEvents > 0 ? (totalParticipants / totalEvents).toFixed(1) : 0;
-            document.getElementById('insightAvgHours').textContent = totalEvents > 0 ? (totalHours / totalEvents).toFixed(1) : 0;
-            document.getElementById('insightMultiplier').textContent = totalHours > 0 ? (totalImpact / totalHours).toFixed(1) + 'x' : '0x';
+            document.getElementById('insightAvgParticipants').textContent = totalEvents > 0 ? Math.ceil(totalParticipants / totalEvents).toLocaleString('en-US') : 0;
+            document.getElementById('insightAvgHours').textContent = totalEvents > 0 ? Math.ceil(totalHours / totalEvents).toLocaleString('en-US') : 0;
+            document.getElementById('insightMultiplier').textContent = totalHours > 0 ? Math.ceil(totalImpact / totalHours).toLocaleString('en-US') + 'x' : '0x';
 
             let biggestEvent = '-';
             let maxImp = 0;
@@ -698,7 +726,7 @@
                 group.innerHTML = `
                     <div class="timeline-year-header">
                         <div class="timeline-year-badge">${year}</div>
-                        <div class="timeline-year-meta">${evts.length} event${evts.length !== 1 ? 's' : ''} &bull; ${yearHours % 1 === 0 ? yearHours : yearHours.toFixed(1)} hrs &bull; ${yearParticipants} participants</div>
+                        <div class="timeline-year-meta">${evts.length} event${evts.length !== 1 ? 's' : ''} &bull; ${fmt(yearHours)} hrs &bull; ${fmt(yearParticipants)} participants</div>
                         <div class="timeline-year-line"></div>
                     </div>
                     <div class="timeline-spine" id="spine-${year}"></div>
@@ -720,9 +748,9 @@
                             </div>
                             <div class="timeline-event-org" style="color:${color}">${event.organization}</div>
                             <div class="timeline-event-meta">
-                                <span>&#x23F1; ${event.hours} hrs</span>
-                                <span>&#x1F465; ${event.participants} participants</span>
-                                <span>&#x1F4AA; ${(event.hours * event.participants).toFixed(0)} impact hrs</span>
+                                <span>&#x23F1; ${fmt(event.hours)} hrs</span>
+                                <span>&#x1F465; ${fmt(event.participants)} participants</span>
+                                <span>&#x1F4AA; ${fmt(event.hours * event.participants)} impact hrs</span>
                             </div>
                             ${event.description ? `<div class="timeline-event-desc">${event.description}</div>` : ''}
                             ${event.location ? `<div class="timeline-event-loc">&#x1F4CD; ${event.location}</div>` : ''}
@@ -865,6 +893,115 @@
                 photos = stored;
             })
             .catch(err => { console.warn('IndexedDB unavailable, photos will not persist:', err); photos = []; });
+
+        // ---- SIGN-UP MODULE ----
+        // June 2026 upcoming events pulled from the SharePoint roster.
+        // Update SIGNUP_EVENTS each month with the current month's roster.
+        const SIGNUP_EVENTS = [
+            {
+                id: 's1',
+                title: 'The Greenway Foundation',
+                org: 'The Greenway Foundation',
+                date: '2026-06-24',
+                time: '9:00 AM – 12:00 PM',
+                location: 'Commons Park, Denver',
+                description: 'Trash pick up and riverside cleanup along the South Platte.',
+                totalSpots: 10,
+                roster: ['Chelsea', 'Nick', 'Steve', 'Paul', 'Lisa']
+            }
+        ];
+
+        // Persist local sign-ups (additions via this module) in localStorage
+        function getLocalSignups() {
+            try { return JSON.parse(localStorage.getItem('volunteerSignups') || '{}'); } catch(e) { return {}; }
+        }
+        function saveLocalSignup(eventId, name) {
+            const s = getLocalSignups();
+            if (!s[eventId]) s[eventId] = [];
+            if (!s[eventId].includes(name)) s[eventId].push(name);
+            localStorage.setItem('volunteerSignups', JSON.stringify(s));
+        }
+        function removeLocalSignup(eventId, name) {
+            const s = getLocalSignups();
+            if (s[eventId]) s[eventId] = s[eventId].filter(n => n !== name);
+            localStorage.setItem('volunteerSignups', JSON.stringify(s));
+        }
+
+        function renderSignup() {
+            const container = document.getElementById('signupView');
+            const localSignups = getLocalSignups();
+            const now = new Date();
+            const monthName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+            const upcoming = SIGNUP_EVENTS.filter(e => new Date(e.date + 'T00:00:00') >= now);
+            const past     = SIGNUP_EVENTS.filter(e => new Date(e.date + 'T00:00:00') < now);
+
+            function eventHTML(ev) {
+                const allSignups = [...(ev.roster || []), ...(localSignups[ev.id] || [])];
+                const unique = [...new Set(allSignups)];
+                const filled = unique.length;
+                const open   = Math.max(0, ev.totalSpots - filled);
+                const d = new Date(ev.date + 'T00:00:00');
+                const fmtDate = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+                const dots = Array.from({length: ev.totalSpots}, (_, i) =>
+                    `<span class="signup-spot-dot ${i < filled ? 'filled' : 'open'}">${i < filled ? (unique[i] ? unique[i][0].toUpperCase() : '✓') : '+'}</span>`
+                ).join('');
+                const canAdd = open > 0;
+                return `
+                    <div class="signup-event-card">
+                        <div class="signup-event-header">
+                            <div>
+                                <div class="signup-event-title">${ev.title}</div>
+                                <div class="signup-event-org">${ev.org}</div>
+                            </div>
+                            <div class="signup-event-date">${fmtDate}</div>
+                        </div>
+                        <div class="signup-event-meta">
+                            ${ev.time ? `<span>&#x23F0; ${ev.time}</span>` : ''}
+                            ${ev.location ? `<span>&#x1F4CD; ${ev.location}</span>` : ''}
+                        </div>
+                        ${ev.description ? `<div style="font-family:'Nunito',sans-serif;font-size:0.88em;color:#5A6B7C;margin-bottom:10px;">${ev.description}</div>` : ''}
+                        <div class="signup-spots">${dots}<span class="signup-spot-label">${filled}/${ev.totalSpots} signed up &bull; ${open} spot${open !== 1 ? 's' : ''} left</span></div>
+                        ${canAdd ? `
+                        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <input type="text" id="name-${ev.id}" placeholder="Your name" style="padding:8px 14px;border:1.5px solid #d4ddf8;border-radius:20px;font-family:'Nunito',sans-serif;font-size:0.88em;outline:none;width:180px;">
+                            <button class="btn" style="padding:8px 20px;font-size:0.88em;" onclick="addSignup('${ev.id}')">Sign Me Up!</button>
+                        </div>` : `<div style="margin-top:12px;font-family:'Nunito',sans-serif;font-size:0.85em;color:#d4617a;font-weight:700;">&#x2714; Event is full</div>`}
+                        ${unique.length > 0 ? `<div style="margin-top:12px;font-family:'Nunito',sans-serif;font-size:0.82em;color:#9aadcc;">Signed up: ${unique.join(', ')}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="signup-container">
+                    <div class="signup-hero">
+                        <h2>&#x1F91D; Volunteer Sign-Ups — ${monthName}</h2>
+                        <p>Sign up for upcoming events below. The full team roster is managed in the SharePoint Excel doc — use the button to open it and confirm your spot officially.</p>
+                        <a href="https://roku-my.sharepoint.com/:x:/p/jmonjure/IQAYpF-6msC5tDwn0vKMDINAAaIPOqNkzScfo7GIfnNw_L8?e=K6jQli" target="_blank" class="signup-excel-link">
+                            &#x1F4CA; Open Signup Sheet (SharePoint)
+                        </a>
+                    </div>
+
+                    ${upcoming.length > 0 ? `
+                        <div class="signup-section-title">&#x1F4C5; Upcoming Events</div>
+                        ${upcoming.map(eventHTML).join('')}
+                    ` : `<div class="signup-empty">&#x1F389; No upcoming events scheduled yet — check back soon!</div>`}
+
+                    ${past.length > 0 ? `
+                        <div class="signup-section-title" style="color:#9aadcc;border-left-color:#d4ddf8;">&#x2713; Past This Month</div>
+                        ${past.map(eventHTML).join('')}
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function addSignup(eventId) {
+            const input = document.getElementById('name-' + eventId);
+            const name = (input ? input.value : '').trim();
+            if (!name) { input && input.focus(); return; }
+            saveLocalSignup(eventId, name);
+            renderSignup();
+        }
 
         loadEvents();
     </script>
