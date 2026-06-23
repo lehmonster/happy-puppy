@@ -689,6 +689,246 @@
           );
         }
 
+        // ─── RECENTLY READ + BLOG ────────────────────────────────────────────────────
+
+        const EMPTY_BOOK = { id: "", title: "", author: "", dateFinished: "", rating: 0, review: "" };
+
+        function StarPicker({ value, onChange }) {
+          const [hovered, setHovered] = React.useState(null);
+          return (
+            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+              <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#9a7090", marginRight: 4 }}>Rating:</span>
+              {[1,2,3,4,5].map(star => (
+                <span
+                  key={star}
+                  onMouseEnter={() => setHovered(star)}
+                  onMouseLeave={() => setHovered(null)}
+                  onClick={() => onChange(value === star ? 0 : star)}
+                  style={{ fontSize: 22, cursor: "pointer", color: (hovered != null ? star <= hovered : star <= value) ? "#FCCA59" : "#e0cfd8", transition: "color 0.15s", lineHeight: 1 }}
+                >★</span>
+              ))}
+              {value > 0 && (
+                <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#FCCA59", marginLeft: 4 }}>{value}/5</span>
+              )}
+            </div>
+          );
+        }
+
+        function RecentlyRead() {
+          const storageKey = "recentlyRead_v1";
+          const loadBooks = () => {
+            try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch { return []; }
+          };
+          const [books, setBooks] = React.useState(loadBooks);
+          const [editingId, setEditingId] = React.useState(null);
+          const [draft, setDraft] = React.useState(null);
+          const [blogOpen, setBlogOpen] = React.useState(null);
+          const [addingNew, setAddingNew] = React.useState(false);
+          const [newBook, setNewBook] = React.useState({ title: "", author: "", dateFinished: "", rating: 0 });
+
+          const save = (updated) => {
+            setBooks(updated);
+            localStorage.setItem(storageKey, JSON.stringify(updated));
+          };
+
+          const removeBook = (id) => save(books.filter(b => b.id !== id));
+
+          const startEdit = (book) => {
+            setEditingId(book.id);
+            setDraft({ ...book });
+            setBlogOpen(null);
+          };
+
+          const saveEdit = () => {
+            save(books.map(b => b.id === editingId ? { ...draft } : b));
+            setEditingId(null);
+            setDraft(null);
+          };
+
+          const saveReview = (id, text) => {
+            save(books.map(b => b.id === id ? { ...b, review: text } : b));
+          };
+
+          const addBook = () => {
+            if (!newBook.title.trim()) return;
+            const entry = { ...newBook, id: Date.now().toString(), review: "" };
+            const updated = [entry, ...books].slice(0, 10);
+            save(updated);
+            setNewBook({ title: "", author: "", dateFinished: "", rating: 0 });
+            setAddingNew(false);
+          };
+
+          const inputStyle = { fontFamily: "Lato, sans-serif", fontSize: 13, padding: "6px 10px", border: "1.5px solid #e8d0e0", borderRadius: 6, outline: "none", width: "100%", boxSizing: "border-box", background: "#fff" };
+
+          return (
+            <div style={{ background: "#FEFDFB", minHeight: "80vh", fontFamily: "Georgia, serif" }}>
+              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
+
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+                  <div>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", margin: 0 }}>Recently Read</h2>
+                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", margin: "4px 0 0" }}>Your last 10 books — rate them, review them, remember them</p>
+                  </div>
+                  {!addingNew && (
+                    <button onClick={() => setAddingNew(true)} style={{ padding: "10px 20px", background: "#F296BD", color: "#fff", border: "none", borderRadius: 8, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+                      + Add Book
+                    </button>
+                  )}
+                </div>
+
+                {addingNew && (
+                  <div style={{ background: "#fff", border: "2px solid #F296BD", borderRadius: 14, padding: 20, marginBottom: 20 }}>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#2C3E50", marginBottom: 14 }}>Add a book you just finished</h3>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+                      <div>
+                        <label style={{ fontFamily: "Lato, sans-serif", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "#9a7090", display: "block", marginBottom: 4 }}>Title *</label>
+                        <input style={inputStyle} value={newBook.title} onChange={e => setNewBook(b => ({ ...b, title: e.target.value }))} placeholder="Book title" />
+                      </div>
+                      <div>
+                        <label style={{ fontFamily: "Lato, sans-serif", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "#9a7090", display: "block", marginBottom: 4 }}>Author</label>
+                        <input style={inputStyle} value={newBook.author} onChange={e => setNewBook(b => ({ ...b, author: e.target.value }))} placeholder="Author name" />
+                      </div>
+                      <div>
+                        <label style={{ fontFamily: "Lato, sans-serif", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "#9a7090", display: "block", marginBottom: 4 }}>Date finished</label>
+                        <input type="date" style={inputStyle} value={newBook.dateFinished} onChange={e => setNewBook(b => ({ ...b, dateFinished: e.target.value }))} />
+                      </div>
+                      <div style={{ display: "flex", alignItems: "flex-end", paddingBottom: 4 }}>
+                        <StarPicker value={newBook.rating} onChange={r => setNewBook(b => ({ ...b, rating: r }))} />
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button onClick={addBook} style={{ padding: "8px 18px", background: "#F296BD", color: "#fff", border: "none", borderRadius: 7, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Save</button>
+                      <button onClick={() => setAddingNew(false)} style={{ padding: "8px 18px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 13, cursor: "pointer" }}>Cancel</button>
+                    </div>
+                  </div>
+                )}
+
+                {books.length === 0 && !addingNew && (
+                  <div style={{ textAlign: "center", padding: "60px 20px", background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea" }}>
+                    <div style={{ fontSize: 48, marginBottom: 12 }}>📖</div>
+                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: "#9a7090", fontStyle: "italic" }}>No books yet — add the first one above</p>
+                  </div>
+                )}
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {books.map((book, idx) => {
+                    const isEditing = editingId === book.id;
+                    const isBlogOpen = blogOpen === book.id;
+                    return (
+                      <div key={book.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", overflow: "hidden", boxShadow: "0 2px 10px rgba(242,150,189,0.07)" }}>
+                        <div style={{ padding: "18px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
+                            <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
+                            <div style={{ flex: 1, minWidth: 200 }}>
+                              {isEditing ? (
+                                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                  <input style={inputStyle} value={draft.title} onChange={e => setDraft(d => ({ ...d, title: e.target.value }))} placeholder="Title" />
+                                  <input style={inputStyle} value={draft.author} onChange={e => setDraft(d => ({ ...d, author: e.target.value }))} placeholder="Author" />
+                                  <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                                    <input type="date" style={{ ...inputStyle, width: "auto" }} value={draft.dateFinished} onChange={e => setDraft(d => ({ ...d, dateFinished: e.target.value }))} />
+                                    <StarPicker value={draft.rating} onChange={r => setDraft(d => ({ ...d, rating: r }))} />
+                                  </div>
+                                  <div style={{ display: "flex", gap: 8 }}>
+                                    <button onClick={saveEdit} style={{ padding: "7px 16px", background: "#F296BD", color: "#fff", border: "none", borderRadius: 6, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>Save</button>
+                                    <button onClick={() => setEditingId(null)} style={{ padding: "7px 14px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 12, cursor: "pointer" }}>Cancel</button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#2C3E50", marginBottom: 3 }}>{book.title || <span style={{ color: "#ccc", fontStyle: "italic" }}>Untitled</span>}</div>
+                                  {book.author && <div style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", marginBottom: 6 }}>{book.author}</div>}
+                                  <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                                    <div style={{ display: "flex", gap: 2 }}>
+                                      {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: 16, color: s <= book.rating ? "#FCCA59" : "#e0cfd8" }}>★</span>)}
+                                    </div>
+                                    {book.dateFinished && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#aaa", letterSpacing: 0.5 }}>finished {new Date(book.dateFinished + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
+                                    {book.review && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#F296BD", letterSpacing: 0.5 }}>has review</span>}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                            {!isEditing && (
+                              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                                <button onClick={() => setBlogOpen(isBlogOpen ? null : book.id)} style={{ padding: "6px 12px", background: isBlogOpen ? "#F5793B" : "transparent", color: isBlogOpen ? "#fff" : "#F5793B", border: "1.5px solid #F5793B", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                                  {book.review ? "Edit Review" : "Write Review"}
+                                </button>
+                                <button onClick={() => startEdit(book)} style={{ padding: "6px 10px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>Edit</button>
+                                <button onClick={() => removeBook(book.id)} style={{ padding: "6px 10px", background: "transparent", color: "#d08090", border: "1.5px solid #f0d0d8", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>Remove</button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {isBlogOpen && (
+                          <BlogEditor
+                            book={book}
+                            onSave={(text) => { saveReview(book.id, text); setBlogOpen(null); }}
+                            onClose={() => setBlogOpen(null)}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {books.length > 0 && (
+                  <div style={{ marginTop: 32, padding: "16px 20px", background: "#F296BD10", borderRadius: 10, borderLeft: "3px solid #F296BD" }}>
+                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#6a3050", margin: 0 }}>
+                      Ratings and reviews are saved to your browser. Up to 10 books shown — adding a new one when you are at 10 drops the oldest.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        function BlogEditor({ book, onSave, onClose }) {
+          const [text, setText] = React.useState(book.review || "");
+          const [preview, setPreview] = React.useState(false);
+          const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+
+          return (
+            <div style={{ borderTop: "1.5px solid #f0e0ea", background: "#fffbfe", padding: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+                <div>
+                  <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700, color: "#F5793B" }}>
+                    {book.review ? "Edit Review" : "Write a Review"}
+                  </span>
+                  <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#aaa", marginLeft: 10 }}>
+                    {book.title}
+                  </span>
+                </div>
+                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#bbb" }}>{wordCount} words</span>
+                  <button onClick={() => setPreview(!preview)} style={{ padding: "5px 12px", background: preview ? "#F5793B" : "transparent", color: preview ? "#fff" : "#F5793B", border: "1.5px solid #F5793B", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>
+                    {preview ? "Edit" : "Preview"}
+                  </button>
+                </div>
+              </div>
+
+              {preview ? (
+                <div style={{ minHeight: 140, padding: "14px 16px", background: "#fff", border: "1.5px solid #f0e0ea", borderRadius: 8, fontFamily: "Georgia, serif", fontSize: 14, color: "#2C3E50", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
+                  {text || <span style={{ color: "#ccc", fontStyle: "italic" }}>Nothing written yet...</span>}
+                </div>
+              ) : (
+                <textarea
+                  value={text}
+                  onChange={e => setText(e.target.value)}
+                  placeholder={"What did you think? Write as much or as little as you want — a quick reaction, a full review, or just the line that stuck with you."}
+                  style={{ width: "100%", minHeight: 140, padding: "12px 14px", fontFamily: "Georgia, serif", fontSize: 14, color: "#2C3E50", lineHeight: 1.75, border: "1.5px solid #f0e0ea", borderRadius: 8, outline: "none", resize: "vertical", boxSizing: "border-box", background: "#fff" }}
+                />
+              )}
+
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button onClick={() => onSave(text)} style={{ padding: "8px 20px", background: "#F5793B", color: "#fff", border: "none", borderRadius: 7, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Save Review</button>
+                {text && <button onClick={() => onSave("")} style={{ padding: "8px 14px", background: "transparent", color: "#d08090", border: "1.5px solid #f0d0d8", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 12, cursor: "pointer" }}>Clear</button>}
+                <button onClick={onClose} style={{ padding: "8px 14px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 12, cursor: "pointer" }}>Cancel</button>
+              </div>
+            </div>
+          );
+        }
+
         // ─── ROOT APP ────────────────────────────────────────────────────────────────
 
         const TABS = [
@@ -696,6 +936,7 @@
           { id: "themes", label: "🎭 By Theme", subtitle: "7 Genres" },
           { id: "history", label: "✅ Books Read", subtitle: "420 Complete" },
           { id: "tbr", label: "📚 TBR Pile", subtitle: "20 + 20 Picks" },
+          { id: "recent", label: "⭐ Recently Read", subtitle: "Ratings & Reviews" },
         ];
 
         function App() {
@@ -728,7 +969,7 @@
                     {TABS.map((tab) => {
                       const isActive = activeTab === tab.id;
                       return (
-                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: isActive ? (tab.id === "tbr" ? "#f5f0e8" : "#0c0810") : "transparent", color: isActive ? (tab.id === "tbr" ? "#1c0a14" : "#f0e8f4") : "#7a5080", cursor: "pointer", fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: "clamp(11px, 2vw, 14px)", letterSpacing: 0.5, transition: "all 0.2s", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, flexShrink: 0 }}>
+                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: isActive ? (["tbr","recent"].includes(tab.id) ? "#f5f0e8" : "#0c0810") : "transparent", color: isActive ? (["tbr","recent"].includes(tab.id) ? "#1c0a14" : "#f0e8f4") : "#7a5080", cursor: "pointer", fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: "clamp(11px, 2vw, 14px)", letterSpacing: 0.5, transition: "all 0.2s", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, flexShrink: 0 }}>
                           <span>{tab.label}</span>
                           <span style={{ fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.6, fontWeight: 400 }}>{tab.subtitle}</span>
                         </button>
@@ -742,6 +983,7 @@
               {activeTab === "themes" && <LiteraryThemes />}
               {activeTab === "history" && <HistoricalList />}
               {activeTab === "tbr" && <TBRPile />}
+              {activeTab === "recent" && <RecentlyRead />}
             </div>
           );
         }
