@@ -693,18 +693,67 @@
 
         const EMPTY_BOOK = { id: "", title: "", author: "", dateFinished: "", rating: 0, review: "" };
 
-        const DEFAULT_RECENT = [
-          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "", rating: 0, review: "" },
-          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "", rating: 0, review: "" },
-          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "", rating: 0, review: "" },
-          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "", rating: 0, review: "" },
-          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "", rating: 0, review: "" },
-          { id: "d6", title: "And Now Back to You", author: "BK Borrison", dateFinished: "", rating: 0, review: "" },
-          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "", rating: 0, review: "" },
-          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "", rating: 0, review: "" },
-          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "", rating: 0, review: "" },
-          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "", rating: 0, review: "" },
+        const BASE_TOTAL = 426;
+
+        const TIMELINE_DATA = [
+          { year: "Earlier", color: "#F296BD", books: [
+            "I Am Pilgrim", "Home", "Verity", "A Killer's Wife", "Whisper Network", "Lexicon", "The Summer House", "The Last Flight", "Pretty Little Wife", "Every Last Secret", "The Hollows", "In an Instant", "The Best of Friends", "When We Believed in Mermaids", "The Other Wife", "The Girl in Cabin 13", "The Mother-in-Law", "The Woman I Wanted to Be", "The Other Emily", "The Wreckage of My Presence", "The Girl That Vanished", "The Girl in the Manor", "The Girl Next Door", "Bring Me Back", "The Dilemma", "The Lies That Bind", "The Third Wife", "When She Returned", "The Secrets of Us", "Protecting Noah", "Missing Parts", "Appetite for Innocence", "Phantom Limb", "Summer of '69", "Black Ice", "Barefoot", "28 Weeks of Summer", "The Sixth Wedding", "The Midnight Library", "The Last Anniversary", "Summerland", "Silver Girl", "Win", "Blue Bistro", "Crimson Lake Road", "An Unreliable Truth", "The Neon Lawyer", "Mercy", "Blood Dahlia", "Murder 42", "The Vanished", "The Unseen", "It Ends with Us", "The Veiled", "Layla", "Paradise", "A Gambler's Jury", "The Shotgun Lawyer", "An Invisible Client", "White Angel Murder", "Walk in Darkness", "Sun City Homicide", "Arsonist", "Black Widow Murders", "Run Away", "Mania", "Park Road", "Purgatory", "The Murder of Janessa Henley", "The Bastille", "It Starts with Us", "When Breath Becomes Air", "Final Girl"
+          ]},
+          { year: "2022", color: "#99B7F5", books: [
+            "Regretting You", "Too Late", "People We Meet on Vacation", "One Year Gone", "Girl Gone Mad", "The Humans", "Three Wishes", "The Last Thing He Told Me", "Eight Hundred Grapes", "Hello Sunshine", "The Invisible Life of Addie LaRue", "Happy Days", "The Radleys", "Heart Bones", "Then Came You", "Winter Street", "Winter Stroll", "Winter Storms", "Winter Solstice", "Reminders of Him", "The Love Hypothesis", "The Wife Between Us", "Book Lovers", "Beach Read", "The Golden Couple", "Good in Bed", "Things We Never Got Over", "By a Thread", "The Hotel Nantucket", "November 9", "The Worst Best Man", "A Deal with the Devil", "The Devil and the Deep Blue Sea", "The Devil You Know", "Confess", "All Your Perfects", "Dirty Like Me", "Dirty Like Brody", "Dirty Like Us", "Dirty Like Jude", "Dirty Like Zane", "Hot Mess", "Sweet Temptation", "Lovely Madness", "Handsome Devil", "Rebel Heir", "Olive", "Hopeless", "Losing Hope", "Tempt Me", "Break Me", "Teach Me", "Surrender to Me", "Sweet Mercy", "Gabriel Fallen", "Dirty Empire", "Fallen Empire", "Like a Mother", "We Were Liars", "Slammed", "Point of Retreat", "Shadow and Bone", "Siege and Storm", "Ruin and Rising", "It Starts with Us", "When Breath Becomes Air", "Final Girl"
+          ]},
+          { year: "2023", color: "#267F53", books: [
+            "Maybe in Another Life", "Every Summer After", "Carrie Soto Is Back", "One True Loves", "After I Do", "The Fifth Trimester", "Red, White & Royal Blue", "Lessons in Chemistry", "Nora Goes Off Script", "The Proposal", "In Five Years", "One Italian Summer", "Twenty Years Later", "The Match", "The Edge of Falling", "The Guest List", "They Both Die at the End", "Malibu Rising", "Killers of a Certain Age", "I Will Find You", "Scandalized", "Happy Place", "The Last Housewife", "Romantic Comedy", "The Shift", "The Soulmate", "Look Closer", "In My Dreams I Hold a Knife", "Daddy Diaries", "Neighbor Favor", "Love on the Brain", "Stone Cold Fox", "The Change", "Meet Me at the Lake", "Life's Too Short", "Same Time Next Summer", "10% Happier", "Vera Wong", "Wish You Were Here", "The Happy Ever After Playlist", "It Happened One Summer", "Seven Year Slip", "Yours Truly", "The True Love Experiment", "The Celebrants", "Tomorrow and Tomorrow and Tomorrow", "Mrs. Nash's Ashes", "Things We Hide from the Light", "Things We Left Behind", "The Cage", "Practice Makes Perfect", "You with a View", "Big Swiss", "Nothing to See Here", "Hello Stranger", "The Wishing Game", "Forget Me Not", "The Five Star Weekend", "A Very Merry Bromance", "The Sweet Spot", "Tom Lake", "Thank You for Listening", "The Tourist Attraction", "Mistletoe and Mr. Right", "Enjoy the View", "Georgie All Along", "Jana Goes Wild", "Snowed In", "Dear Dolly", "One Day"
+          ]},
+          { year: "2024", color: "#F5793B", books: [
+            "The Dinner List", "Meet Me in Another Life", "The Thursday Murder Club", "The Verifiers", "The Very Secret Society of Irregular Witches", "Down the Drain", "Undercover Bromance", "Ghosts", "The Dead Romantics", "One Day in December", "Mad Honey", "The Lies I Tell", "Rosaline Palmer Takes the Cake", "Check & Mate", "The Flat Share", "The Burnout", "A Christmas Orphans Club", "Tweet Cute", "Love in Lockdown", "A Winter in New York", "Killing Moon", "Isn't It Bromantic", "My Sister the Serial Killer", "Bride", "Oona Out of Order", "Butcher & Blackbird", "First Lie Wins", "The Rachel Incident", "Listen for the Lie", "Maybe Once Maybe Twice", "Strange Sally Diamond", "The Good Daughter", "Funny Story", "Just for the Summer", "The Heiress", "Part of Your World", "The Guilt Trip", "Good Material", "Dream On", "Once More with Feeling", "Funny You Should Ask", "The Kind Worth Killing", "The Kind Worth Saving", "Leather & Lark", "In a Holidaze", "Drawn That Way", "How to End a Love Story", "Loathe to Love You", "Beautiful Bastard", "This Summer Will Be Different", "Ace of Spades", "Love and Other Words", "The Love That Split the World", "Long Bright River", "End of Story", "Roomies", "Just Haven't Met You Yet", "The Ministry of Time", "Things You Saved in a Fire", "Not in Love", "Happily Never After", "Hook Line and Sinker", "Summer Romance", "The Block Party", "The Last Time I Lied", "The Rule Book", "The Siren", "Fix Her Up", "Love Her or Lose Her", "The No Show", "Window Shopping", "Alex Approximately", "Too Good to Be True", "Greenwich Park", "Tools of Engagement", "Not Another Love Song", "Here One Moment", "The Simple Wild", "Float Plan", "The Rom-Commers", "Margo's Got Money Troubles", "Every Time I Go on Vacation Someone Dies", "Dating You / Hating You", "My Not So Perfect Life", "The Paradise Problem", "An Anonymous Girl", "The Sicilian Inheritance", "When We Were Silent", "The Life Impossible", "We Solve Murders", "The Design of Us", "The Night We Lost Him", "Very Bad Company", "The Undomestic Goddess", "The Spanish Love Deception", "Lula Dean's Little Library", "Swan Song", "A Talent for Murder", "The Ex Vows", "All Fours"
+          ]},
+          { year: "2025", color: "#F296BD", books: [
+            "The Dry", "Is She Really Going Out with Him", "Summer Fridays", "The Monkey's Raincoat", "The Psilocybin Handbook for Women", "Letters to a Serial Killer", "Let Them", "This Spells Love", "Once More from the Top", "Until Next Summer", "The Last Love Note", "The Drowning Woman", "The Christmas You Found Me", "Business Casual", "The Love of My Afterlife", "The Turn of the Key", "The American Roommate Experiment", "My Lovely Wife", "Show Don't Tell", "Four Weekends and a Funeral", "What Happened to Nina", "Maybe Next Time", "The Roommate Pact", "The Best Lies", "Expiration Dates", "Catch and Keep", "The Catch", "Emma of 83rd Street", "Hot Air", "Catalina", "All I Want Is You", "All the Other Mothers Hate Me", "Everyone in My Family Has Killed Someone", "The Most Wonderful Crime of the Year", "Hotter in the Hamptons", "All Rhodes Lead Here", "Beg Borrow or Steal", "Atmosphere", "An Honest Lie", "When I Think of You", "Big Fan", "Only One Survives", "Husbands and Lovers", "Deep End", "One Last Summer", "Love Lettering", "The Testaments", "The Other Side of Disappearing", "Love at First", "Luck of the Draw", "Best of Luck", "Sorry of My Life", "First Time Caller", "Great Big Beautiful Life", "How to Giggle", "Instamom", "Wild Side", "Without Merit", "Twice Shy", "Totally and Completely Fine", "In a New York Minute", "Maybe Someday", "Today Tonight Tomorrow", "Self Help", "The Ex Hex", "The Love Haters", "Elizabeth of East Hampton", "So We Meet Again", "Not Bad for a Girl", "Good Company", "Say You'll Remember Me", "Till Death Do Us Part", "The Kiss Curse", "The Wedding Witch", "Anne of Avenue A", "How to Read a Book", "Hot for Slayer", "Writers and Lovers", "Death at the White Heart", "Summer Skate", "A Holly Jolly Ever After", "Heart the Lover", "The Academy"
+          ]},
+          { year: "2026", color: "#FCCA59", books: [
+            "Snow Place Like LA", "A Jingle Bell Mingle", "The Five Types of Wealth", "The Whole-Brain Child", "Mona Acts Out", "Careless People", "The Storied Life of AJ Fikry", "Young Jane Young", "Elsewhere", "A Sociopath's Guide to a Successful Marriage", "Mouth to Mouth", "Happy Money", "Kill Night", "Two Can Play", "The Book Thief", "Startlement", "Co-Intelligence", "Beautyland", "Strangers", "Annie Knows Everything", "Catch Her If You Can", "One of Us Is Lying", "Once and Again", "The Meaning of Your Life", "One Last Stop", "The Wedding People", "To Bless the Space Between Us", "And Now Back to You", "Audition", "The Night We Met", "Fair Play", "The Things We Never Say", "Both Can Be True"
+          ]},
         ];
+
+        const DEFAULT_RECENT = [
+          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 0, review: "" },
+          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 0, review: "" },
+          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 0, review: "" },
+          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 0, review: "" },
+          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 0, review: "" },
+          { id: "d6", title: "And Now Back to You", author: "BK Borrison", dateFinished: "2026-04-26", rating: 0, review: "" },
+          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 0, review: "" },
+          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "2026-04-12", rating: 0, review: "" },
+          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "2026-04-05", rating: 0, review: "" },
+          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "2026-03-29", rating: 0, review: "" },
+        ];
+
+        function BookCover({ title, author }) {
+          const query = encodeURIComponent(title + " " + author);
+          const src = "https://covers.openlibrary.org/b/olid/OL-L.jpg?default=false";
+          const googleSrc = "https://books.google.com/books/content?vid=ISBN&printsec=frontcover&img=1&zoom=1&q=" + query;
+          const [failed, setFailed] = React.useState(false);
+          const [triedGoogle, setTriedGoogle] = React.useState(false);
+          const openLibSrc = "https://covers.openlibrary.org/b/title/" + encodeURIComponent(title) + "-M.jpg?default=false";
+
+          return (
+            <div style={{ width: 56, height: 84, flexShrink: 0, borderRadius: 4, overflow: "hidden", background: "linear-gradient(160deg, #f5d0e0, #d0c0f0)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 3px 10px rgba(0,0,0,0.15)", position: "relative" }}>
+              {!failed ? (
+                <img
+                  src={openLibSrc}
+                  alt={title}
+                  onError={() => { if (!triedGoogle) { setTriedGoogle(true); } else { setFailed(true); } }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              ) : (
+                <div style={{ padding: 4, textAlign: "center" }}>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 8, fontWeight: 700, color: "#4a2030", lineHeight: 1.2 }}>{title.length > 30 ? title.slice(0, 28) + "..." : title}</div>
+                </div>
+              )}
+            </div>
+          );
+        }
 
         function StarPicker({ value, onChange }) {
           const [hovered, setHovered] = React.useState(null);
@@ -727,7 +776,7 @@
           );
         }
 
-        function RecentlyRead() {
+        function RecentlyRead({ onBookAdded }) {
           const storageKey = "recentlyRead_v1";
           const loadBooks = () => {
             try { const saved = JSON.parse(localStorage.getItem(storageKey)); return saved && saved.length ? saved : DEFAULT_RECENT; } catch { return DEFAULT_RECENT; }
@@ -769,6 +818,7 @@
             save(updated);
             setNewBook({ title: "", author: "", dateFinished: "", rating: 0 });
             setAddingNew(false);
+            if (onBookAdded) onBookAdded();
           };
 
           const inputStyle = { fontFamily: "Lato, sans-serif", fontSize: 13, padding: "6px 10px", border: "1.5px solid #e8d0e0", borderRadius: 6, outline: "none", width: "100%", boxSizing: "border-box", background: "#fff" };
@@ -831,8 +881,11 @@
                       <div key={book.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", overflow: "hidden", boxShadow: "0 2px 10px rgba(242,150,189,0.07)" }}>
                         <div style={{ padding: "18px 20px" }}>
                           <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
-                            <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
+                            <BookCover title={book.title} author={book.author} />
                             <div style={{ flex: 1, minWidth: 200 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                                <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 10, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
+                              </div>
                               {isEditing ? (
                                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                                   <input style={inputStyle} value={draft.title} onChange={e => setDraft(d => ({ ...d, title: e.target.value }))} placeholder="Title" />
@@ -942,6 +995,65 @@
           );
         }
 
+        // ─── TIMELINE ────────────────────────────────────────────────────────────────
+
+        function Timeline() {
+          const [expanded, setExpanded] = React.useState("2026");
+          return (
+            <div style={{ background: "#FEFDFB", minHeight: "80vh", fontFamily: "Georgia, serif" }}>
+              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
+                <div style={{ marginBottom: 28 }}>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", marginBottom: 4 }}>Reading Timeline</h2>
+                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a" }}>Every book, organized by year — click a year to expand</p>
+                </div>
+
+                <div style={{ position: "relative" }}>
+                  <div style={{ position: "absolute", left: 18, top: 0, bottom: 0, width: 2, background: "linear-gradient(180deg, #F296BD, #99B7F5, #267F53, #F5793B, #F296BD, #FCCA59)", opacity: 0.3, borderRadius: 2 }} />
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {TIMELINE_DATA.slice().reverse().map((yd) => {
+                      const isOpen = expanded === yd.year;
+                      return (
+                        <div key={yd.year} style={{ paddingLeft: 48, position: "relative" }}>
+                          <div style={{ position: "absolute", left: 8, top: 16, width: 20, height: 20, borderRadius: "50%", background: yd.color, border: "3px solid #fff", boxShadow: "0 0 0 2px " + yd.color + "55", zIndex: 1 }} />
+                          <div
+                            onClick={() => setExpanded(isOpen ? null : yd.year)}
+                            style={{ background: "#fff", borderRadius: 12, border: "1.5px solid " + (isOpen ? yd.color : "#f0e0ea"), cursor: "pointer", transition: "all 0.2s", boxShadow: isOpen ? "0 4px 20px " + yd.color + "20" : "none" }}
+                          >
+                            <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 14 }}>
+                              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: yd.color, minWidth: 60 }}>{yd.year}</div>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#9a7090" }}>{yd.books.length} books</div>
+                                {!isOpen && <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#bbb", marginTop: 2 }}>{yd.books.slice(0, 4).join(", ")}{yd.books.length > 4 ? "..." : ""}</div>}
+                              </div>
+                              <div style={{ width: 80, height: 6, borderRadius: 3, background: "#f5eaf0", overflow: "hidden" }}>
+                                <div style={{ width: (yd.books.length / 100) * 100 + "%", background: yd.color, height: "100%", borderRadius: 3, maxWidth: "100%" }} />
+                              </div>
+                              <div style={{ color: "#c0a0b0", fontSize: 14, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</div>
+                            </div>
+
+                            {isOpen && (
+                              <div style={{ borderTop: "1px solid " + yd.color + "22", padding: "16px 20px 20px" }}>
+                                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                                  {yd.books.map((book, i) => (
+                                    <span key={i} style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#4a2030", background: yd.color + "15", border: "1px solid " + yd.color + "33", borderRadius: 20, padding: "4px 12px", lineHeight: 1.4 }}>
+                                      {book}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        }
+
         // ─── ROOT APP ────────────────────────────────────────────────────────────────
 
         const TABS = [
@@ -950,10 +1062,20 @@
           { id: "history", label: "✅ Books Read", subtitle: "420 Complete" },
           { id: "tbr", label: "📚 TBR Pile", subtitle: "20 + 20 Picks" },
           { id: "recent", label: "⭐ Recently Read", subtitle: "Ratings & Reviews" },
+          { id: "timeline", label: "📅 Timeline", subtitle: "By Year" },
         ];
 
         function App() {
           const [activeTab, setActiveTab] = useState("stats");
+          const [extraBooks, setExtraBooks] = React.useState(() => {
+            try { return parseInt(localStorage.getItem("extraBooksAdded_v1") || "0"); } catch { return 0; }
+          });
+          const totalBooks = BASE_TOTAL + extraBooks;
+          const handleBookAdded = () => {
+            const next = extraBooks + 1;
+            setExtraBooks(next);
+            localStorage.setItem("extraBooksAdded_v1", String(next));
+          };
 
           return (
             <div style={{ fontFamily: "Georgia, serif" }}>
@@ -976,7 +1098,7 @@
                     <span style={{ fontSize: "clamp(20px, 4vw, 28px)", color: "#F5793B" }}>✷</span>
                   </h1>
                   <p style={{ fontFamily: "Lato, sans-serif", fontSize: "clamp(13px, 2.5vw, 16px)", fontStyle: "italic", color: "#267F53", marginBottom: 6, fontWeight: 400 }}>Looking at life with rosé colored reading glasses</p>
-                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: "clamp(10px, 2vw, 12px)", letterSpacing: 1.5, color: "#99B7F5", marginBottom: 8, fontWeight: 400 }}>420 books &amp; counting</p>
+                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: "clamp(10px, 2vw, 12px)", letterSpacing: 1.5, color: "#99B7F5", marginBottom: 8, fontWeight: 400 }}>{totalBooks} books &amp; counting</p>
 
                   <div style={{ display: "flex", gap: 4, flexWrap: "wrap", overflowX: "auto" }}>
                     {TABS.map((tab) => {
@@ -996,7 +1118,8 @@
               {activeTab === "themes" && <LiteraryThemes />}
               {activeTab === "history" && <HistoricalList />}
               {activeTab === "tbr" && <TBRPile />}
-              {activeTab === "recent" && <RecentlyRead />}
+              {activeTab === "recent" && <RecentlyRead onBookAdded={handleBookAdded} />}
+              {activeTab === "timeline" && <Timeline />}
             </div>
           );
         }
