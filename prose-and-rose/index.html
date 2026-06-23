@@ -693,6 +693,19 @@
 
         const EMPTY_BOOK = { id: "", title: "", author: "", dateFinished: "", rating: 0, review: "" };
 
+        const DEFAULT_RECENT = [
+          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "", rating: 0, review: "" },
+          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "", rating: 0, review: "" },
+          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "", rating: 0, review: "" },
+          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "", rating: 0, review: "" },
+          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "", rating: 0, review: "" },
+          { id: "d6", title: "And Now Back to You", author: "BK Borrison", dateFinished: "", rating: 0, review: "" },
+          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "", rating: 0, review: "" },
+          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "", rating: 0, review: "" },
+          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "", rating: 0, review: "" },
+          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "", rating: 0, review: "" },
+        ];
+
         function StarPicker({ value, onChange }) {
           const [hovered, setHovered] = React.useState(null);
           return (
@@ -717,7 +730,7 @@
         function RecentlyRead() {
           const storageKey = "recentlyRead_v1";
           const loadBooks = () => {
-            try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch { return []; }
+            try { const saved = JSON.parse(localStorage.getItem(storageKey)); return saved && saved.length ? saved : DEFAULT_RECENT; } catch { return DEFAULT_RECENT; }
           };
           const [books, setBooks] = React.useState(loadBooks);
           const [editingId, setEditingId] = React.useState(null);
