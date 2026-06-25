@@ -717,33 +717,36 @@
         ];
 
         const DEFAULT_RECENT = [
-          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 0, review: "" },
-          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 0, review: "" },
-          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 0, review: "" },
-          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 0, review: "" },
-          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 0, review: "" },
-          { id: "d6", title: "And Now Back to You", author: "BK Borrison", dateFinished: "2026-04-26", rating: 0, review: "" },
-          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 0, review: "" },
-          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "2026-04-12", rating: 0, review: "" },
-          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "2026-04-05", rating: 0, review: "" },
-          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "2026-03-29", rating: 0, review: "" },
+          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1776111412i/237353764.jpg" },
+          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1771952095i/242082631.jpg" },
+          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732028627i/216895124.jpg" },
+          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1755786976i/231801371.jpg" },
+          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1722126296i/216247518.jpg" },
+          { id: "d6", title: "And Now Back to You", author: "BK Borison", dateFinished: "2026-04-26", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748482477i/217513554.jpg" },
+          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1442613785i/1211497.jpg" },
+          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "2026-04-12", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1759683499i/198902277.jpg" },
+          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "2026-04-05", rating: 4, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1598019346i/54860443.jpg" },
+          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "2026-03-29", rating: 4, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1774479295i/238766978.jpg" },
         ];
 
-        function BookCover({ title, author }) {
-          const query = encodeURIComponent(title + " " + author);
-          const src = "https://covers.openlibrary.org/b/olid/OL-L.jpg?default=false";
-          const googleSrc = "https://books.google.com/books/content?vid=ISBN&printsec=frontcover&img=1&zoom=1&q=" + query;
-          const [failed, setFailed] = React.useState(false);
-          const [triedGoogle, setTriedGoogle] = React.useState(false);
+        function BookCover({ title, author, coverUrl }) {
           const openLibSrc = "https://covers.openlibrary.org/b/title/" + encodeURIComponent(title) + "-M.jpg?default=false";
+          const srcs = [coverUrl, openLibSrc].filter(Boolean);
+          const [idx, setIdx] = React.useState(0);
+          const [failed, setFailed] = React.useState(false);
+
+          const handleError = () => {
+            if (idx + 1 < srcs.length) setIdx(idx + 1);
+            else setFailed(true);
+          };
 
           return (
             <div style={{ width: 56, height: 84, flexShrink: 0, borderRadius: 4, overflow: "hidden", background: "linear-gradient(160deg, #f5d0e0, #d0c0f0)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 3px 10px rgba(0,0,0,0.15)", position: "relative" }}>
               {!failed ? (
                 <img
-                  src={openLibSrc}
+                  src={srcs[idx]}
                   alt={title}
-                  onError={() => { if (!triedGoogle) { setTriedGoogle(true); } else { setFailed(true); } }}
+                  onError={handleError}
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
               ) : (
@@ -779,7 +782,16 @@
         function RecentlyRead({ onBookAdded }) {
           const storageKey = "recentlyRead_v1";
           const loadBooks = () => {
-            try { const saved = JSON.parse(localStorage.getItem(storageKey)); return saved && saved.length ? saved : DEFAULT_RECENT; } catch { return DEFAULT_RECENT; }
+            try {
+              const saved = JSON.parse(localStorage.getItem(storageKey));
+              if (!saved || !saved.length) return DEFAULT_RECENT;
+              // Merge in coverUrl from defaults for any book that doesn't have one
+              return saved.map(b => {
+                if (b.coverUrl) return b;
+                const def = DEFAULT_RECENT.find(d => d.id === b.id);
+                return def && def.coverUrl ? { ...b, coverUrl: def.coverUrl } : b;
+              });
+            } catch { return DEFAULT_RECENT; }
           };
           const [books, setBooks] = React.useState(loadBooks);
           const [editingId, setEditingId] = React.useState(null);
@@ -881,7 +893,7 @@
                       <div key={book.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", overflow: "hidden", boxShadow: "0 2px 10px rgba(242,150,189,0.07)" }}>
                         <div style={{ padding: "18px 20px" }}>
                           <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
-                            <BookCover title={book.title} author={book.author} />
+                            <BookCover title={book.title} author={book.author} coverUrl={book.coverUrl} />
                             <div style={{ flex: 1, minWidth: 200 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                                 <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 10, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
@@ -904,9 +916,7 @@
                                   <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#2C3E50", marginBottom: 3 }}>{book.title || <span style={{ color: "#ccc", fontStyle: "italic" }}>Untitled</span>}</div>
                                   {book.author && <div style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", marginBottom: 6 }}>{book.author}</div>}
                                   <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                                    <div style={{ display: "flex", gap: 2 }}>
-                                      {[1,2,3,4,5].map(s => <span key={s} style={{ fontSize: 16, color: s <= book.rating ? "#FCCA59" : "#e0cfd8" }}>★</span>)}
-                                    </div>
+                                    <StarPicker value={book.rating} onChange={r => save(books.map(b => b.id === book.id ? { ...b, rating: r } : b))} />
                                     {book.dateFinished && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#aaa", letterSpacing: 0.5 }}>finished {new Date(book.dateFinished + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
                                     {book.review && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#F296BD", letterSpacing: 0.5 }}>has review</span>}
                                   </div>
