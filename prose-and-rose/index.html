@@ -257,7 +257,6 @@
           ],
           everygirl: [
             { id: "with-a-vengeance", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1733935606i/219603177.jpg", title: "With a Vengeance", author: "Riley Sager", hook: "A 1954 overnight train. She's locked everyone who destroyed her family aboard. A murder derails her plan. Christie-level locked-room thriller — instant NYT bestseller.", rating: null },
-            { id: "its-a-love-story", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1728397501i/218153839.jpg", title: "It's a Love Story", author: "Annabel Monaghan", hook: "Former sitcom punchline turned Hollywood exec faked having a pop star deal to greenlight her project. Now she needs her enemy/one-time crush to make it real. Monaghan's best.", rating: null },
             { id: "summer-in-city", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1745152848i/216405550.jpg", title: "Summer in the City", author: "Alex Aster", hook: "Screenwriter with writer's block. Her stairwell hookup is now her neighbor and fake boyfriend per their deal. Alex Aster's debut romance — #2 NYT bestseller.", rating: null },
             { id: "love-war-song", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1731022378i/220687884.jpg", title: "Love Is a War Song", author: "Danica Nava", hook: "Cancelled Muscogee pop star flees to her grandmother's Oklahoma ranch. The cowboy running it wants her gone. USA Today bestseller with real Indigenous cultural depth.", rating: null },
             { id: "mvb-book-club", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1734728830i/215805887.jpg", title: "The Martha's Vineyard Beach and Book Club", author: "Martha Hall Kelly", hook: "Two sisters, 1942 Martha's Vineyard. A failing farm, a U-boat offshore, and a wartime book club that holds them together. From the Lilac Girls author — built for you.", rating: null },
@@ -684,7 +683,7 @@
 
         const EMPTY_BOOK = { id: "", title: "", author: "", dateFinished: "", rating: 0, review: "" };
 
-        const BASE_TOTAL = 427;
+        const BASE_TOTAL = 430;
 
         const TIMELINE_DATA = [
           { year: "Earlier", color: "#F296BD", books: [
@@ -708,6 +707,9 @@
         ];
 
         const DEFAULT_RECENT = [
+          { id: "d0a", title: "Scythe & Sparrow", author: "Brynne Weaver", dateFinished: "2026-06-29", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1714505398i/127616032.jpg" },
+          { id: "d0b", title: "It's a Love Story", author: "Annabel Monaghan", dateFinished: "2026-06-22", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1728397501i/218153839.jpg" },
+          { id: "d0c", title: "Our Perfect Storm", author: "Carley Fortune", dateFinished: "2026-06-15", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1756350403i/239703816.jpg" },
           { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1776111412i/237353764.jpg" },
           { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1771952095i/242082631.jpg" },
           { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732028627i/216895124.jpg" },
@@ -715,9 +717,6 @@
           { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1722126296i/216247518.jpg" },
           { id: "d6", title: "And Now Back to You", author: "BK Borison", dateFinished: "2026-04-26", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748482477i/217513554.jpg" },
           { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1442613785i/1211497.jpg" },
-          { id: "d8", title: "The Wedding People", author: "Allison Espach", dateFinished: "2026-04-12", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1759683499i/198902277.jpg" },
-          { id: "d9", title: "One Last Stop", author: "Casey McQuiston", dateFinished: "2026-04-05", rating: 4, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1598019346i/54860443.jpg" },
-          { id: "d10", title: "The Meaning of Your Life", author: "Arthur C. Brooks", dateFinished: "2026-03-29", rating: 4, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1774479295i/238766978.jpg" },
         ];
 
         function BookCover({ title, author, coverUrl }) {
