@@ -775,12 +775,17 @@
             try {
               const saved = JSON.parse(localStorage.getItem(storageKey));
               if (!saved || !saved.length) return DEFAULT_RECENT;
-              // Merge in coverUrl from defaults for any book that doesn't have one
-              return saved.map(b => {
+              const savedIds = new Set(saved.map(b => b.id));
+              // Prepend any new defaults not yet in localStorage (newest books added by code)
+              const newDefaults = DEFAULT_RECENT.filter(d => !savedIds.has(d.id));
+              // Merge coverUrl into saved entries that don't have it
+              const merged = saved.map(b => {
                 if (b.coverUrl) return b;
                 const def = DEFAULT_RECENT.find(d => d.id === b.id);
                 return def && def.coverUrl ? { ...b, coverUrl: def.coverUrl } : b;
               });
+              // Combine and cap at 10, newest first
+              return [...newDefaults, ...merged].slice(0, 10);
             } catch { return DEFAULT_RECENT; }
           };
           const [books, setBooks] = React.useState(loadBooks);
