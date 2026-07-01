@@ -710,13 +710,13 @@
           { id: "d0a", title: "Scythe & Sparrow", author: "Brynne Weaver", dateFinished: "2026-06-29", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1714505398i/127616032.jpg" },
           { id: "d0b", title: "It's a Love Story", author: "Annabel Monaghan", dateFinished: "2026-06-22", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1728397501i/218153839.jpg" },
           { id: "d0c", title: "Our Perfect Storm", author: "Carley Fortune", dateFinished: "2026-06-15", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1756350403i/239703816.jpg" },
-          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1776111412i/237353764.jpg" },
-          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1771952095i/242082631.jpg" },
-          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732028627i/216895124.jpg" },
-          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1755786976i/231801371.jpg" },
-          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1722126296i/216247518.jpg" },
-          { id: "d6", title: "And Now Back to You", author: "BK Borison", dateFinished: "2026-04-26", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748482477i/217513554.jpg" },
-          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 5, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1442613785i/1211497.jpg" },
+          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1776111412i/237353764.jpg" },
+          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1771952095i/242082631.jpg" },
+          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732028627i/216895124.jpg" },
+          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1755786976i/231801371.jpg" },
+          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1722126296i/216247518.jpg" },
+          { id: "d6", title: "And Now Back to You", author: "BK Borison", dateFinished: "2026-04-26", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748482477i/217513554.jpg" },
+          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1442613785i/1211497.jpg" },
         ];
 
         function BookCover({ title, author, coverUrl }) {
@@ -770,7 +770,7 @@
         }
 
         function RecentlyRead({ onBookAdded }) {
-          const storageKey = "recentlyRead_v1";
+          const storageKey = "recentlyRead_v2";
           const loadBooks = () => {
             try {
               const saved = JSON.parse(localStorage.getItem(storageKey));
