@@ -175,6 +175,8 @@
   .person-pill.wren { background: #ec4899; border-color: #ec4899; }
   .person-pill.chelsea { background: #c4b5fd; border-color: #c4b5fd; }
   .person-pill.vivian { background: #eab308; border-color: #eab308; }
+  .person-pill.alice { background: #10b981; border-color: #10b981; }
+  .person-pill.bob { background: #f97316; border-color: #f97316; }
   .person-pill.all { background: var(--accent); border-color: var(--accent); color: white; }
   .person-pill:hover { background: var(--accent-soft); }
   .ribbon-row {
@@ -648,7 +650,8 @@
       daysOfWeek: [0],
       time: "9:30 AM",
       ranges: [{ start: "2026-06-01", end: "2026-08-31" }],
-      note: "Sundays, June – August 2026"
+      exceptions: ["2026-07-12"],
+      note: "Sundays, June – August 2026 · no church Jul 12"
     },
     {
       id: "soccer",
@@ -703,6 +706,7 @@
       time: "1:30 – 4:00 PM",
       intervalWeeks: 2,
       ranges: [{ start: "2026-06-03", end: null }],
+      exceptions: ["2026-06-17"],
       note: "Every other Wednesday, starts Jun 3, 2026"
     },
     {
@@ -723,16 +727,26 @@
     { id: "matt", name: "Matt", color: "#3b82f6" },
     { id: "wren", name: "Wren", color: "#ec4899" },
     { id: "chelsea", name: "Chelsea", color: "#c4b5fd" },
-    { id: "vivian", name: "Vivian", color: "#eab308" }
+    { id: "vivian", name: "Vivian", color: "#eab308" },
+    { id: "alice", name: "Alice", color: "#10b981" },
+    { id: "bob", name: "Bob", color: "#f97316" }
   ];
 
   let selectedPerson = "all";
 
   const personRanges = [
-    { person: "chelsea", start: "2026-07-01", end: "2026-07-05", note: "Travel dates" },
     // Vivian time off
     { person: "vivian", start: "2026-06-27", end: "2026-06-27", note: "Vivian off" },
     { person: "vivian", start: "2026-07-03", end: "2026-07-04", note: "Vivian off" },
+    // Vivian working days Jul 13–24 (Jul 13, 14, 21, 22, 23, 24 only)
+    { person: "vivian", start: "2026-07-13", end: "2026-07-14", note: "Vivian working" },
+    { person: "vivian", start: "2026-07-21", end: "2026-07-24", note: "Vivian working" },
+    // Breckenridge — Matt, Chelsea, Wren (Jul 10–13); Alice & Bob (Jul 10–15)
+    { person: "matt",    start: "2026-07-10", end: "2026-07-13", note: "Breckenridge, CO" },
+    { person: "chelsea", start: "2026-07-10", end: "2026-07-13", note: "Breckenridge, CO" },
+    { person: "wren",    start: "2026-07-10", end: "2026-07-13", note: "Breckenridge, CO" },
+    { person: "alice",   start: "2026-07-10", end: "2026-07-15", note: "Breckenridge, CO" },
+    { person: "bob",     start: "2026-07-10", end: "2026-07-15", note: "Breckenridge, CO" },
     // Montana — Matt, Chelsea, Wren (UA 2246 Jun 25 DEN→FCA, UA 5991 Jun 29 FCA→DEN)
     { person: "matt",    start: "2026-06-25", end: "2026-06-29", note: "Montana (Kalispell)" },
     { person: "chelsea", start: "2026-06-25", end: "2026-06-29", note: "Montana (Kalispell)" },
@@ -780,10 +794,10 @@
     { title: "📚 Half day (last day)",       color: "#ec4899", date: "2026-05-29", owner: "wren" },
     { title: "☀️ Summer break begins",       color: "#ec4899", date: "2026-06-01", owner: "wren" },
     // Wren – 2026–27 MSD school year (official calendar, updated 1/7/26)
-    { title: "🧺 Welcome Back Picnic/Reception",    color: "#ec4899", date: "2026-08-16", owner: "wren", location: "Lakeside" },
-    { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "Refer to your child's schedule · Toddler Family Visits (Parents Only)" },
-    { title: "🏫 MSD 101 – New Families",           color: "#ec4899", date: "2026-08-29", owner: "wren", note: "New families only" },
-    { title: "🎒 New Student Orientation (½-day)",  color: "#ec4899", date: "2026-08-31", owner: "wren", note: "K–MS half day" },
+    { title: "🧺 Back to School Family Picnic",      color: "#ec4899", date: "2026-08-16", time: "5:00 – 7:00 PM", owner: "wren", location: "Lakeside Amusement Park", note: "Pack your dinner and a blanket · Join MSD families for a casual picnic" },
+    { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
+    { title: "🏫 MSD 101 – New Families",           color: "#ec4899", date: "2026-08-29", time: "9:00 AM – 1:00 PM", owner: "wren", note: "All new families required to attend · Adults only · Details and registration coming" },
+    { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-31", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
     { title: "🎒 First Full Day of School (K–MS)",  color: "#ec4899", date: "2026-09-01", owner: "wren", note: "Toddler Phase-in begins · 2nd Year Primary ½-day" },
     { title: "📚 2nd Year Primary – regular hours", color: "#ec4899", date: "2026-09-02", owner: "wren" },
     { title: "📚 1st Year Primary – ½-day",         color: "#ec4899", date: "2026-09-03", owner: "wren" },
@@ -1044,7 +1058,9 @@
 
     const dayItems = [];
     events.forEach(ev => {
-      if (occursOn(ev, date)) dayItems.push({ type: "recurring", ev });
+      if (occursOn(ev, date) && (selectedPerson === "all" || ev.owner === selectedPerson)) {
+        dayItems.push({ type: "recurring", ev });
+      }
     });
     oneOffEvents.forEach(ev => {
       if (sameDay(date, parseYmd(ev.date)) && oneOffVisible(ev)) {
@@ -1091,7 +1107,7 @@
 
     const ranges = personRangesForDate(date);
     const recurring = events
-      .filter(ev => occursOn(ev, date))
+      .filter(ev => occursOn(ev, date) && (selectedPerson === "all" || ev.owner === selectedPerson))
       .slice()
       .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
     const oneOffs = oneOffEvents
@@ -1244,7 +1260,7 @@
 
     recurringEl.innerHTML = "";
     events
-      .filter(ev => ev.ranges.some(r => stillActive(r.end)))
+      .filter(ev => ev.ranges.some(r => stillActive(r.end)) && (selectedPerson === "all" || ev.owner === selectedPerson))
       .forEach(ev => {
         const days = ev.daysOfWeek.map(d => fullDow[d]).join(", ");
         const card = document.createElement("div");
