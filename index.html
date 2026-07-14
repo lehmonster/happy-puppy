@@ -1,172 +1,338 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Happy Puppy - Games & Travel Tools</title>
-<style>
-  :root {
-    --bg: #fdf9f3;
-    --card: #ffffff;
-    --ink: #2b2233;
-    --muted: #7a6f80;
-    --border: #ece4d9;
-    --accent: #ff7a59;
-    --blue: #3b82f6;
-    --green: #10b981;
-    --shadow: 0 8px 24px rgba(40, 30, 50, 0.06);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: ui-rounded, "Nunito", "Segoe UI", system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.6;
-    padding: 20px;
-  }
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  header {
-    text-align: center;
-    padding: 40px 20px;
-  }
-  h1 {
-    font-size: 48px;
-    margin-bottom: 8px;
-  }
-  .subtitle {
-    color: var(--muted);
-    font-size: 18px;
-  }
-  .sections {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    margin-top: 40px;
-  }
-  .section-card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 32px;
-    box-shadow: var(--shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .section-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(40, 30, 50, 0.12);
-  }
-  .section-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
-  }
-  .section-title {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  .section-desc {
-    color: var(--muted);
-    margin-bottom: 20px;
-    font-size: 15px;
-  }
-  .links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .link-btn {
-    display: block;
-    padding: 12px 20px;
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    text-decoration: none;
-    color: var(--ink);
-    font-weight: 600;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .link-btn:hover {
-    border-color: var(--accent);
-    background: white;
-  }
-  .link-btn.primary {
-    background: var(--accent);
-    color: white;
-    border-color: var(--accent);
-  }
-  .link-btn.primary:hover {
-    background: #ff6342;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chelsea's Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #fdf9f3;
+      color: #2b2233;
+      line-height: 1.6;
+      padding: 0 20px 72px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      text-align: center;
+      padding: 60px 20px 44px;
+    }
+    .header-ornament {
+      font-size: 1.1rem;
+      letter-spacing: 18px;
+      color: #F296BD;
+      opacity: 0.55;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-style: italic;
+      font-weight: 700;
+      color: #2b2233;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .header .subtitle {
+      font-size: 1rem;
+      color: #7a6f80;
+      font-weight: 500;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .header-rule {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      max-width: 280px;
+      margin: 28px auto 0;
+    }
+    .header-rule hr { flex: 1; border: none; border-top: 1.5px solid #ece4d9; }
+    .header-rule .ornament { color: #F296BD; font-size: 1.1rem; }
+
+    /* ── QUICK LINKS ── */
+    .quick-bar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 700px;
+      margin: 32px auto 56px;
+    }
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 18px;
+      background: white;
+      border: 1.5px solid #ece4d9;
+      border-radius: 99px;
+      text-decoration: none;
+      color: #2b2233;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(40,30,50,0.05);
+    }
+    .quick-link:hover {
+      border-color: #F296BD;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(242,150,189,0.18);
+    }
+
+    /* ── CONTAINER ── */
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 52px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .section-emoji { font-size: 1.4rem; line-height: 1; }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2b2233;
+      white-space: nowrap;
+    }
+    .section-line { flex: 1; height: 1.5px; background: #ece4d9; }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      gap: 18px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #2b2233;
+      box-shadow: 0 4px 20px rgba(40,30,50,0.07);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 36px rgba(40,30,50,0.13);
+    }
+    .card-stripe { height: 6px; }
+    .card-body {
+      padding: 22px 22px 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .card-icon { font-size: 2rem; margin-bottom: 10px; line-height: 1; }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.13rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      line-height: 1.3;
+      color: #2b2233;
+    }
+    .card-desc {
+      font-size: 0.83rem;
+      color: #7a6f80;
+      line-height: 1.58;
+      flex: 1;
+    }
+    .card-url {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: #c8b8d8;
+      margin-top: 14px;
+      padding-top: 11px;
+      border-top: 1px solid #f0ebe5;
+      word-break: break-all;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 36px 20px 0;
+      font-size: 0.8rem;
+      color: #c8b8d8;
+    }
+    footer a { color: #F296BD; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .header { padding: 44px 16px 32px; }
+      .quick-bar { margin-bottom: 40px; }
+    }
+  </style>
 </head>
 <body>
+
 <div class="container">
-  <header>
-    <h1>🐕 Happy Puppy</h1>
-    <p class="subtitle">Games, Travel Tools & Reading Trackers</p>
+
+  <header class="header">
+    <span class="header-ornament">✦ &nbsp; ✦ &nbsp; ✦</span>
+    <h1>Chelsea's Projects</h1>
+    <p class="subtitle">A collection of tools, games, dashboards &amp; adventures</p>
+    <div class="header-rule">
+      <hr><span class="ornament">✿</span><hr>
+    </div>
   </header>
 
-  <div class="sections">
-    <!-- Schedule and Trip Planning -->
-    <div class="section-card">
-      <div class="section-icon">✈️</div>
-      <h2 class="section-title">Schedule and Trip Planning</h2>
-      <p class="section-desc">Smart packing lists and schedules for your trips</p>
-      <div class="links">
-        <a href="travel/packing-pinterest.html" class="link-btn primary">Pinterest Packing List</a>
-        <a href="travel/packing-list.html" class="link-btn">Simple Packing List</a>
-        <a href="travel/schedule.html" class="link-btn">Travel Schedule</a>
-      </div>
-    </div>
-
-    <!-- Kids Games -->
-    <div class="section-card">
-      <div class="section-icon">🎮</div>
-      <h2 class="section-title">Kids Games</h2>
-      <p class="section-desc">Fun educational games for toddlers and kids</p>
-      <div class="links">
-        <a href="games/" class="link-btn primary">All Games</a>
-        <a href="games/princess.html" class="link-btn">Princess Game</a>
-        <a href="games/emoji-word-match.html" class="link-btn">Emoji Word Match</a>
-        <a href="games/word-adventure.html" class="link-btn">Word Adventure</a>
-      </div>
-    </div>
-
-    <!-- Games (Reading Quest included) -->
-    <div class="section-card">
-      <div class="section-icon">📖</div>
-      <h2 class="section-title">Reading & Learning</h2>
-      <p class="section-desc">Educational reading games</p>
-      <div class="links">
-        <a href="games/reading-quest.html" class="link-btn primary">Reading Quest</a>
-      </div>
-    </div>
-
-    <!-- Spanish Trainer -->
-    <div class="section-card">
-      <div class="section-icon">🇲🇽</div>
-      <h2 class="section-title">Wanderwords</h2>
-      <p class="section-desc">Flashcards, quiz, fill-in-blank, listen &amp; spell, sentence builder — 100+ words for travel</p>
-      <div class="links">
-        <a href="tools/spanish-trainer.html" class="link-btn primary">Open Wanderwords</a>
-      </div>
-    </div>
-
-    <!-- Other Tools -->
-    <div class="section-card">
-      <div class="section-icon">🛠️</div>
-      <h2 class="section-title">Other Tools</h2>
-      <p class="section-desc">Dashboards and utilities</p>
-      <div class="links">
-        <a href="tools/reading-dashboard-full.html" class="link-btn primary">Reading Dashboard</a>
-        <a href="tools/volunteer-tracker.html" class="link-btn">Volunteer Tracker</a>
-        <a href="tools/gift-genius.html" class="link-btn">Gift Genius</a>
-      </div>
-    </div>
+  <div class="quick-bar">
+    <a class="quick-link" href="https://lehmonster.github.io/happy-puppy/" target="_blank">🏠 Main Site</a>
+    <a class="quick-link" href="https://github.com/lehmonster/happy-puppy" target="_blank">💾 GitHub</a>
   </div>
-</div>
-</body>
-</html>
+
+  <!-- LANGUAGE LEARNING -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-emoji">🌍</span>
+      <h2 class="section-title">Language Learning</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid">
+
+      <a href="https://lehmonster.github.io/happy-puppy/tools/spanish-trainer.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#F296BD;"></div>
+        <div class="card-body">
+          <div class="card-icon">🇲🇽</div>
+          <div class="card-title">Wanderwords — Spanish</div>
+          <div class="card-desc">Full Spanish trainer with flashcards, quiz, fill-in, listen &amp; spell, sentence builder, SRS review, and placement assessment</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/tools/spanish-trainer.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/tools/italian-trainer.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#267F53;"></div>
+        <div class="card-body">
+          <div class="card-icon">🇮🇹</div>
+          <div class="card-title">Wanderwords — Italian</div>
+          <div class="card-desc">Full Italian trainer with flashcards, quiz, fill-in, listen &amp; spell, sentence builder, SRS review, and placement assessment</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/tools/italian-trainer.html</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- BOOKS & READING -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-emoji">📚</span>
+      <h2 class="section-title">Books &amp; Reading</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid">
+
+      <a href="https://lehmonster.github.io/happy-puppy/prose-and-rose/" class="card" target="_blank">
+        <div class="card-stripe" style="background:linear-gradient(90deg,#F296BD,#99B7F5);"></div>
+        <div class="card-body">
+          <div class="card-icon">🌹</div>
+          <div class="card-title">Prose &amp; Rosé</div>
+          <div class="card-desc">Interactive dashboard tracking 430 books across 6 years — visual analytics, genre breakdown, literary themes, TBR pile with cover art, Recently Read with star ratings &amp; reviews, and full reading timeline</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/prose-and-rose/</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- PERSONAL TOOLS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-emoji">🛠️</span>
+      <h2 class="section-title">Personal Tools</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid">
+
+      <a href="https://lehmonster.github.io/happy-puppy/tools/gift-genius.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#F5793B;"></div>
+        <div class="card-body">
+          <div class="card-icon">🎁</div>
+          <div class="card-title">Gift Genius</div>
+          <div class="card-desc">Gift idea tracker and planner, password-protected</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/tools/gift-genius.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/tools/volunteer-tracker.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#267F53;"></div>
+        <div class="card-body">
+          <div class="card-icon">🤝</div>
+          <div class="card-title">Volunteer Impact Tracker</div>
+          <div class="card-desc">Track community engagement events with stats, impact thermometer, and CSV export</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/tools/volunteer-tracker.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/tools/fridge-chef.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#FCCA59;"></div>
+        <div class="card-body">
+          <div class="card-icon">🍳</div>
+          <div class="card-title">Good Enough Grill</div>
+          <div class="card-desc">It's fine, eat it — a recipe explorer for whatever's actually in your fridge</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/tools/fridge-chef.html</div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- TRAVEL -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-emoji">✈️</span>
+      <h2 class="section-title">Travel &amp; Planning</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="grid">
+
+      <a href="https://lehmonster.github.io/happy-puppy/travel/packing-moodboard.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#99B7F5;"></div>
+        <div class="card-body">
+          <div class="card-icon">🧳</div>
+          <div class="card-title">Keep Calm, and Carry On</div>
+          <div class="card-desc">Moodboard-style trip planner and packing list</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/travel/packing-moodboard.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/travel/packing-pinterest.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#F296BD;"></div>
+        <div class="card-body">
+          <div class="card-icon">📸</div>
+          <div class="card-title">Pinterest Packing List</div>
+          <div class="card-desc">Photo upload + AI styling suggestions for your trip wardrobe</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/travel/packing-pinterest.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/travel/packing-list.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#267F53;"></div>
+        <div class="card-body">
+          <div class="card-icon">✅</div>
+          <div class="card-title">Simple Packing List</div>
+          <div class="card-desc">Quick packing checklist for any trip</div>
+          <div class="card-url">lehmonster.github.io/happy-puppy/travel/packing-list.html</div>
+        </div>
+      </a>
+
+      <a href="https://lehmonster.github.io/happy-puppy/travel/schedule.html" class="card" target="_blank">
+        <div class="card-stripe" style="background:#F5793B;"></div>
+        <div class
