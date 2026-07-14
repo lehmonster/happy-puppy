@@ -540,6 +540,12 @@ body{font-family:'Lato',sans-serif;background:var(--bg);min-height:100vh;}
       <span class="nav-icon">🎓</span>
       <div><div class="nav-lbl">Placement Test</div><div class="nav-sub" id="assess-sub">Find your level</div></div>
     </button>
+
+    <div class="sidebar-section">Explore</div>
+    <button class="nav-item" onclick="goMode('lookup')" id="tab-lookup">
+      <span class="nav-icon">🔍</span>
+      <div><div class="nav-lbl">Dictionary</div><div class="nav-sub">Look up any word</div></div>
+    </button>
   </nav>
 
   <!-- MAIN CONTENT -->
@@ -802,6 +808,20 @@ body{font-family:'Lato',sans-serif;background:var(--bg);min-height:100vh;}
       </div>
     </div>
 
+    <!-- DICTIONARY LOOKUP -->
+    <div id="lookup" class="screen">
+      <div class="panel">
+        <div style="text-align:center;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin-bottom:14px">Spanish–English Dictionary</div>
+        <input class="text-inp" id="lk-inp" placeholder="Search English or Spanish…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="renderLK()">
+        <div style="display:flex;gap:8px;justify-content:center;margin:10px 0">
+          <button class="btn btn-skip" id="lk-dir" onclick="cycleLKDir()" style="font-size:.76rem;padding:6px 14px">🔄 Both directions</button>
+          <button class="btn btn-skip" onclick="document.getElementById('lk-inp').value='';renderLK();document.getElementById('lk-inp').focus()" style="font-size:.76rem;padding:6px 14px">✕ Clear</button>
+        </div>
+        <div id="lk-results" style="border-top:1px solid var(--border);margin-top:4px"></div>
+        <div id="lk-count" style="text-align:center;font-size:.71rem;color:var(--dim);margin-top:10px"></div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /app-body -->
 
@@ -816,6 +836,7 @@ body{font-family:'Lato',sans-serif;background:var(--bg);min-height:100vh;}
   <button class="mob-item" onclick="goMode('srs')" id="mob-srs"><span>🔁</span><span>SRS</span></button>
   <button class="mob-item" onclick="goMode('drill')" id="mob-drill"><span>📝</span><span>Drill</span></button>
   <button class="mob-item" onclick="goMode('assess')" id="mob-assess"><span>🎓</span><span>Assess</span></button>
+  <button class="mob-item" onclick="goMode('lookup')" id="mob-lookup"><span>🔍</span><span>Lookup</span></button>
 </nav>
 
 <script>
@@ -929,6 +950,188 @@ const SENT=[
   {words:['¿Dónde','está','el','hotel?'],hint:'Where is the hotel?'},
 ];
 
+const LOOKUP_EXTRA=[
+  // Days
+  {w:'lunes',m:'Monday',c:'days'},{w:'martes',m:'Tuesday',c:'days'},
+  {w:'miércoles',m:'Wednesday',c:'days'},{w:'jueves',m:'Thursday',c:'days'},
+  {w:'viernes',m:'Friday',c:'days'},{w:'sábado',m:'Saturday',c:'days'},{w:'domingo',m:'Sunday',c:'days'},
+  // Months
+  {w:'enero',m:'January',c:'months'},{w:'febrero',m:'February',c:'months'},
+  {w:'marzo',m:'March',c:'months'},{w:'abril',m:'April',c:'months'},
+  {w:'mayo',m:'May',c:'months'},{w:'junio',m:'June',c:'months'},
+  {w:'julio',m:'July',c:'months'},{w:'agosto',m:'August',c:'months'},
+  {w:'septiembre',m:'September',c:'months'},{w:'octubre',m:'October',c:'months'},
+  {w:'noviembre',m:'November',c:'months'},{w:'diciembre',m:'December',c:'months'},
+  // Seasons & time
+  {w:'primavera',m:'spring',c:'time'},{w:'verano',m:'summer',c:'time'},
+  {w:'otoño',m:'autumn / fall',c:'time'},{w:'invierno',m:'winter',c:'time'},
+  {w:'minuto',m:'minute',c:'time'},{w:'segundo',m:'second',c:'time'},
+  {w:'mediodía',m:'noon / midday',c:'time'},{w:'medianoche',m:'midnight',c:'time'},
+  {w:'ayer',m:'yesterday',c:'time'},{w:'pasado mañana',m:'day after tomorrow',c:'time'},
+  {w:'mes',m:'month',c:'time'},{w:'año',m:'year',c:'time'},
+  {w:'pronto',m:'soon / early',c:'time'},{w:'esta noche',m:'tonight / this evening',c:'time'},
+  // Weather
+  {w:'sol',m:'sun / sunshine',c:'weather'},{w:'lluvia',m:'rain',c:'weather'},
+  {w:'nieve',m:'snow',c:'weather'},{w:'viento',m:'wind',c:'weather'},
+  {w:'nube',m:'cloud',c:'weather'},{w:'tormenta',m:'thunderstorm',c:'weather'},
+  {w:'niebla',m:'fog',c:'weather'},{w:'caliente',m:'hot / warm',c:'weather'},
+  {w:'frío',m:'cold',c:'weather'},{w:'húmedo',m:'humid / damp',c:'weather'},
+  {w:'despejado',m:'clear / sunny',c:'weather'},
+  // Numbers 11–1000
+  {w:'once',m:'eleven',c:'numbers'},{w:'doce',m:'twelve',c:'numbers'},
+  {w:'trece',m:'thirteen',c:'numbers'},{w:'catorce',m:'fourteen',c:'numbers'},
+  {w:'quince',m:'fifteen',c:'numbers'},{w:'dieciséis',m:'sixteen',c:'numbers'},
+  {w:'diecisiete',m:'seventeen',c:'numbers'},{w:'dieciocho',m:'eighteen',c:'numbers'},
+  {w:'diecinueve',m:'nineteen',c:'numbers'},{w:'veinte',m:'twenty',c:'numbers'},
+  {w:'treinta',m:'thirty',c:'numbers'},{w:'cuarenta',m:'forty',c:'numbers'},
+  {w:'cincuenta',m:'fifty',c:'numbers'},{w:'sesenta',m:'sixty',c:'numbers'},
+  {w:'setenta',m:'seventy',c:'numbers'},{w:'ochenta',m:'eighty',c:'numbers'},
+  {w:'noventa',m:'ninety',c:'numbers'},{w:'cien',m:'hundred',c:'numbers'},
+  {w:'mil',m:'thousand',c:'numbers'},
+  // Directions
+  {w:'norte',m:'north',c:'directions'},{w:'sur',m:'south',c:'directions'},
+  {w:'este',m:'east',c:'directions'},{w:'oeste',m:'west',c:'directions'},
+  {w:'derecha',m:'right',c:'directions'},{w:'izquierda',m:'left',c:'directions'},
+  {w:'recto',m:'straight ahead',c:'directions'},{w:'detrás',m:'behind',c:'directions'},
+  {w:'cerca',m:'near / close',c:'directions'},{w:'lejos',m:'far',c:'directions'},
+  {w:'delante',m:'in front',c:'directions'},{w:'dentro',m:'inside',c:'directions'},
+  {w:'fuera',m:'outside',c:'directions'},{w:'arriba',m:'above / up',c:'directions'},
+  {w:'abajo',m:'below / down',c:'directions'},{w:'al lado',m:'next to / beside',c:'directions'},
+  {w:'esquina',m:'corner',c:'directions'},{w:'cruce',m:'intersection / crossroads',c:'directions'},
+  {w:'semáforo',m:'traffic light',c:'directions'},
+  // Transport
+  {w:'metro',m:'subway / metro',c:'transport'},{w:'ferry',m:'ferry',c:'transport'},
+  {w:'bicicleta',m:'bicycle',c:'transport'},{w:'autopista',m:'highway / motorway',c:'transport'},
+  {w:'andén',m:'platform / track',c:'transport'},{w:'salida',m:'departure / exit',c:'transport'},
+  {w:'llegada',m:'arrival',c:'transport'},{w:'retraso',m:'delay',c:'transport'},
+  {w:'ida',m:'one-way journey',c:'transport'},
+  {w:'ida y vuelta',m:'round trip / return ticket',c:'transport'},
+  {w:'parada',m:'stop / bus stop',c:'transport'},{w:'aparcamiento',m:'parking',c:'transport'},
+  {w:'gasolina',m:'gasoline / petrol',c:'transport'},{w:'alquiler',m:'rental',c:'transport'},
+  {w:'transbordo',m:'connection / transfer',c:'transport'},
+  // Hotel
+  {w:'habitación',m:'room',c:'hotel'},{w:'habitación individual',m:'single room',c:'hotel'},
+  {w:'habitación doble',m:'double room',c:'hotel'},
+  {w:'recepción',m:'reception / front desk',c:'hotel'},{w:'llave',m:'key',c:'hotel'},
+  {w:'ascensor',m:'elevator / lift',c:'hotel'},{w:'planta',m:'floor / level',c:'hotel'},
+  {w:'planta baja',m:'ground floor',c:'hotel'},
+  {w:'reserva',m:'reservation / booking',c:'hotel'},
+  {w:'check-in',m:'check-in',c:'hotel'},{w:'check-out',m:'check-out',c:'hotel'},
+  {w:'toalla',m:'towel',c:'hotel'},{w:'sábana',m:'bed sheet',c:'hotel'},
+  {w:'almohada',m:'pillow',c:'hotel'},{w:'manta',m:'blanket',c:'hotel'},
+  {w:'aire acondicionado',m:'air conditioning',c:'hotel'},
+  {w:'piscina',m:'swimming pool',c:'hotel'},{w:'WiFi',m:'WiFi',c:'hotel'},
+  // Food extended
+  {w:'aperitivo',m:'appetizer / starter',c:'food'},{w:'entrante',m:'starter / first course',c:'food'},
+  {w:'plato principal',m:'main course',c:'food'},{w:'guarnición',m:'side dish',c:'food'},
+  {w:'postre',m:'dessert',c:'food'},{w:'filete',m:'steak',c:'food'},
+  {w:'pescado',m:'fish',c:'food'},{w:'marisco',m:'seafood',c:'food'},
+  {w:'verduras',m:'vegetables',c:'food'},{w:'ensalada',m:'salad',c:'food'},
+  {w:'sopa',m:'soup',c:'food'},{w:'pasta',m:'pasta',c:'food'},
+  {w:'pizza',m:'pizza',c:'food'},{w:'helado',m:'ice cream',c:'food'},
+  {w:'servilleta',m:'napkin',c:'food'},{w:'tenedor',m:'fork',c:'food'},
+  {w:'cuchillo',m:'knife',c:'food'},{w:'cuchara',m:'spoon',c:'food'},
+  {w:'plato',m:'plate / dish',c:'food'},{w:'vaso',m:'glass',c:'food'},
+  {w:'botella',m:'bottle',c:'food'},{w:'ración',m:'portion / serving',c:'food'},
+  // Shopping
+  {w:'tienda',m:'shop / store',c:'shopping'},{w:'supermercado',m:'supermarket',c:'shopping'},
+  {w:'farmacia',m:'pharmacy',c:'shopping'},{w:'librería',m:'bookstore',c:'shopping'},
+  {w:'ropa',m:'clothing / clothes',c:'shopping'},{w:'talla',m:'size',c:'shopping'},
+  {w:'caja',m:'cashier / checkout',c:'shopping'},{w:'descuento',m:'discount',c:'shopping'},
+  {w:'rebajas',m:'sale / clearance',c:'shopping'},{w:'recibo',m:'receipt',c:'shopping'},
+  {w:'cambio',m:'exchange / change',c:'shopping'},{w:'euro',m:'euro',c:'shopping'},
+  // Clothing
+  {w:'camisa',m:'shirt',c:'clothing'},{w:'pantalones',m:'pants / trousers',c:'clothing'},
+  {w:'falda',m:'skirt',c:'clothing'},{w:'vestido',m:'dress / suit',c:'clothing'},
+  {w:'chaqueta',m:'jacket',c:'clothing'},{w:'abrigo',m:'coat',c:'clothing'},
+  {w:'zapatos',m:'shoes',c:'clothing'},{w:'botas',m:'boots',c:'clothing'},
+  {w:'sandalias',m:'sandals',c:'clothing'},{w:'sombrero',m:'hat',c:'clothing'},
+  {w:'bufanda',m:'scarf',c:'clothing'},{w:'guantes',m:'gloves',c:'clothing'},
+  {w:'bolso',m:'bag / purse',c:'clothing'},{w:'mochila',m:'backpack',c:'clothing'},
+  {w:'maleta',m:'suitcase',c:'clothing'},{w:'paraguas',m:'umbrella',c:'clothing'},
+  // Medical & body
+  {w:'cabeza',m:'head',c:'medical'},{w:'cuello',m:'neck',c:'medical'},
+  {w:'hombro',m:'shoulder',c:'medical'},{w:'brazo',m:'arm',c:'medical'},
+  {w:'mano',m:'hand',c:'medical'},{w:'dedo',m:'finger / toe',c:'medical'},
+  {w:'estómago',m:'stomach',c:'medical'},{w:'pierna',m:'leg',c:'medical'},
+  {w:'pie',m:'foot',c:'medical'},{w:'espalda',m:'back',c:'medical'},
+  {w:'dolor de cabeza',m:'headache',c:'medical'},{w:'fiebre',m:'fever',c:'medical'},
+  {w:'resfriado',m:'cold (illness)',c:'medical'},{w:'tos',m:'cough',c:'medical'},
+  {w:'gripe',m:'flu',c:'medical'},{w:'alergia',m:'allergy',c:'medical'},
+  {w:'médico',m:'doctor',c:'medical'},{w:'hospital',m:'hospital',c:'medical'},
+  {w:'urgencias',m:'emergency room',c:'medical'},
+  {w:'ambulancia',m:'ambulance',c:'medical'},
+  {w:'medicina',m:'medicine',c:'medical'},{w:'dolor',m:'pain',c:'medical'},
+  {w:'farmacéutico',m:'pharmacist',c:'medical'},
+  // Technology
+  {w:'teléfono',m:'phone',c:'tech'},{w:'móvil',m:'mobile phone / cell phone',c:'tech'},
+  {w:'cargador',m:'charger',c:'tech'},{w:'batería',m:'battery',c:'tech'},
+  {w:'internet',m:'internet',c:'tech'},{w:'contraseña',m:'password',c:'tech'},
+  {w:'foto',m:'photo',c:'tech'},{w:'cámara',m:'camera',c:'tech'},
+  {w:'mapa',m:'map',c:'tech'},{w:'mensaje',m:'message',c:'tech'},
+  {w:'llamada',m:'phone call',c:'tech'},
+  // Adjectives extended
+  {w:'alto',m:'tall / high',c:'adjectives'},{w:'bajo',m:'short / low',c:'adjectives'},
+  {w:'largo',m:'long',c:'adjectives'},{w:'corto',m:'short (in length)',c:'adjectives'},
+  {w:'ancho',m:'wide / broad',c:'adjectives'},{w:'estrecho',m:'narrow',c:'adjectives'},
+  {w:'pesado',m:'heavy',c:'adjectives'},{w:'ligero',m:'light',c:'adjectives'},
+  {w:'rápido',m:'fast / quick',c:'adjectives'},{w:'lento',m:'slow',c:'adjectives'},
+  {w:'difícil',m:'difficult',c:'adjectives'},{w:'fácil',m:'easy',c:'adjectives'},
+  {w:'caro',m:'expensive',c:'adjectives'},{w:'barato',m:'cheap / affordable',c:'adjectives'},
+  {w:'fresco',m:'fresh / cool',c:'adjectives'},{w:'limpio',m:'clean',c:'adjectives'},
+  {w:'sucio',m:'dirty',c:'adjectives'},{w:'abierto',m:'open',c:'adjectives'},
+  {w:'cerrado',m:'closed',c:'adjectives'},{w:'lleno',m:'full',c:'adjectives'},
+  {w:'vacío',m:'empty',c:'adjectives'},{w:'joven',m:'young',c:'adjectives'},
+  {w:'viejo',m:'old',c:'adjectives'},{w:'cansado',m:'tired',c:'adjectives'},
+  {w:'feliz',m:'happy',c:'adjectives'},{w:'triste',m:'sad',c:'adjectives'},
+  {w:'enojado',m:'angry',c:'adjectives'},{w:'simpático',m:'friendly / likeable',c:'adjectives'},
+  {w:'amable',m:'kind / polite',c:'adjectives'},{w:'ruidoso',m:'noisy / loud',c:'adjectives'},
+  {w:'tranquilo',m:'quiet / calm',c:'adjectives'},{w:'interesante',m:'interesting',c:'adjectives'},
+  {w:'importante',m:'important',c:'adjectives'},{w:'útil',m:'useful',c:'adjectives'},
+  {w:'necesario',m:'necessary',c:'adjectives'},{w:'feo',m:'ugly / unpleasant',c:'adjectives'},
+  // Verbs extended
+  {w:'caminar',m:'to walk',c:'verbs'},{w:'correr',m:'to run',c:'verbs'},
+  {w:'esperar',m:'to wait',c:'verbs'},{w:'entrar',m:'to enter',c:'verbs'},
+  {w:'salir',m:'to exit / go out',c:'verbs'},{w:'subir',m:'to go up / climb',c:'verbs'},
+  {w:'bajar',m:'to go down / get off',c:'verbs'},{w:'tomar',m:'to take',c:'verbs'},
+  {w:'dejar',m:'to leave / let',c:'verbs'},{w:'mandar',m:'to send',c:'verbs'},
+  {w:'recibir',m:'to receive',c:'verbs'},{w:'sentir',m:'to feel',c:'verbs'},
+  {w:'dormir',m:'to sleep',c:'verbs'},{w:'despertarse',m:'to wake up',c:'verbs'},
+  {w:'gastar',m:'to spend',c:'verbs'},{w:'perder',m:'to lose',c:'verbs'},
+  {w:'mirar',m:'to look at / watch',c:'verbs'},{w:'escuchar',m:'to listen',c:'verbs'},
+  {w:'leer',m:'to read',c:'verbs'},{w:'escribir',m:'to write',c:'verbs'},
+  {w:'trabajar',m:'to work',c:'verbs'},{w:'estudiar',m:'to study',c:'verbs'},
+  {w:'viajar',m:'to travel',c:'verbs'},{w:'visitar',m:'to visit',c:'verbs'},
+  {w:'nadar',m:'to swim',c:'verbs'},{w:'cambiar',m:'to change',c:'verbs'},
+  {w:'agradecer',m:'to thank',c:'verbs'},{w:'disculparse',m:'to apologize',c:'verbs'},
+  {w:'reservar',m:'to book / reserve',c:'verbs'},{w:'cocinar',m:'to cook',c:'verbs'},
+  {w:'manejar',m:'to drive',c:'verbs'},{w:'jugar',m:'to play',c:'verbs'},
+  // Places & sights
+  {w:'plaza',m:'square / plaza',c:'places'},{w:'iglesia',m:'church',c:'places'},
+  {w:'museo',m:'museum',c:'places'},{w:'castillo',m:'castle',c:'places'},
+  {w:'palacio',m:'palace / building',c:'places'},{w:'parque',m:'park',c:'places'},
+  {w:'jardín',m:'garden',c:'places'},{w:'playa',m:'beach',c:'places'},
+  {w:'mar',m:'sea',c:'places'},{w:'lago',m:'lake',c:'places'},
+  {w:'montaña',m:'mountain',c:'places'},{w:'isla',m:'island',c:'places'},
+  {w:'puerto',m:'port / harbor',c:'places'},{w:'puente',m:'bridge',c:'places'},
+  {w:'torre',m:'tower',c:'places'},{w:'ruinas',m:'ruins',c:'places'},
+  {w:'campo',m:'countryside / field',c:'places'},{w:'colina',m:'hill',c:'places'},
+  {w:'fuente',m:'fountain',c:'places'},
+  // Useful phrases
+  {w:'¿cómo se dice?',m:'how do you say?',c:'phrases'},
+  {w:'no sé',m:"I don't know",c:'phrases'},
+  {w:'quizás',m:'maybe / perhaps',c:'phrases'},{w:'claro',m:'of course / clear',c:'phrases'},
+  {w:'exacto',m:'exactly / correct',c:'phrases'},{w:'enseguida',m:'right away',c:'phrases'},
+  {w:'todavía',m:'still / yet',c:'phrases'},{w:'demasiado',m:'too much / too many',c:'phrases'},
+  {w:'desgraciadamente',m:'unfortunately',c:'phrases'},
+  {w:'de todos modos',m:'anyway / regardless',c:'phrases'},
+  {w:'entonces',m:'so / therefore / then',c:'phrases'},{w:'en cambio',m:'instead / on the other hand',c:'phrases'},
+  {w:'bastante',m:'enough / quite / rather',c:'phrases'},{w:'juntos',m:'together',c:'phrases'},
+  {w:'siempre',m:'always',c:'phrases'},{w:'nunca',m:'never',c:'phrases'},
+  {w:'a menudo',m:'often',c:'phrases'},{w:'con mucho gusto',m:'with pleasure / gladly',c:'phrases'},
+];
+const ALL_WORDS=[...W,...LOOKUP_EXTRA];
+
 // ── PERSISTENCE ──────────────────────────────────────────────
 const SK='ww4';
 let ST;
@@ -998,7 +1201,7 @@ function say(text){
 if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
 
 // ── NAV ──────────────────────────────────────────────────────
-const SCRS=['home','fc','mc','fib','ls','bd','srs','drill','assess','assess-dash','results'];
+const SCRS=['home','fc','mc','fib','ls','bd','srs','drill','assess','assess-dash','results','lookup'];
 function showSc(n){
   SCRS.forEach(s=>{
     document.getElementById(s).classList.toggle('active',s===n);
@@ -1312,7 +1515,7 @@ function rateDR(g){
 }
 
 // ── MODE REGISTRY ─────────────────────────────────────────────
-const MODES={fc:goFC,mc:goMC,fib:goFIB,ls:goLS,bd:goBD,srs:goSRS,drill:goDrill,assess:goAssess};
+const MODES={fc:goFC,mc:goMC,fib:goFIB,ls:goLS,bd:goBD,srs:goSRS,drill:goDrill,assess:goAssess,lookup:goLookup};
 function goMode(m){
   document.getElementById('deckSel').value=DECK;
   MODES[m]&&MODES[m]();showSc(m);
@@ -1542,6 +1745,43 @@ function buildRecs(level,catStats,known,notStarted){
 }
 
 function retakeAssess(){goAssess();}
+
+// ── DICTIONARY LOOKUP ─────────────────────────────────────────
+let lkDir=0;
+function goLookup(){showSc('lookup');setTimeout(()=>document.getElementById('lk-inp').focus(),50);renderLK();}
+function cycleLKDir(){
+  lkDir=(lkDir+1)%3;
+  const labels=['🔄 Both directions','🇬🇧 → 🇲🇽 English → Spanish','🇲🇽 → 🇬🇧 Spanish → English'];
+  document.getElementById('lk-dir').textContent=labels[lkDir];
+  renderLK();
+}
+function renderLK(){
+  const raw=document.getElementById('lk-inp').value;
+  const q=norm(raw);
+  const box=document.getElementById('lk-results');
+  if(!q){
+    box.innerHTML='<div style="text-align:center;padding:32px 0;color:var(--dim);font-size:.85rem">Type a word to search '+ALL_WORDS.length+' entries…</div>';
+    document.getElementById('lk-count').textContent='';return;
+  }
+  const matches=ALL_WORDS.filter(e=>{
+    const esMatch=norm(e.w).includes(q);
+    const enMatch=norm(e.m).includes(q);
+    return lkDir===1?enMatch:lkDir===2?esMatch:(esMatch||enMatch);
+  });
+  const res=matches.slice(0,50);
+  if(!res.length){
+    box.innerHTML='<div style="text-align:center;padding:32px 0;color:var(--dim);font-size:.85rem">No matches found</div>';
+    document.getElementById('lk-count').textContent='';return;
+  }
+  box.innerHTML=res.map(e=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--border)">
+    <div style="min-width:120px;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink)">${e.w}</div>
+    <div style="flex:1;font-size:.82rem;color:var(--muted);line-height:1.4">${e.m}</div>
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--pri);background:var(--pri-lt);border-radius:99px;padding:2px 8px;flex-shrink:0;white-space:nowrap">${e.c}</div>
+    <button style="background:none;border:none;cursor:pointer;font-size:1rem;padding:2px 4px;flex-shrink:0;opacity:${SIL?.4:1}" onclick="say('${e.w.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">🔊</button>
+  </div>`).join('');
+  const extra=matches.length>50?' (first 50 shown)':'';
+  document.getElementById('lk-count').textContent=`${matches.length}${extra} result${matches.length===1?'':'s'}`;
+}
 
 // ── BOOT ──────────────────────────────────────────────────────
 loadST();
