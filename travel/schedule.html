@@ -565,45 +565,17 @@
   // ranges: each entry is { start, end } as YYYY-MM-DD strings; null = open-ended
   const events = [
     {
-      id: "group-swim-summer",
-      title: "🏊 Group Swimming",
-      color: "#06b6d4",
-      location: "Lakewood Country Club",
-      shortLocation: "LCC",
-      address: "6800 West 10th Avenue, Lakewood, CO 80214",
-      daysOfWeek: [2, 3, 4, 5],
-      time: "11:30 AM",
-      ranges: [
-        { start: "2026-06-02", end: "2026-06-12" },
-        { start: "2026-06-30", end: "2026-07-10" }
-      ],
-      note: "Tue–Fri · Session 1 (Jun 2–12) and Session 3 (Jun 30–Jul 10) · no LCC Jun 16–26"
-    },
-    {
-      id: "group-swim-aug",
-      title: "🏊 Group Swimming",
-      color: "#06b6d4",
-      location: "Lakewood Country Club",
-      shortLocation: "LCC",
-      address: "6800 West 10th Avenue, Lakewood, CO 80214",
-      daysOfWeek: [2, 3, 4],
-      time: "11:30 AM",
-      ranges: [
-        { start: "2026-08-04", end: "2026-08-14" }
-      ],
-      note: "Tue / Wed / Thu · Session 4 (Aug 4–14)"
-    },
-    {
-      id: "jcc-swim-tue",
-      title: "🏊 Swimming",
-      color: "#0891b2",
-      location: "JCC",
-      shortLocation: "JCC",
-      address: "350 S Dahlia St, Denver, CO 80246",
-      daysOfWeek: [2],
-      time: "5:00 PM",
-      ranges: [{ start: "2026-06-02", end: null }],
-      note: "Drop off 4:30 PM · Tuesdays at the JCC"
+      id: "chelsea-tennis",
+      title: "🎾 Tennis (Chelsea)",
+      color: "#c4b5fd",
+      location: "",
+      shortLocation: "",
+      daysOfWeek: [1],
+      time: "6:00 PM",
+      owner: "chelsea",
+      ranges: [{ start: "2026-07-27", end: "2026-08-24" }],
+      exceptions: ["2026-08-17"],
+      note: "Mondays, Jul 27 – Aug 24, 2026 · no tennis Aug 17 (Ohio trip)"
     },
     {
       id: "tumbling",
@@ -704,7 +676,7 @@
       time: "1:30 – 4:00 PM",
       intervalWeeks: 2,
       ranges: [{ start: "2026-06-03", end: null }],
-      exceptions: ["2026-06-17"],
+      exceptions: ["2026-06-17", "2026-07-29"],
       note: "Every other Wednesday, starts Jun 3, 2026"
     },
     {
@@ -787,6 +759,9 @@
     { title: "🎂 Bob's Birthday",  color: "#3b82f6", date: "2026-07-08", owner: "matt" },
     { title: "👋 Last Day (V)",    color: "#3b82f6", date: "2026-08-07", owner: "matt" },
     { title: "🍻 Steve",           color: "#3b82f6", date: "2026-08-08", owner: "matt" },
+    { title: "🎸 Of Monsters and Men", color: "#3b82f6", date: "2026-08-06", time: "6:00 PM", location: "Red Rocks Amphitheatre", note: "Matt & Chelsea · Red Rocks", owner: "matt" },
+    { title: "🎸 Of Monsters and Men", color: "#c4b5fd", date: "2026-08-06", time: "6:00 PM", location: "Red Rocks Amphitheatre", note: "Matt & Chelsea · Red Rocks", owner: "chelsea" },
+    { title: "👶 Rachel Babysitting", color: "#f97316", date: "2026-08-06", time: "6:00 – 11:00 PM", note: "Rachel babysitting while Matt & Chelsea at Red Rocks" },
     // Wren – end of 2025–26 school year
     { title: "🇺🇸 Memorial Day – school off", color: "#ec4899", date: "2026-05-25", owner: "wren" },
     { title: "📚 Half day (last day)",       color: "#ec4899", date: "2026-05-29", owner: "wren" },
@@ -794,7 +769,7 @@
     // Wren – 2026–27 MSD school year (official calendar, updated 1/7/26)
     { title: "🧺 Back to School Family Picnic",      color: "#ec4899", date: "2026-08-16", time: "5:00 – 7:00 PM", owner: "wren", location: "Lakeside Amusement Park", note: "Pack your dinner and a blanket · Join MSD families for a casual picnic" },
     { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
-    { title: "🏫 MSD 101 – New Families",           color: "#ec4899", date: "2026-08-29", time: "9:00 AM – 1:00 PM", owner: "wren", note: "All new families required to attend · Adults only · Details and registration coming" },
+    { title: "🏫 MSD 101 – New Families Orientation", color: "#ec4899", date: "2026-08-29", time: "9:00 AM – 1:00 PM", owner: "wren", location: "Montessori School of Denver", note: "All new families required to attend · Adults only (alternate childcare required) · 8:45 AM Check-In (coffee & snacks) · 9:00 Welcomes & Introductions · 10:00 MSD Experiences & Program Visits · 12:00 Wrap Up & Lunch" },
     { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-31", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
     { title: "🎒 First Full Day of School (K–MS)",  color: "#ec4899", date: "2026-09-01", owner: "wren", note: "Toddler Phase-in begins · 2nd Year Primary ½-day" },
     { title: "📚 2nd Year Primary – regular hours", color: "#ec4899", date: "2026-09-02", owner: "wren" },
@@ -811,6 +786,8 @@
     { title: "🇺🇸 Memorial Day – No School",         color: "#ec4899", date: "2027-05-31", owner: "wren" },
     { title: "🎓 Last Day of School (½-day)",       color: "#ec4899", date: "2027-06-04", owner: "wren" },
     { title: "🇺🇸 Juneteenth – Campus Closed",       color: "#ec4899", date: "2027-06-18", owner: "wren" },
+    // Housecleaning (extra/moved)
+    { title: "🧹 House Cleaning", color: "#0d9488", date: "2026-07-28", time: "1:30 – 4:00 PM", note: "Extra / moved session" },
     // Chelsea
     { title: "🎾 Tennis", color: "#c4b5fd", date: "2026-04-28", time: "4:00 PM",  owner: "chelsea" },
     { title: "🎾 Tennis", color: "#c4b5fd", date: "2026-05-24", time: "11:00 AM", owner: "chelsea" },
