@@ -177,8 +177,10 @@
                             <label for="organization">Organization *</label>
                             <input type="text" id="organization" list="orgList" required>
                             <datalist id="orgList">
+                                <option value="A Precious Child">
                                 <option value="Amp the Cause">
                                 <option value="Colorado Pet Pantry">
+                                <option value="Denver Days">
                                 <option value="Denver Parks and Rec">
                                 <option value="Denver Rescue Mission">
                                 <option value="Feed the City / Tango Charities">
@@ -354,7 +356,8 @@
             {id: 1051, name: "Denver Parks and Rec - Earth Day", organization: "Denver Parks and Rec", date: "2026-04-22", hours: 45, participants: 15, description: "3 hrs/person. Chelsea, Mark, Dave, Joey, Taylor, Alison, Erin, Vienna, Jack, Ben, Cori, LeRoy, Nick, Bella, Chris Q.", location: "Denver Parks"},
             {id: 1052, name: "Colorado Pet Pantry", organization: "Colorado Pet Pantry", date: "2026-05-31", hours: 18, participants: 6, description: "3 hrs/person. Chris Q, Laura D, Tiara T, Merlin M, Steve S (+1 guest).", location: "2830 S. Zuni St, Englewood, CO 80110"},
             {id: 1053, name: "The Greenway Foundation", organization: "The Greenway Foundation", date: "2026-06-24", hours: 12, participants: 4, description: "3 hrs/person. Chelsea, Nick, Steve, Paul, Lisa. Trash pick up and riverside cleanup.", location: "Commons Park, Denver"},
-            {id: 1054, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2026-07-19", hours: 2.5, participants: 1, description: "2.5 hrs. Chelsea. Cooking breakfast for residents.", location: "1300 E. 21st Ave, Denver, CO 80205"}
+            {id: 1054, name: "Ronald McDonald House", organization: "Ronald McDonald House", date: "2026-07-19", hours: 2.5, participants: 1, description: "2.5 hrs. Chelsea. Cooking breakfast for residents.", location: "1300 E. 21st Ave, Denver, CO 80205"},
+            {id: 1055, name: "Denver Days: Back to School Fest", organization: "Denver Days", date: "2026-08-09", hours: 5, participants: 2, description: "2.5 hrs/person. Christopher Q, Leah. Distributing and helping put on Denver Days Back to School Fest.", location: "Westwood Community Center, 1000 S Lowell, Denver, CO 80219"}
         ];
 
         function loadEvents() {
@@ -371,7 +374,7 @@
         }
 
         function resetToFullHistory() {
-            if (confirm('Reset to full history? This will restore all 54 events from 2022-2026 and remove any custom entries.')) {
+            if (confirm('Reset to full history? This will restore all 55 events from 2022-2026 and remove any custom entries.')) {
                 events = JSON.parse(JSON.stringify(FULL_HISTORY));
                 saveEvents();
             }
@@ -895,19 +898,41 @@
             .catch(err => { console.warn('IndexedDB unavailable, photos will not persist:', err); photos = []; });
 
         // ---- SIGN-UP MODULE ----
-        // June 2026 upcoming events pulled from the SharePoint roster.
+        // September 2026 upcoming events — 5th Annual Day of Service with Mile High United Way.
         // Update SIGNUP_EVENTS each month with the current month's roster.
         const SIGNUP_EVENTS = [
             {
                 id: 's1',
-                title: 'The Greenway Foundation',
-                org: 'The Greenway Foundation',
-                date: '2026-06-24',
+                title: '5th Annual Day of Service – A Precious Child',
+                org: 'A Precious Child',
+                date: '2026-09-18',
                 time: '9:00 AM – 12:00 PM',
-                location: 'Commons Park, Denver',
-                description: 'Trash pick up and riverside cleanup along the South Platte.',
-                totalSpots: 10,
-                roster: ['Chelsea', 'Nick', 'Steve', 'Paul', 'Lisa']
+                location: 'West 118th Ave, Westminster, CO 80020 (Check in at Unit 6)',
+                description: 'Help create a clean and welcoming space. Free parking in lot and along W 118th Ave.',
+                totalSpots: 15,
+                roster: []
+            },
+            {
+                id: 's2',
+                title: '5th Annual Day of Service – Florence Crittenton',
+                org: 'Florence Crittenton Services',
+                date: '2026-09-18',
+                time: '9:00 AM – 12:00 PM',
+                location: '96 S. Zuni Street, Denver, CO',
+                description: 'Help create a clean and welcoming space for those seeking mental health support.',
+                totalSpots: 15,
+                roster: []
+            },
+            {
+                id: 's3',
+                title: '5th Annual Day of Service – Loretto Heights Trail',
+                org: 'Denver Parks and Rec',
+                date: '2026-09-18',
+                time: '9:00 AM – 11:00 AM',
+                location: '2800 S. Lowell Street, Denver, CO 80236',
+                description: 'Refresh gravel trail. Trash pickup available for anyone who cannot do the trail project. Bring water and closed-toe shoes.',
+                totalSpots: 15,
+                roster: []
             }
         ];
 
@@ -977,7 +1002,7 @@
                     <div class="signup-hero">
                         <h2>&#x1F91D; Volunteer Sign-Ups — ${monthName}</h2>
                         <p>Sign up for upcoming events below. The full team roster is managed in the SharePoint Excel doc — use the button to open it and confirm your spot officially.</p>
-                        <a href="https://roku-my.sharepoint.com/:x:/p/jmonjure/IQAYpF-6msC5tDwn0vKMDINAAaIPOqNkzScfo7GIfnNw_L8?e=K6jQli" target="_blank" class="signup-excel-link">
+                        <a href="https://roku-my.sharepoint.com/:x:/p/jmonjure/IQAYpF-6msC5tDwn0vKMDINAAaIPOqNkzScfo7GIfnNw_L8?e=CLIVjz" target="_blank" class="signup-excel-link">
                             &#x1F4CA; Open Signup Sheet (SharePoint)
                         </a>
                     </div>
