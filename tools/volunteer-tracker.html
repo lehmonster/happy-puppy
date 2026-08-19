@@ -1167,10 +1167,13 @@
             const container = document.getElementById('signupView');
             const localSignups = getLocalSignups();
             const now = new Date();
-            const monthName = now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
             const upcoming = SIGNUP_EVENTS.filter(e => new Date(e.date + 'T00:00:00') >= now);
             const past     = SIGNUP_EVENTS.filter(e => new Date(e.date + 'T00:00:00') < now);
+
+            const headerDate = upcoming.length > 0
+                ? new Date(upcoming[0].date + 'T00:00:00').toLocaleString('en-US', { month: 'long', year: 'numeric' })
+                : now.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
             function eventHTML(ev) {
                 const allSignups = [...(ev.roster || []), ...(localSignups[ev.id] || [])];
@@ -1211,7 +1214,7 @@
             container.innerHTML = `
                 <div class="signup-container">
                     <div class="signup-hero">
-                        <h2>&#x1F91D; Volunteer Sign-Ups — ${monthName}</h2>
+                        <h2>&#x1F91D; Volunteer Sign-Ups — ${headerDate}</h2>
                         <p>Sign up for upcoming events below. The full team roster is managed in the SharePoint Excel doc — use the button to open it and confirm your spot officially.</p>
                         <a href="https://roku-my.sharepoint.com/:x:/p/jmonjure/IQAYpF-6msC5tDwn0vKMDINAAaIPOqNkzScfo7GIfnNw_L8?e=43zbuL" target="_blank" class="signup-excel-link">
                             &#x1F4CA; Open Signup Sheet (SharePoint)
