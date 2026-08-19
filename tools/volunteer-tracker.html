@@ -376,6 +376,13 @@
             const stored = localStorage.getItem('volunteerEventsEnriched');
             if (stored) {
                 events = JSON.parse(stored);
+                // Merge any FULL_HISTORY entries not yet in localStorage (added after initial seed)
+                const existingIds = new Set(events.map(e => e.id));
+                const newEntries = FULL_HISTORY.filter(e => !existingIds.has(e.id));
+                if (newEntries.length) {
+                    events = events.concat(newEntries).sort((a, b) => new Date(b.date) - new Date(a.date));
+                    saveEvents();
+                }
                 updateStats();
                 renderEvents();
                 updateFilters();
