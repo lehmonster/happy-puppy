@@ -144,6 +144,16 @@
         .collage-empty-icon { font-size: 3em; margin-bottom: 14px; }
         .collage-empty-text { font-family: 'Nunito', sans-serif; color: #2C3E50; font-size: 1.15em; margin-bottom: 8px; font-weight: 700; }
         .collage-empty-sub { font-family: 'Nunito', sans-serif; color: #9aadcc; font-size: 0.85em; }
+        /* ---- GitHub Photo Storage ---- */
+        .gh-connect-banner { background: #eef2fb; border-radius: 14px; padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border: 1.5px solid #d4ddf8; }
+        .gh-connect-status { font-family: 'Nunito', sans-serif; font-size: 0.88em; color: #5A6B7C; flex: 1; min-width: 160px; }
+        .gh-connect-status strong { color: #2C3E50; }
+        .gh-pat-input { padding: 8px 14px; border: 1.5px solid #d4ddf8; border-radius: 20px; font-family: 'Nunito', sans-serif; font-size: 0.85em; width: 240px; outline: none; }
+        .gh-pat-input:focus { border-color: #7b8fe8; }
+        .gh-status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .gh-status-dot.connected { background: #6a9f6a; }
+        .gh-status-dot.disconnected { background: #d4617a; }
+        .gh-sync-status { font-family: 'Nunito', sans-serif; font-size: 0.8em; color: #7b8fe8; font-weight: 700; min-height: 20px; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -241,13 +251,15 @@
                 <div class="collage-header">
                     <div>
                         <h2>Photo Collage</h2>
-                        <p>Add photos from your volunteer events — they're saved in your browser.</p>
+                        <p>Add photos from your volunteer events. Connect GitHub below to save them permanently.</p>
                     </div>
                     <div>
                         <span class="collage-count" id="photoCount">0 photos</span>
                         <button class="btn btn-secondary" style="margin-left:12px;padding:8px 16px;font-size:12px;" onclick="clearAllPhotos()">Clear All</button>
                     </div>
                 </div>
+                <div id="ghConnectBanner" class="gh-connect-banner"></div>
+                <div id="ghSyncStatus" class="gh-sync-status"></div>
                 <div class="collage-upload-zone" id="uploadZone" onclick="document.getElementById('photoFileInput').click()">
                     <input type="file" id="photoFileInput" multiple accept="image/*" style="display:none">
                     <div class="collage-upload-icon">&#x1F5BC;&#xFE0F;</div>
@@ -764,15 +776,25 @@
             });
         }
 
-        // ---- PHOTO COLLAGE (IndexedDB — no 5MB storage limit) ----
+        // ---- PHOTO COLLAGE — IndexedDB (local cache) + GitHub (permanent storage) ----
         let photos = [];
         let photoDB = null;
 
+        const GH_REPO = 'lehmonster/happy-puppy';
+        const GH_PHOTOS_DIR = 'tools/volunteer-photos';
+        const GH_RAW = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_PHOTOS_DIR}`;
+        const GH_API = `https://api.github.com/repos/${GH_REPO}/contents/${GH_PHOTOS_DIR}`;
+
+        function getGHPAT() { return localStorage.getItem('ghPAT') || ''; }
+        function setGHPAT(p) { localStorage.setItem('ghPAT', p.trim()); }
+
+        // ---- IndexedDB ----
         function openPhotoDB() {
             return new Promise((resolve, reject) => {
-                const req = indexedDB.open('volunteerPhotos', 1);
+                const req = indexedDB.open('volunteerPhotos', 2);
                 req.onupgradeneeded = e => {
-                    e.target.result.createObjectStore('photos', { keyPath: 'id' });
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos', { keyPath: 'id' });
                 };
                 req.onsuccess = e => { photoDB = e.target.result; resolve(); };
                 req.onerror = e => reject(e.target.error);
@@ -788,34 +810,144 @@
             });
         }
 
-        function savePhotosToDB() {
+        function savePhotosToDB(list) {
             return new Promise((resolve, reject) => {
                 const tx = photoDB.transaction('photos', 'readwrite');
                 const store = tx.objectStore('photos');
                 store.clear();
-                photos.forEach(p => store.put(p));
+                (list || photos).forEach(p => store.put(p));
                 tx.oncomplete = resolve;
                 tx.onerror = e => reject(e.target.error);
             });
         }
 
+        // ---- GitHub API helpers ----
+        async function ghGetSHA(path) {
+            const pat = getGHPAT();
+            if (!pat) return null;
+            try {
+                const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+                    headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' }
+                });
+                if (!r.ok) return null;
+                return (await r.json()).sha || null;
+            } catch { return null; }
+        }
+
+        async function ghPutFile(path, b64Content, message) {
+            const pat = getGHPAT();
+            if (!pat) return null;
+            const sha = await ghGetSHA(path);
+            const body = { message, content: b64Content };
+            if (sha) body.sha = sha;
+            const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Upload failed'); }
+            return (await r.json()).content.download_url;
+        }
+
+        async function ghDeleteFile(path) {
+            const pat = getGHPAT();
+            if (!pat) return;
+            const sha = await ghGetSHA(path);
+            if (!sha) return;
+            await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: `Remove volunteer photo`, sha })
+            });
+        }
+
+        async function ghSaveManifest() {
+            const manifest = photos.map(p => ({ id: p.id, ghUrl: p.ghUrl || null, caption: p.caption || '' }));
+            const content = btoa(unescape(encodeURIComponent(JSON.stringify(manifest, null, 2))));
+            await ghPutFile(`${GH_PHOTOS_DIR}/manifest.json`, content, 'Update photo manifest');
+        }
+
+        async function ghLoadManifest() {
+            try {
+                const r = await fetch(`${GH_RAW}/manifest.json?t=${Date.now()}`);
+                if (!r.ok) return null;
+                return await r.json();
+            } catch { return null; }
+        }
+
+        async function loadFromGitHub() {
+            const manifest = await ghLoadManifest();
+            if (!manifest) return;
+            const localPhotos = await loadPhotosFromDB();
+            const localMap = {};
+            localPhotos.forEach(p => { localMap[p.id] = p; });
+            const ghIds = new Set(manifest.map(m => m.id));
+            const merged = manifest.map(m => ({
+                id: m.id,
+                ghUrl: m.ghUrl,
+                src: localMap[m.id] ? localMap[m.id].src : m.ghUrl,
+                caption: m.caption || (localMap[m.id] ? localMap[m.id].caption : '')
+            }));
+            localPhotos.forEach(p => { if (!ghIds.has(p.id)) merged.push(p); });
+            photos = merged;
+            await savePhotosToDB();
+        }
+
+        // ---- Image resize ----
+        function resizeImage(file, maxDim = 1400) {
+            return new Promise(resolve => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => {
+                    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    URL.revokeObjectURL(url);
+                    resolve(canvas.toDataURL('image/jpeg', 0.85));
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+                img.src = url;
+            });
+        }
+
+        // ---- Render ----
         function renderCollage() {
             const grid = document.getElementById('collageGrid');
             const empty = document.getElementById('collageEmpty');
+            const banner = document.getElementById('ghConnectBanner');
+            const pat = getGHPAT();
+
+            if (banner) {
+                banner.innerHTML = pat
+                    ? `<div class="gh-status-dot connected"></div>
+                       <div class="gh-connect-status"><strong>GitHub storage connected.</strong> Photos are permanently saved in the repo.</div>
+                       <button class="btn btn-secondary" style="padding:6px 14px;font-size:12px;" onclick="disconnectGH()">Disconnect</button>`
+                    : `<div class="gh-status-dot disconnected"></div>
+                       <div class="gh-connect-status"><strong>Photos stored in browser only.</strong> Add a GitHub token to save permanently.</div>
+                       <input class="gh-pat-input" id="ghPatInput" type="password" placeholder="Paste GitHub token…">
+                       <button class="btn" style="padding:8px 16px;font-size:13px;" onclick="connectGH()">Connect</button>`;
+            }
+
             document.getElementById('photoCount').textContent = photos.length + ' photo' + (photos.length !== 1 ? 's' : '');
             grid.innerHTML = '';
             if (photos.length === 0) { empty.style.display = 'block'; return; }
             empty.style.display = 'none';
-            photos.forEach((photo, i) => {
+
+            photos.forEach(photo => {
                 const item = document.createElement('div');
                 item.className = 'collage-item';
+                const src = photo.ghUrl || photo.src;
+                const badge = photo.ghUrl ? '' : `<span style="position:absolute;top:8px;left:8px;background:rgba(200,120,64,0.9);color:white;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;font-family:'Nunito',sans-serif;">Local only</span>`;
                 item.innerHTML = `
-                    <img class="collage-img" src="${photo.src}" alt="${photo.caption || ''}">
+                    <img class="collage-img" src="${src}" alt="${photo.caption || ''}">
+                    ${badge}
                     <div class="collage-item-actions">
-                        <button class="collage-delete-btn" onclick="deletePhoto(${i})">Remove</button>
+                        <button class="collage-delete-btn" onclick="deletePhoto('${photo.id}')">Remove</button>
                     </div>
                     <textarea class="collage-caption" placeholder="Add a caption..." rows="1"
-                        onblur="updateCaption(${i}, this.value)"
+                        onblur="updateCaption('${photo.id}', this.value)"
                         oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
                     >${photo.caption || ''}</textarea>
                 `;
@@ -823,40 +955,112 @@
             });
         }
 
-        function deletePhoto(index) {
-            photos.splice(index, 1);
-            savePhotosToDB().then(() => renderCollage());
+        function setGHStatus(msg) {
+            const el = document.getElementById('ghSyncStatus');
+            if (el) el.textContent = msg;
         }
 
-        function updateCaption(index, value) {
-            if (photos[index]) {
-                photos[index].caption = value;
-                savePhotosToDB();
+        function connectGH() {
+            const input = document.getElementById('ghPatInput');
+            const pat = input ? input.value.trim() : '';
+            if (!pat) { if (input) input.focus(); return; }
+            setGHStatus('Verifying token…');
+            fetch('https://api.github.com/user', { headers: { 'Authorization': `Bearer ${pat}` } })
+                .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+                .then(() => {
+                    setGHPAT(pat);
+                    setGHStatus('Connected! Loading photos from GitHub…');
+                    loadFromGitHub().then(() => { setGHStatus(''); renderCollage(); });
+                })
+                .catch(() => { setGHStatus('Invalid token — make sure it has Contents: Read & Write on this repo.'); renderCollage(); });
+        }
+
+        function disconnectGH() {
+            if (!confirm('Disconnect GitHub? Photos already in the repo stay there. New uploads will be browser-only until you reconnect.')) return;
+            localStorage.removeItem('ghPAT');
+            renderCollage();
+        }
+
+        async function handlePhotoFiles(files) {
+            const pat = getGHPAT();
+            for (const file of Array.from(files)) {
+                const resized = await resizeImage(file);
+                if (!resized) continue;
+                const id = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9);
+                const photo = { id, src: resized, caption: '', ghUrl: null };
+                photos.push(photo);
+                await savePhotosToDB();
+                renderCollage();
+                if (pat) {
+                    setGHStatus('Uploading to GitHub…');
+                    try {
+                        const b64 = resized.split(',')[1];
+                        const ext = file.type === 'image/png' ? 'png' : 'jpg';
+                        const ghUrl = await ghPutFile(`${GH_PHOTOS_DIR}/${id}.${ext}`, b64, `Add volunteer photo ${id}.${ext}`);
+                        photo.ghUrl = ghUrl;
+                        await savePhotosToDB();
+                        await ghSaveManifest();
+                        setGHStatus('');
+                        renderCollage();
+                    } catch (err) {
+                        console.warn('GitHub upload failed:', err);
+                        setGHStatus('Upload failed — saved locally only. Check your token.');
+                        setTimeout(() => setGHStatus(''), 5000);
+                    }
+                }
             }
         }
 
-        function clearAllPhotos() {
+        async function deletePhoto(id) {
+            const idx = photos.findIndex(p => p.id === id);
+            if (idx === -1) return;
+            if (!confirm('Remove this photo?')) return;
+            const photo = photos[idx];
+            const pat = getGHPAT();
+            if (pat && photo.ghUrl) {
+                const match = photo.ghUrl.match(/\/main\/(.+)$/);
+                if (match) {
+                    setGHStatus('Removing from GitHub…');
+                    try { await ghDeleteFile(match[1]); } catch(e) { console.warn('GitHub delete failed:', e); }
+                }
+            }
+            photos.splice(idx, 1);
+            await savePhotosToDB();
+            if (pat) {
+                try { await ghSaveManifest(); } catch(e) {}
+            }
+            setGHStatus('');
+            renderCollage();
+        }
+
+        async function updateCaption(id, value) {
+            const photo = photos.find(p => p.id === id);
+            if (!photo) return;
+            photo.caption = value;
+            await savePhotosToDB();
+            if (getGHPAT()) { try { await ghSaveManifest(); } catch(e) {} }
+        }
+
+        async function clearAllPhotos() {
             if (photos.length === 0) return;
-            if (confirm('Remove all ' + photos.length + ' photos from the collage?')) {
+            if (!confirm('Remove all ' + photos.length + ' photos?')) return;
+            const pat = getGHPAT();
+            if (pat) {
+                setGHStatus('Removing from GitHub…');
+                for (const p of photos) {
+                    if (p.ghUrl) {
+                        const match = p.ghUrl.match(/\/main\/(.+)$/);
+                        if (match) { try { await ghDeleteFile(match[1]); } catch(e) {} }
+                    }
+                }
                 photos = [];
-                savePhotosToDB().then(() => renderCollage());
+                try { await ghSaveManifest(); } catch(e) {}
+                setGHStatus('');
+            } else {
+                photos = [];
             }
-        }
-
-        function handlePhotoFiles(files) {
-            const readers = Array.from(files).map(file => new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = e => resolve({
-                    src: e.target.result,
-                    caption: '',
-                    id: Date.now().toString() + '_' + Math.random().toString(36).substr(2, 9)
-                });
-                reader.readAsDataURL(file);
-            }));
-            Promise.all(readers).then(newPhotos => {
-                photos = photos.concat(newPhotos);
-                savePhotosToDB().then(() => renderCollage());
-            });
+            await savePhotosToDB();
+            renderCollage();
         }
 
         document.getElementById('photoFileInput').addEventListener('change', function() {
@@ -877,7 +1081,6 @@
         openPhotoDB()
             .then(() => loadPhotosFromDB())
             .then(stored => {
-                // Migrate any photos previously saved to localStorage
                 if (stored.length === 0) {
                     const legacy = localStorage.getItem('volunteerPhotos');
                     if (legacy) {
@@ -895,7 +1098,8 @@
                 }
                 photos = stored;
             })
-            .catch(err => { console.warn('IndexedDB unavailable, photos will not persist:', err); photos = []; });
+            .then(() => { if (getGHPAT()) return loadFromGitHub(); })
+            .catch(err => { console.warn('Storage init error:', err); photos = []; });
 
         // ---- SIGN-UP MODULE ----
         // September 2026 upcoming events — 5th Annual Day of Service with Mile High United Way.
