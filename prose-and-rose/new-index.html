@@ -1453,9 +1453,25 @@
 
           return (
             <div style={{ minHeight: "100vh", background: "#FEFDFB", display: "flex", flexDirection: "column" }}>
-              <div style={{ background: "#fff", borderBottom: "2px solid #f0e0ea", padding: "24px 20px 18px", textAlign: "center" }}>
+              <div style={{ background: "#fff", borderBottom: "2px solid #f0e0ea", padding: "20px 20px 16px", textAlign: "center" }}>
                 <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(26px, 6vw, 40px)", color: "#2C3E50", margin: "0 0 4px", fontStyle: "italic" }}>Prose &amp; Rosé</h1>
-                <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#9a7080", margin: 0 }}>444 books &amp; counting 🍷</p>
+                <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#9a7080", margin: "0 0 14px" }}>A reading life, beautifully tracked</p>
+                <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap" }}>
+                  {[
+                    { label: "Total Books", value: "444", emoji: "📚" },
+                    { label: "Books in 2026", value: "50", emoji: "🍷" },
+                    { label: "Peak Year", value: "2024", emoji: "🏆" },
+                    { label: "Avg / Month", value: "~7", emoji: "📖" },
+                  ].map(stat => (
+                    <div key={stat.label} style={{ background: "#fdf0f5", border: "1px solid #f0d0e0", borderRadius: 20, padding: "7px 14px", display: "flex", alignItems: "center", gap: 7 }}>
+                      <span style={{ fontSize: 15 }}>{stat.emoji}</span>
+                      <div style={{ textAlign: "left" }}>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 15, fontWeight: 700, color: "#2C3E50", lineHeight: 1.1 }}>{stat.value}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, color: "#9a7080", textTransform: "uppercase", letterSpacing: "0.5px" }}>{stat.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
               <nav style={navStyle}>
                 {tabs.map(t => (
