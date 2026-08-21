@@ -706,33 +706,40 @@
         ];
 
         const DEFAULT_RECENT = [
-          { id: "n7", title: "The Villa", author: "Rachel Hawkins", dateFinished: "2026-08-18", rating: 0, review: "", wine: "Provence Rosé" },
-          { id: "n6", title: "Exit Lane", author: "Erika Veurink", dateFinished: "2026-08-14", rating: 0, review: "", wine: "Minuty Rosé" },
-          { id: "n5", title: "Hardly Strangers", author: "AC Robinson", dateFinished: "2026-08-10", rating: 0, review: "", wine: "Rosé d'Anjou" },
-          { id: "n4", title: "The Hill", author: "Harriet Clark", dateFinished: "2026-08-06", rating: 0, review: "", wine: "AIX Rosé" },
-          { id: "n3", title: "Comedic Timing", author: "Upasana Baratheon", dateFinished: "2026-08-02", rating: 0, review: "", wine: "Loveblock Rosé" },
-          { id: "n2", title: "Found Time", author: "Caroline Goldstein", dateFinished: "2026-07-28", rating: 0, review: "", wine: "Gérard Bertrand Rosé" },
-          { id: "n1", title: "The Vacationers", author: "Emma Straub", dateFinished: "2026-07-24", rating: 0, review: "", wine: "Sancerre Rosé" },
-          { id: "r1", title: "Grape Juice", author: "Eliza Dumais", dateFinished: "2026-07-14", rating: 0, review: "", wine: "Côtes de Provence Rosé" },
+          { id: "n7", title: "The Villa", author: "Rachel Hawkins", dateFinished: "2026-08-18", rating: 0, review: "", wine: "Provence Rosé", isbn: "9781250280015" },
+          { id: "n6", title: "Exit Lane", author: "Erika Veurink", dateFinished: "2026-08-14", rating: 0, review: "", wine: "Minuty Rosé", isbn: "9798893310610" },
+          { id: "n5", title: "Hardly Strangers", author: "AC Robinson", dateFinished: "2026-08-10", rating: 0, review: "", wine: "Rosé d'Anjou", isbn: "9798893310207" },
+          { id: "n4", title: "The Hill", author: "Harriet Clark", dateFinished: "2026-08-06", rating: 0, review: "", wine: "AIX Rosé", isbn: "9781668073124" },
+          { id: "n3", title: "Comedic Timing", author: "Upasana Baratheon", dateFinished: "2026-08-02", rating: 0, review: "", wine: "Loveblock Rosé", isbn: "9798893310276" },
+          { id: "n2", title: "Found Time", author: "Caroline Goldstein", dateFinished: "2026-07-28", rating: 0, review: "", wine: "Gérard Bertrand Rosé", isbn: "9798893311297" },
+          { id: "n1", title: "The Vacationers", author: "Emma Straub", dateFinished: "2026-07-24", rating: 0, review: "", wine: "Sancerre Rosé", isbn: "9781594632471" },
+          { id: "r1", title: "Grape Juice", author: "Eliza Dumais", dateFinished: "2026-07-14", rating: 0, review: "", wine: "Côtes de Provence Rosé", isbn: "9798893310184" },
           { id: "r2", title: "It's a Love Story", author: "Annabel Monaghan", dateFinished: "2026-07-08", rating: 0, review: "", wine: "Whispering Angel" },
-          { id: "r3", title: "Scythe and Sparrow", author: "Hannah Whitten", dateFinished: "2026-07-01", rating: 0, review: "", wine: "Château Galoupet Rosé" },
+          { id: "r3", title: "Scythe and Sparrow", author: "Hannah Whitten", dateFinished: "2026-07-01", rating: 0, review: "", wine: "Château Galoupet Rosé", isbn: "9781638931812" },
         ];
 
-        function BookCover({ title, author }) {
-          const query = encodeURIComponent(title + " " + author);
-          const src = "https://covers.openlibrary.org/b/olid/OL-L.jpg?default=false";
-          const googleSrc = "https://books.google.com/books/content?vid=ISBN&printsec=frontcover&img=1&zoom=1&q=" + query;
+        function BookCover({ title, author, src: directSrc, isbn }) {
+          const sources = React.useMemo(() => {
+            const list = [];
+            if (directSrc) list.push(directSrc);
+            if (isbn) {
+              const clean = isbn.replace(/-/g, "");
+              list.push(`https://covers.openlibrary.org/b/isbn/${clean}-M.jpg?default=false`);
+              list.push(`https://books.google.com/books/content?isbn=${clean}&printsec=frontcover&img=1&zoom=1&source=gbs_api`);
+            }
+            list.push(`https://covers.openlibrary.org/b/title/${encodeURIComponent(title)}-M.jpg?default=false`);
+            return list;
+          }, [directSrc, isbn, title]);
+          const [idx, setIdx] = React.useState(0);
           const [failed, setFailed] = React.useState(false);
-          const [triedGoogle, setTriedGoogle] = React.useState(false);
-          const openLibSrc = "https://covers.openlibrary.org/b/title/" + encodeURIComponent(title) + "-M.jpg?default=false";
 
           return (
             <div style={{ width: 56, height: 84, flexShrink: 0, borderRadius: 4, overflow: "hidden", background: "linear-gradient(160deg, #f5d0e0, #d0c0f0)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 3px 10px rgba(0,0,0,0.15)", position: "relative" }}>
               {!failed ? (
                 <img
-                  src={openLibSrc}
+                  src={sources[idx]}
                   alt={title}
-                  onError={() => { if (!triedGoogle) { setTriedGoogle(true); } else { setFailed(true); } }}
+                  onError={() => { if (idx < sources.length - 1) { setIdx(idx + 1); } else { setFailed(true); } }}
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
               ) : (
@@ -881,7 +888,7 @@
                       <div key={book.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", overflow: "hidden", boxShadow: "0 2px 10px rgba(242,150,189,0.07)" }}>
                         <div style={{ padding: "18px 20px" }}>
                           <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
-                            <BookCover title={book.title} author={book.author} />
+                            <BookCover title={book.title} author={book.author} isbn={book.isbn} src={book.coverUrl} />
                             <div style={{ flex: 1, minWidth: 200 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                                 <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 10, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
