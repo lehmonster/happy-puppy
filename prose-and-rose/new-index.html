@@ -1,3 +1,4 @@
+<!-- Prose & Rosé v2.1 — August 2026 | Fixes: clickable sip ratings | Adds: full song tags, Playlist tab w/ Spotify export, Everygirl 2026 TBR -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -90,7 +91,7 @@
             bg: "linear-gradient(135deg, #0c1018, #10141e)",
             count: 75,
             vibe: "Nantucket summers, found families, complicated friendships, and women navigating life's messy turns with grace (eventually).",
-            keyAuthors: ["Elin Hilderbrand", "Liane Moriarty", "Taylor Jenkins Reid", "Rebecca Serle", "Laura Dave", "Carly Fortune", "Kate Clayborn", "Sally Hepworth"],
+            keyAuthors: ["Elin Hilderbrand", "Liane Moriarty", "Taylor Jenkins Reid", "Rebecca Serle", "Laura Dave", "Carly Fortune", "Kate Clayborn", "Kathryn Scanlan", "Sally Hepworth"],
             standouts: ["Malibu Rising", "Hotel Nantucket", "The Last Thing He Told Me", "Here One Moment", "Every Summer After", "Five Star Weekend", "Swan Song", "After I Do", "One Italian Summer"],
             note: "Hilderbrand has 16 books on your list. You've read nearly her entire Nantucket catalog.",
           },
@@ -206,277 +207,453 @@
           );
         }
 
-        // Books you've already read (to filter out) - COMPLETE LIST from CSV
-        const ALREADY_READ = [
-          "1984", "1984 & Animal Farm", "A Clockwork Orange", "A Confederacy of Dunces", "A Discovery of Witches", "A Flicker in the Dark", "A Good Girl's Guide to Murder", "A Great and Terrible Beauty", "A Little Life", "A Man Called Ove", "A Prayer for Owen Meany", "A Separate Peace", "A Short History of Nearly Everything", "A Spool of Blue Thread", "A Tree Grows in Brooklyn", "A Wrinkle in Time", "Ace of Spades", "Alex, Approximately", "Alice in Wonderland [Adaptation]", "Alice's Adventures in Wonderland / Through the Looking-Glass", "All Quiet on the Western Front", "All the Colors of the Dark", "All the Light We Cannot See", "All the Names", "An Invisible Client", "Angela's Ashes", "Angels & Demons", "Anne of Green Gables", "Anne of Manhattan", "Anthropology of an American Girl", "Area 51: An Uncensored History of America's Top Secret Military Base", "Atonement", "Atlas Shrugged", "Bad Summer People", "Beach Read", "Beautiful Bastard", "Beautiful Ruins", "Becoming", "Beloved", "Best Friends Forever", "Black Ice", "Bleeding Edge", "Book Lovers", "Born a Crime: Stories from a South African Childhood", "Bossypants", "Brave New World", "Break", "Breaking Dawn", "Bridge to Terabithia", "Bright Young Women", "Bring Up the Bodies", "Butcher & Blackbird", "Candide", "Catch-22", "Catching Fire", "Cat's Cradle", "Charlotte's Web", "Check & Mate", "Confessions of a Shopaholic", "Crime and Punishment", "Crimson Lake Road", "Crossed", "Cry, the Beloved Country", "Dark Matter", "Dark Places", "Dating You / Hating You", "Decision Points", "Deep End", "Disgrace", "Divergent", "Do Over", "Doctor Sleep", "Don Quixote", "Down to Earth", "Drawn That Way", "Dreamland", "Dragonfly in Amber", "Eat Pray Love", "Educated", "Eight White Nights", "Empire Falls", "Eternity", "Every Summer After", "Every Time I Go on Vacation, Someone Dies", "Everything I Never Told You", "Everything Is Illuminated", "Extremely Loud and Incredibly Close", "Fahrenheit 451", "Faithful Place", "First Lie Wins", "Five Star Weekend", "Fix Her Up", "Flowers for Algernon", "Forever...", "Frankenstein", "Freedom", "Freakonomics: A Rogue Economist Explores the Hidden Side of Everything", "Funny Story", "Funny You Should Ask", "Generations: The History of America's Future, 1584 to 2069", "Genghis Khan and the Making of the Modern World", "Georgie, All Along", "Girl Gone Mad", "Gone Girl", "Good Material", "Green Eggs and Ham", "Greenwich Park", "Guns, Germs, and Steel: The Fates of Human Societies", "Happily Never After", "Happy Place", "Harry Potter and the Chamber of Secrets", "Harry Potter and the Deathly Hallows", "Harry Potter and the Goblet of Fire", "Harry Potter and the Half-Blood Prince", "Harry Potter and the Order of the Phoenix", "Harry Potter and the Prisoner of Azkaban", "Harry Potter and the Sorcerer's Stone", "Heart of Darkness", "Here One Moment", "Holes", "Hook, Line, and Sinker", "Hour of the Rat", "How to End a Love Story", "I Am Charlotte Simmons", "I Kissed Shara Wheeler", "In a Holidaze", "In an Instant", "In the Time of the Butterflies", "In the Woods", "Into the Blue", "Into the Wild", "Into Thin Air: A Personal Account of the Mt. Everest Disaster", "Island Time", "It Ends with Us", "It Happened One Summer", "It's Kind of a Funny Story", "J.R.R. Tolkien 4-Book Boxed Set: The Hobbit and the Lord of the Rings", "James", "Jana Goes Wild", "Julius Caesar", "Just for the Summer", "Just Haven't Met You Yet", "Keep Holding On", "Keeping the Moon", "King Lear", "La Vérité sur l'Affaire Harry Quebert", "Leather & Lark", "Leaves of Grass", "Life After Life", "Life of Pi", "Life's Too Short", "Listen for the Lie", "Little Bee", "Little House in the Big Woods", "Little Women", "Loathe to Love You", "Lone Survivor: The Eyewitness Account of Operation Redwing and the Lost Heroes of Seal Team 10", "Long Bright River", "Long Island Compromise", "Lord of the Flies", "Love and Other Words", "Love Her or Lose Her", "Love in the Time of Cholera", "Loving Frank", "Luckiest Girl Alive", "Macbeth", "Madame Bovary", "Malibu Rising", "Margo's Got Money Troubles", "Matched", "Matilda", "Maybe Once, Maybe Twice", "Me Talk Pretty One Day", "Mere Christianity", "Midnight in the Garden of Good and Evil", "Midnight Is the Darkest Hour", "Missing Parts", "Mockingjay", "Mrs. Dalloway", "Mrs. Fletcher", "Murder 42", "My Sister's Keeper", "New Moon", "Night", "Nineteen Minutes", "Not in Love", "Not Another Love Song", "November 9", "Of Mice and Men", "On Chesil Beach", "On Earth We're Briefly Gorgeous", "Once More With Feeling", "One Day", "One Flew Over the Cuckoo's Nest", "One Hundred Years of Solitude", "One Year Gone", "Oona Out of Order", "Outlander", "Part of Your World", "People We Meet on Vacation", "Pride and Prejudice", "Prep", "Pretty Girls", "Pretty Little Wife", "Rebecca", "Red, White & Royal Blue", "Regretting You", "Revolutionary Road", "Romeo and Juliet", "Roomies", "Run Away", "Same As It Ever Was", "Scourge", "Sense and Sensibility", "Seven Days in June", "Shadow of Night", "Sharp Objects", "Siddhartha", "Sing You Home", "Slaughterhouse-Five", "Someone Like You", "Speak", "Stargirl", "Stone Cold Fox", "Summer Romance", "Summer Sisters", "Swan Song", "Thank You for Listening", "That Summer", "The Alchemist", "The Anthropocene Reviewed", "The Bell Jar", "The BFG", "The Block Party", "The Book of Life", "The Book Thief", "The Catcher in the Rye", "The Cat in the Hat", "The Change", "The Christmas Bookshop", "The Cider House Rules", "The Circle", "The Complete Fairy Tales", "The Corrections", "The Curious Incident of the Dog in the Night-Time", "The Design of Us", "The Devil in the White City", "The Devil Wears Prada", "The Devil You Know", "The Diary of a Young Girl", "The Divine Comedy", "The Donut Legion", "The Edge of Falling", "The Emperor of All Maladies: A Biography of Cancer", "The End of the Affair", "The Fault in Our Stars", "The Five People You Meet in Heaven", "The Five-Star Weekend", "The Fountainhead", "The Frozen River", "The Geography of Bliss: One Grump's Search for the Happiest Places in the World", "The Girl and the Deadly Express", "The Girl Beneath the Sea", "The Girl in the Manor", "The Girl Next Door", "The Girl on the Train", "The Girl That Vanished", "The Girl Who Kicked the Hornet's Nest", "The Girl Who Played with Fire", "The Girl with Stars in Her Eyes", "The Girl with the Dragon Tattoo", "The Girl with the Louding Voice", "The Giver", "The Glass Castle", "The God of Small Things", "The Grapes of Wrath", "The Great Gatsby", "The Guest List", "The Guesthouse", "The Hallows", "The Handmaid's Tale", "The Heart Is a Lonely Hunter", "The Help", "The Hobbit, or There and Back Again", "The Host", "The Hotel Nantucket", "The Husbands", "The Humans", "The Hunger Games", "The Husband's Secret", "The Idea of You", "The Iliad", "The Importance of Being Earnest", "The Inheritance of Loss", "The Interestings", "The Invisible Life of Addie LaRue", "The Island", "The Joy Luck Club", "The Jungle", "The Keeper of Lost Causes", "The Kind Worth Killing", "The Kind Worth Saving", "The Kite Runner", "The Language of Flowers", "The Last Flight", "The Last Letter from Your Lover", "The Lies I Tell", "The Life Impossible", "The Likeness", "The Lord of the Rings", "The Lost Apothecary", "The Lost Husband", "The Love Hypothesis", "The Love That Split the World", "The Lovely Bones", "The Magician King", "The Magicians", "The Many Lives of Mama Love: A Memoir of Lying, Stealing, Writing, and Healing", "The Marriage Plot", "The Martian", "The Maze Runner", "The Memory Keeper's Daughter", "The Metamorphosis", "The Midnight Feast", "The Midnight Library", "The Ministry of Time", "The Mother-in-Law", "The Namesake", "The Neon Lawyer", "The Neverending Story", "The Night Circus", "The Night We Lost Him", "The Nightingale", "The Notebook", "The Odyssey", "The Old Man and the Sea", "The Other Emily", "The Other Wife", "The Pact", "The Paradise Problem", "The Paris Wife", "The Passage", "The Perfect Child", "The Perks of Being a Wallflower", "The Phantom Tollbooth", "The Picture of Dorian Gray", "The Pillars of the Earth", "The Poisonwood Bible", "The Power of One", "The Push", "The Red Tent", "The Reincarnationist", "The Remains of the Day", "The Rom-Commers", "The Rosie Effect", "The Rosie Project", "The Rough Guide to Iceland", "The Rule Book", "The Ruin", "The Secret Garden", "The Secret History", "The Secret Life of Bees", "The Secret Place", "The Secrets of Us", "The Seven Husbands of Evelyn Hugo", "The Shadow of the Wind", "The Shining", "The Sicilian Inheritance", "The Silent Patient", "The Simple Wild", "The Social Animal: The Hidden Sources of Love, Character, and Achievement", "The Spanish Love Deception", "The Stranger", "The Strange Case of Dr. Jekyll and Mr. Hyde", "The Summer Place", "The Sun Also Rises", "The Tales of Beedle the Bard", "The Tell-Tale Heart and Other Writings", "The Testaments", "The Things They Carried", "The Third Wife", "The Thirteenth Tale", "The Time Traveler's Wife", "The Tipping Point", "The True Love Experiment", "The Truth about Forever", "The Twilight Collection", "The Unbearable Lightness of Being", "The Unchangeable Spots of Leopards", "The Undomestic Goddess", "The Unseen", "The Very Secret Society of Irregular Witches", "The Warmth of Other Suns: The Epic Story of America's Great Migration", "The Wedding People", "The Woman in Cabin 10", "The Woman in the Window", "The World According to Garp", "The World Is Flat: A Brief History of the Twenty-first Century", "The Worst Best Man", "Their Eyes Were Watching God", "These Violent Delights", "They Both Die at the End", "Things Fall Apart", "Things We Never Got Over", "This Lullaby", "Three Cups of Tea: One Man's Mission to Promote Peace . . . One School at a Time", "To Kill a Mockingbird", "To the Lighthouse", "Tom Lake", "Tomorrow, and Tomorrow, and Tomorrow", "Too Good To Be True", "Tools of Engagement", "Trading Up", "Truly Madly Guilty", "Tuck Everlasting", "Tuesdays with Morrie", "Twelfth Night", "Twilight", "Unbroken: A World War II Story of Survival, Resilience, and Redemption", "Uncle Tom's Cabin", "Under One Roof", "Verity", "Water for Elephants", "What Alice Forgot", "What Does It Feel Like?", "What the Dog Saw: And Other Adventures", "When We Were Silent", "Where the Crawdads Sing", "Where the Sidewalk Ends", "Where the Wild Things Are", "Where'd You Go, Bernadette", "Window Shopping", "Winter Solstice", "Wrong Place Wrong Time", "You Are Here", "Your Baby's First Year Week by Week", "Yours Truly", "Z: A Novel of Zelda Fitzgerald", "The First Gentleman", "Kick the Latch", "One of Us Is Next", "Awake", "Square Waves", "Set Piece", "Grape Juice", "One Perfect Storm", "It's a Love Story", "Scythe and Sparrow", "The Vacationers", "Found Time", "Comedic Timing", "The Hill", "Hardly Strangers", "Exit Lane", "The Villa"
-        ].sort();
+        const ALREADY_READ_RAW = [
+          '10% Happier',
+          '28 Weeks of Summer',
+          'A Christmas Orphans Club',
+          'A Deal with the Devil',
+          "A Gambler's Jury",
+          'A Holly Jolly Ever After',
+          'A Jingle Bell Mingle',
+          "A Killer's Wife",
+          "A Sociopath's Guide to a Successful Marriage",
+          'A Talent for Murder',
+          'A Very Merry Bromance',
+          'A Winter in New York',
+          'Ace of Spades',
+          'After I Do',
+          'Alex Approximately',
+          'All Fours',
+          'All I Want Is You',
+          'All Rhodes Lead Here',
+          'All Your Perfects',
+          'All the Other Mothers Hate Me',
+          'An Anonymous Girl',
+          'An Honest Lie',
+          'An Invisible Client',
+          'An Unreliable Truth',
+          'And Now Back to You',
+          'Anne of Avenue A',
+          'Annie Knows Everything',
+          'Appetite for Innocence',
+          'Arsonist',
+          'Atmosphere',
+          'Audition',
+          'Awake',
+          'Barefoot',
+          'Beach Read',
+          'Beautiful Bastard',
+          'Beautyland',
+          'Beg Borrow or Steal',
+          'Best of Luck',
+          'Big Fan',
+          'Big Swiss',
+          'Black Ice',
+          'Black Widow Murders',
+          'Blood Dahlia',
+          'Blue Bistro',
+          'Book Lovers',
+          'Both Can Be True',
+          'Break Me',
+          'Bride',
+          'Bring Me Back',
+          'Business Casual',
+          'Butcher & Blackbird',
+          'By a Thread',
+          'Careless People',
+          'Carrie Soto Is Back',
+          'Catalina',
+          'Catch Her If You Can',
+          'Catch and Keep',
+          'Check & Mate',
+          'Co-Intelligence',
+          'Confess',
+          'Crimson Lake Road',
+          'Daddy Diaries',
+          'Dating You / Hating You',
+          'Dear Dolly',
+          'Death at the White Heart',
+          'Deep End',
+          'Dirty Empire',
+          'Dirty Like Brody',
+          'Dirty Like Jude',
+          'Dirty Like Me',
+          'Dirty Like Us',
+          'Dirty Like Zane',
+          'Down the Drain',
+          'Drawn That Way',
+          'Dream On',
+          'Eight Hundred Grapes',
+          'Elizabeth of East Hampton',
+          'Elsewhere',
+          'Emma of 83rd Street',
+          'End of Story',
+          'Enjoy the View',
+          'Every Last Secret',
+          'Every Summer After',
+          'Every Time I Go on Vacation Someone Dies',
+          'Everyone in My Family Has Killed Someone',
+          'Expiration Dates',
+          'Fair Play',
+          'Fallen Empire',
+          'Final Girl',
+          'First Lie Wins',
+          'First Time Caller',
+          'Fix Her Up',
+          'Float Plan',
+          'Forget Me Not',
+          'Four Weekends and a Funeral',
+          'Funny Story',
+          'Funny You Should Ask',
+          'Gabriel Fallen',
+          'Georgie All Along',
+          'Ghosts',
+          'Girl Gone Mad',
+          'Good Company',
+          'Good Material',
+          'Good in Bed',
+          'Grape Juice',
+          'Great Big Beautiful Life',
+          'Greenwich Park',
+          'Handsome Devil',
+          'Happily Never After',
+          'Happy Days',
+          'Happy Money',
+          'Happy Place',
+          'Heart Bones',
+          'Heart the Lover',
+          'Hello Stranger',
+          'Hello Sunshine',
+          'Here One Moment',
+          'Home',
+          'Hook Line and Sinker',
+          'Hopeless',
+          'Hot Air',
+          'Hot Mess',
+          'Hot for Slayer',
+          'Hotter in the Hamptons',
+          'How to End a Love Story',
+          'How to Giggle',
+          'How to Read a Book',
+          'Husbands and Lovers',
+          'I Am Pilgrim',
+          'I Will Find You',
+          'In Five Years',
+          'In My Dreams I Hold a Knife',
+          'In a Holidaze',
+          'In a New York Minute',
+          'In an Instant',
+          'Instamom',
+          'Is She Really Going Out with Him',
+          "Isn't It Bromantic",
+          'It Ends with Us',
+          'It Happened One Summer',
+          'It Starts with Us',
+          'Jana Goes Wild',
+          "Just Haven't Met You Yet",
+          'Just for the Summer',
+          'Kick the Latch',
+          'Kill Night',
+          'Killers of a Certain Age',
+          'Killing Moon',
+          'Layla',
+          'Leather & Lark',
+          'Lessons in Chemistry',
+          'Let Them',
+          'Letters to a Serial Killer',
+          'Lexicon',
+          "Life's Too Short",
+          'Like a Mother',
+          'Listen for the Lie',
+          'Loathe to Love You',
+          'Long Bright River',
+          'Look Closer',
+          'Losing Hope',
+          'Love Her or Lose Her',
+          'Love Lettering',
+          'Love and Other Words',
+          'Love at First',
+          'Love in Lockdown',
+          'Love on the Brain',
+          'Lovely Madness',
+          'Luck of the Draw',
+          "Lula Dean's Little Library",
+          'Mad Honey',
+          'Malibu Rising',
+          'Mania',
+          "Margo's Got Money Troubles",
+          'Maybe Next Time',
+          'Maybe Once Maybe Twice',
+          'Maybe Someday',
+          'Maybe in Another Life',
+          'Meet Me at the Lake',
+          'Meet Me in Another Life',
+          'Mercy',
+          'Missing Parts',
+          'Mistletoe and Mr. Right',
+          'Mona Acts Out',
+          'Mouth to Mouth',
+          "Mrs. Nash's Ashes",
+          'Murder 42',
+          'My Lovely Wife',
+          'My Not So Perfect Life',
+          'My Sister the Serial Killer',
+          'Neighbor Favor',
+          'Nora Goes Off Script',
+          'Not Another Love Song',
+          'Not Bad for a Girl',
+          'Not in Love',
+          'Nothing to See Here',
+          'November 9',
+          'Olive',
+          'Once More from the Top',
+          'Once More with Feeling',
+          'Once and Again',
+          'One Day',
+          'One Day in December',
+          'One Italian Summer',
+          'One Last Stop',
+          'One Last Summer',
+          'One True Loves',
+          'One Year Gone',
+          'One of Us Is Lying',
+          'One of Us Is Next',
+          'Only One Survives',
+          'Oona Out of Order',
+          'Our Perfect Storm',
+          'Paradise',
+          'Park Road',
+          'Part of Your World',
+          'People We Meet on Vacation',
+          'Phantom Limb',
+          'Point of Retreat',
+          'Practice Makes Perfect',
+          'Pretty Little Wife',
+          'Protecting Noah',
+          'Purgatory',
+          'Rebel Heir',
+          'Red, White & Royal Blue',
+          'Regretting You',
+          'Reminders of Him',
+          'Romantic Comedy',
+          'Roomies',
+          'Rosaline Palmer Takes the Cake',
+          'Ruin and Rising',
+          'Run Away',
+          'Same Time Next Summer',
+          "Say You'll Remember Me",
+          'Scandalized',
+          'Scythe & Sparrow',
+          'Self Help',
+          'Set Piece',
+          'Seven Year Slip',
+          'Shadow and Bone',
+          "Show Don't Tell",
+          'Siege and Storm',
+          'Silver Girl',
+          'Slammed',
+          'Snow Place Like LA',
+          'Snowed In',
+          'So We Meet Again',
+          'Sorry of My Life',
+          'Square Waves',
+          'Startlement',
+          'Stone Cold Fox',
+          'Strange Sally Diamond',
+          'Strangers',
+          'Summer Fridays',
+          'Summer Romance',
+          'Summer Skate',
+          "Summer of '69",
+          'Summerland',
+          'Sun City Homicide',
+          'Surrender to Me',
+          'Swan Song',
+          'Sweet Mercy',
+          'Sweet Temptation',
+          'Teach Me',
+          'Tempt Me',
+          'Thank You for Listening',
+          'The Academy',
+          'The American Roommate Experiment',
+          'The Bastille',
+          'The Best Lies',
+          'The Best of Friends',
+          'The Block Party',
+          'The Book Thief',
+          'The Burnout',
+          'The Cage',
+          'The Catch',
+          'The Celebrants',
+          'The Change',
+          'The Christmas You Found Me',
+          'The Dead Romantics',
+          'The Design of Us',
+          'The Devil You Know',
+          'The Devil and the Deep Blue Sea',
+          'The Dilemma',
+          'The Dinner List',
+          'The Drowning Woman',
+          'The Dry',
+          'The Edge of Falling',
+          'The Ex Hex',
+          'The Ex Vows',
+          'The Fifth Trimester',
+          'The First Gentleman',
+          'The Five Star Weekend',
+          'The Five Types of Wealth',
+          'The Flat Share',
+          'The Girl Next Door',
+          'The Girl That Vanished',
+          'The Girl in Cabin 13',
+          'The Girl in the Manor',
+          'The Golden Couple',
+          'The Good Daughter',
+          'The Guest List',
+          'The Guilt Trip',
+          'The Happy Ever After Playlist',
+          'The Heiress',
+          'The Hill',
+          'The Hollows',
+          'The Hotel Nantucket',
+          'The Humans',
+          'The Invisible Life of Addie LaRue',
+          'The Kind Worth Killing',
+          'The Kind Worth Saving',
+          'The Kiss Curse',
+          'The Last Anniversary',
+          'The Last Flight',
+          'The Last Housewife',
+          'The Last Love Note',
+          'The Last Thing He Told Me',
+          'The Last Time I Lied',
+          'The Lies I Tell',
+          'The Lies That Bind',
+          'The Life Impossible',
+          'The Love Haters',
+          'The Love Hypothesis',
+          'The Love That Split the World',
+          'The Love of My Afterlife',
+          'The Match',
+          'The Meaning of Your Life',
+          'The Midnight Library',
+          'The Ministry of Time',
+          "The Monkey's Raincoat",
+          'The Most Wonderful Crime of the Year',
+          'The Mother-in-Law',
+          'The Murder of Janessa Henley',
+          'The Neon Lawyer',
+          'The Night We Lost Him',
+          'The Night We Met',
+          'The No Show',
+          'The Other Emily',
+          'The Other Side of Disappearing',
+          'The Other Wife',
+          'The Paradise Problem',
+          'The Proposal',
+          'The Psilocybin Handbook for Women',
+          'The Rachel Incident',
+          'The Radleys',
+          'The Rom-Commers',
+          'The Roommate Pact',
+          'The Rule Book',
+          'The Secrets of Us',
+          'The Shift',
+          'The Shotgun Lawyer',
+          'The Sicilian Inheritance',
+          'The Simple Wild',
+          'The Siren',
+          'The Sixth Wedding',
+          'The Soulmate',
+          'The Spanish Love Deception',
+          'The Storied Life of AJ Fikry',
+          'The Summer House',
+          'The Sweet Spot',
+          'The Testaments',
+          'The Things We Never Say',
+          'The Third Wife',
+          'The Thursday Murder Club',
+          'The Tourist Attraction',
+          'The True Love Experiment',
+          'The Turn of the Key',
+          'The Undomestic Goddess',
+          'The Unseen',
+          'The Vacationers',
+          'The Vanished',
+          'The Veiled',
+          'The Verifiers',
+          'The Very Secret Society of Irregular Witches',
+          'The Villa',
+          'The Wedding People',
+          'The Wedding Witch',
+          'The Whole-Brain Child',
+          'The Wife Between Us',
+          'The Wishing Game',
+          'The Woman I Wanted to Be',
+          'The Worst Best Man',
+          'The Wreckage of My Presence',
+          'Then Came You',
+          'They Both Die at the End',
+          'Things We Hide from the Light',
+          'Things We Left Behind',
+          'Things We Never Got Over',
+          'Things You Saved in a Fire',
+          'This Spells Love',
+          'This Summer Will Be Different',
+          'Three Wishes',
+          'Till Death Do Us Part',
+          'To Bless the Space Between Us',
+          'Today Tonight Tomorrow',
+          'Tom Lake',
+          'Tomorrow and Tomorrow and Tomorrow',
+          'Too Good to Be True',
+          'Too Late',
+          'Tools of Engagement',
+          'Totally and Completely Fine',
+          'Tweet Cute',
+          'Twenty Years Later',
+          'Twice Shy',
+          'Two Can Play',
+          'Undercover Bromance',
+          'Until Next Summer',
+          'Vera Wong',
+          'Verity',
+          'Very Bad Company',
+          'Walk in Darkness',
+          'We Solve Murders',
+          'We Were Liars',
+          'What Happened to Nina',
+          'When Breath Becomes Air',
+          'When I Think of You',
+          'When She Returned',
+          'When We Believed in Mermaids',
+          'When We Were Silent',
+          'Whisper Network',
+          'White Angel Murder',
+          'Wild Side',
+          'Win',
+          'Window Shopping',
+          'Winter Solstice',
+          'Winter Storms',
+          'Winter Street',
+          'Winter Stroll',
+          'Wish You Were Here',
+          'Without Merit',
+          'Writers and Lovers',
+          'You with a View',
+          'Young Jane Young',
+          'Yours Truly',
 
-        // Organized by your 7 reading themes, pulling from BRAD + classics in your gaps
-        const TBR_BY_THEME = {
-          thriller: [
-            { id: "housemaid", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1646534743i/60556912.jpg", title: "The Housemaid", author: "Freida McFadden", hook: "The thriller every group chat is talking about. Two sittings, max — and the twist will floor you.", rating: null },
-            { id: "family-upstairs", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1564517337i/43822820.jpg", title: "The Family Upstairs", author: "Lisa Jewell", hook: "A baby found alive. Three bodies in the kitchen. Jewell's masterwork — beyond The Third Wife.", rating: null },
-            { id: "mrs-parrish", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1486501028i/34043643.jpg", title: "The Last Mrs. Parrish", author: "Liv Constantine", hook: "A social climber. A perfect marriage. A third-act twist that flips the whole book.", rating: null },
-            { id: "dead-heat", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1753844401i/236889313.jpg", title: "Dead Heat", author: "Sabine Durrant", hook: "Old friends on holiday in Greece's Mani Peninsula. Slow-burn suspense, beautiful setting, and the kind of secrets that detonate quietly. GH August 2026 pick.", rating: null },
-          ],
-          romance: [
-            { id: "good-alive", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/5dd1ac96-5cb6-44d7-bfaa-92476d4acb8b/81lG9AckF7L._SL1500_.jpg", title: "Good at Being Alive", author: "Elizabeth O'Roark", hook: "Fake-married to her grumpy UK counterpart on a reality travel show. BRAD 4★ — your sweet spot.", rating: null },
-            { id: "in-her-league", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/93d5f091-0645-435f-8c4b-89d0fcffe2dc/81CMLuWGaWL._SL1500_.jpg", title: "In Her Own League", author: "Liz Tomforde", hook: "She inherits an MLB team. He's the field manager. BRAD 4★ — forbidden, slow-burn, sports-flavored.", rating: null },
-            { id: "below-zero", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1637311357i/59651553.jpg", title: "Below Zero", author: "Ali Hazelwood", hook: "BRAD 5★ novella — workplace romance, grumpy x sunshine. The companion to Under One Roof.", rating: null },
-            { id: "dolly-time", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1757041312i/240687665.jpg", title: "Dolly All the Time", author: "Alexis Hall", hook: "BRAD 5★ — 'When you're reading a book and you constantly catch yourself grinning, it's five stars.'", rating: null },
-          ],
-          womens: [
-            { id: "sandwich", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1699631079i/200028726.jpg", title: "Sandwich", author: "Catherine Newman", hook: "A week at the beach with three generations. Funny, devastating, deeply true. A quiet stunner.", rating: null },
-            { id: "best-worst", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/d7c5305a-097f-4cf6-b488-717d6fb2b8d3/718AX9wN-gL._SL1500_.jpg", title: "The Best Worst Thing", author: "Lauren Okie", hook: "Infertility, marital breakdown, unexpected reconnection. BRAD 4★ — hard subjects with humor, Henry/Jimenez tonal cousin.", rating: null },
-            { id: "lake-effect", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/8282af71-4b64-43b0-8176-a2491c932f31/81wT49Wo8pL._SL1500_.jpg", title: "Lake Effect", author: "Cynthia D'Aprix Sweeney", hook: "1977 Rochester. Multi-POV family slice-of-life from the author of The Nest. BRAD 4★ — quiet literary win.", rating: null },
-            { id: "eleanor-oliphant", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1493724048i/31434883.jpg", title: "Eleanor Oliphant is Completely Fine", author: "Gail Honeyman", hook: "A withdrawn, prickly accounting clerk who lives by rigid routine meets someone who quietly cracks her open. Unexpectedly tender and funny — BuzzFeed 2026 best-of pick.", rating: null },
-            { id: "getting-away", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1748895608i/228815820.jpg", title: "Getting Away", author: "Kate Sawyer", hook: "One ordinary family. Eight decades of holidays. Starting in the 1930s, each trip is a snapshot of how much (and how little) changes. GH August 2026 — multi-POV, multi-generation, heartfelt.", rating: null },
-            { id: "treasures", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1750698646i/230440887.jpg", title: "The Treasures", author: "Harriet Evans", hook: "Post-war London to mid-60s NYC. A trilogy opener about first love, nostalgia, and the stories we carry forward. GH August 2026 Reader Favourite — readers could not put it down.", rating: null },
-          ],
-          literary: [
-            { id: "young-jane", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1490731852i/33590214.jpg", title: "Young Jane Young", author: "Gabrielle Zevin", hook: "Continue your 2026 Zevin arc. Sharp, funny, deeply human. Made for you.", rating: null },
-            { id: "yesteryear", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/e2781687-846b-44f2-a304-eac496392e99/7169bZ6hrNL._SL1500_.jpg", title: "Yesteryear", author: "Caro Claire Burke", hook: "A tradwife influencer wakes up in 1855. BRAD 5★ — sharp satire of curated online life, feeds your 2026 literary turn.", rating: null },
-            { id: "heart-the-lover", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1745508457i/228110489.jpg", title: "Heart the Lover", author: "Lily King", hook: "First love and second chances, written with the quiet precision that made Writers and Lovers unforgettable. GH August 2026 — readers cried and begged for a sequel.", rating: null },
-            { id: "phoenix-pencil", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1748966900i/220652184.jpg", title: "The Phoenix Pencil Company", author: "Allison King", hook: "An American student uncovers her Chinese grandmother's secret past in 1940s Shanghai. Multigenerational, beautifully written, and the kind of book that surprises you. GH August 2026 pick.", rating: null },
-          ],
-          crime: [
-            { id: "last-devil", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1680740298i/62226126.jpg", title: "The Last Devil to Die", author: "Richard Osman", hook: "Murder Club #4. Funniest and most poignant of the series. You'll cry on the train.", rating: null },
-            { id: "mad-mabel", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/282029b7-066c-4a0c-9c9f-02171536408d/71B6LgRyB8L._SL1500_.jpg", title: "Mad Mabel", author: "Sally Hepworth", hook: "An 80-year-old with a violent past gets pulled into a murder investigation. BRAD 4★ — Hepworth's 2025 mystery turn.", rating: null },
-            { id: "long-isle", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1774448659i/250228282.jpg", title: "The Long Isle", author: "Andrew Raymond", hook: "A gritty female detective on the remote isle of Uist in the Hebrides. Atmospheric, well-paced, brilliant lead character. GH August 2026 — the crime pick of the summer.", rating: null },
-            { id: "story-of-murder", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1731674753i/215362556.jpg", title: "Story of a Murder", author: "Hallie Rubenhold", hook: "The wife and mistress of the notorious Dr Crippen. Rubenhold (The Five) does it again — meticulously researched, brilliantly told. GH August 2026 true-crime pick.", rating: null },
-          ],
-          nonfiction: [
-            { id: "anxious-gen", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1711573377i/171681821.jpg", title: "The Anxious Generation", author: "Jonathan Haidt", hook: "Whole-Brain Child for the smartphone era. The parenting book of the moment.", rating: null },
-          ],
-          mixed: [
-            { id: "god-woods", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1717970538i/199698485.jpg", title: "The God of the Woods", author: "Liz Moore", hook: "Adirondacks summer camp. Missing girl. Layers of family secrets. The big crossover hit of '24 — lit fic + mystery.", rating: null },
-            { id: "the-heir", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/7a6de30a-a376-4901-8de0-770394b8142c/81SYos2o8ML._SL1500_.jpg", title: "The Heir", author: "Sophia Travers", hook: "Casino expansion vs. bourbon legacy. Forced to marry to inherit. BRAD 4★ — enemies-to-lovers with high stakes.", rating: null },
-            { id: "mafia-mistress", src: "https://images.squarespace-cdn.com/content/v1/62796e7bd359e50d795a0c8f/7467f1a8-9a86-4738-8977-a0c6793885fc/817-w1uxWXL._SL1500_.jpg", title: "Mafia Mistress", author: "Mila Finelli", hook: "Calabrian mob daughter, forced marriage into Italian mafia royalty. BRAD 4★ — a darker, spicier change of pace.", rating: null },
-          ],
-          everygirl: [
-            { id: "with-a-vengeance", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1733935606i/219603177.jpg", title: "With a Vengeance", author: "Riley Sager", hook: "A 1954 overnight train. She's locked everyone who destroyed her family aboard. A murder derails her plan. Christie-level locked-room thriller — instant NYT bestseller.", rating: null },
-            { id: "summer-in-city", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1745152848i/216405550.jpg", title: "Summer in the City", author: "Alex Aster", hook: "Screenwriter with writer's block. Her stairwell hookup is now her neighbor and fake boyfriend per their deal. Alex Aster's debut romance — #2 NYT bestseller.", rating: null },
-            { id: "love-war-song", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1731022378i/220687884.jpg", title: "Love Is a War Song", author: "Danica Nava", hook: "Cancelled Muscogee pop star flees to her grandmother's Oklahoma ranch. The cowboy running it wants her gone. USA Today bestseller with real Indigenous cultural depth.", rating: null },
-            { id: "one-of-girls", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1635859718i/58829857.jpg", title: "One of the Girls", author: "Lucy Clarke", hook: "Six women on a Greek island bachelorette trip. Each is hiding a secret. Before it ends, someone won't make it off alive.", rating: null },
-            { id: "mvb-book-club", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1734728830i/215805887.jpg", title: "The Martha's Vineyard Beach and Book Club", author: "Martha Hall Kelly", hook: "Two sisters, 1942 Martha's Vineyard. A failing farm, a U-boat offshore, and a wartime book club that holds them together. From the Lilac Girls author — built for you.", rating: null },
-            { id: "girls-grew-big", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1734707534i/219520677.jpg", title: "The Girls Who Grew Big", author: "Leila Mottley", hook: "Teen moms in a Florida beach town raising their kids in the back of a red truck. Mottley's follow-up to the Booker-longlisted Nightcrawling — warm, urgent, unforgettable.", rating: null },
-            { id: "fox-oates", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1730148206i/219301718.jpg", title: "Fox", author: "Joyce Carol Oates", hook: "A charismatic English teacher vanishes from an elite prep school. His car half-submerged in a pond. Who is Francis Fox? Gillian Flynn called it 'eerie, shocking, brilliant.'", rating: null },
-            { id: "marriage-at-sea", src: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1731041831i/220239083.jpg", title: "A Marriage at Sea", author: "Sophie Elmhirst", hook: "In 1972 they quit their jobs, bought a boat, sailed away. A whale sank it. 118 days on a rubber raft in the Pacific — the real-life thriller of the summer.", rating: null },
-            { id: "river-of-stars", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1770083179i/247508064.jpg", title: "River of Stars", author: "Georgina Moore", hook: "Dual timeline: 1960s bohemian Eel Pie Island and the present day. A former resident returns after 20 years and unravels a family. GH August 2026 Winner — impossible to put down.", rating: null },
-            { id: "knight-and-moth", src: "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1729088690i/205335957.jpg", title: "The Knight and the Moth", author: "Rachel Gillig", hook: "A priestess and rogue knights in a lush gothic fantasy — slow-burn romance with real stakes. BuzzFeed 2026 best-of pick for readers ready to try something a little darker.", rating: null },
-          ],
-        };
+          'Comedic Timing',
+          'Exit Lane',
+          'Found Time',
+          'Hardly Strangers',
+          "It's a Love Story",
+        ];
 
-
-        // ─── SIMPLE CHARTS ───────────────────────────────────────────────────────────
-
-        function SimpleBarChart({ data }) {
-          const maxValue = Math.max(...data.map(d => d.count));
-          const chartHeight = 180;
-          
-          return (
-            <svg width="100%" height={chartHeight} viewBox="0 0 500 180">
-              {data.map((d, i) => {
-                const barHeight = (d.count / maxValue) * (chartHeight - 40);
-                const x = i * 70 + 30;
-                const y = chartHeight - barHeight - 20;
-                
-                return (
-                  <g key={i}>
-                    <rect x={x} y={y} width="45" height={barHeight} fill={d.color} rx="4" />
-                    <text x={x + 22.5} y={chartHeight - 5} textAnchor="middle" fontSize="12" fill="#7a5060" fontWeight="700">{d.year}</text>
-                    <text x={x + 22.5} y={y - 5} textAnchor="middle" fontSize="11" fill="#d4a0c0">{d.count}</text>
-                  </g>
-                );
-              })}
-            </svg>
-          );
-        }
-
-        function SimplePieChart({ data }) {
-          const total = data.reduce((sum, d) => sum + d.value, 0);
-          let currentAngle = -90;
-          const radius = 50;
-          const cx = 70;
-          const cy = 70;
-          
-          return (
-            <svg width="100%" height="140" viewBox="0 0 140 140">
-              {data.map((d, i) => {
-                const sliceAngle = (d.value / total) * 360;
-                const startAngle = currentAngle;
-                const endAngle = currentAngle + sliceAngle;
-                
-                const startRad = (startAngle * Math.PI) / 180;
-                const endRad = (endAngle * Math.PI) / 180;
-                
-                const x1 = cx + radius * Math.cos(startRad);
-                const y1 = cy + radius * Math.sin(startRad);
-                const x2 = cx + radius * Math.cos(endRad);
-                const y2 = cy + radius * Math.sin(endRad);
-                
-                const largeArc = sliceAngle > 180 ? 1 : 0;
-                const path = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArc} 1 ${x2} ${y2} Z`;
-                
-                currentAngle = endAngle;
-                
-                return <path key={i} d={path} fill={d.color} stroke="none" />;
-              })}
-            </svg>
-          );
-        }
-
-        // ─── TAB VIEWS ───────────────────────────────────────────────────────────────
-
-        function VisualDashboard() {
-          return (
-            <div style={{ background: "#FEFDFB", color: "#2C3E50", fontFamily: "Georgia, serif" }}>
-              <div style={{ background: "linear-gradient(135deg, #e8f3ff 0%, #f0f8ff 50%, #fef8f0 100%)", padding: "1.5rem 2rem 1.75rem", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: -60, right: -60, width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(153,183,245,0.2), transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", justifyContent: "center", gap: 10, marginBottom: 6 }}>
-                    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(48px, 10vw, 72px)", fontWeight: 700, color: "#267F53", lineHeight: 1 }}>444</span>
-                    <span style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "clamp(16px, 3.5vw, 22px)", color: "#F296BD" }}>books</span>
-                  </div>
-                  <p style={{ fontFamily: "Lato, sans-serif", fontWeight: 300, color: "#267F53", fontSize: 12, letterSpacing: 1, marginBottom: 24 }}>tracked across 6 years</p>
-                  <div style={{ display: "flex", justifyContent: "center", gap: "clamp(16px, 5vw, 48px)", flexWrap: "wrap" }}>
-                    {[{ label: "Years Tracked", value: "6", color: "#F5793B" }, { label: "Avg / Year", value: "74", color: "#99B7F5" }, { label: "Best Year", value: "2024", color: "#F296BD" }, { label: "2026 YTD", value: "50", color: "#FCCA59" }].map((s) => (
-                      <div key={s.label} style={{ textAlign: "center" }}>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 5vw, 32px)", fontWeight: 700, color: s.color }}>{s.value}</div>
-                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "#267F53" }}>{s.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
-                <section style={{ marginBottom: 20 }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 14 }}>
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#2C3E50", margin: 0 }}>Reading by Year</h2>
-                    <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#5A6B7C", letterSpacing: 1 }}>books read each period</span>
-                  </div>
-                  <div style={{ background: "#FFFFFF", borderRadius: 14, padding: "24px 16px 16px", border: "1.5px solid #99B7F5", boxShadow: "0 2px 12px rgba(153,183,245,0.1)" }}>
-                    <SimpleBarChart data={YEAR_DATA} />
-                  </div>
-                </section>
-
-                <div style={{ display: "grid", gridTemplateColumns: "5fr 6fr", gap: 16, marginBottom: 20 }}>
-                  <section>
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#2C3E50", margin: "0 0 14px" }}>By Genre</h2>
-                    <div style={{ background: "#FFFFFF", borderRadius: 14, padding: "20px", border: "1.5px solid #F296BD", boxShadow: "0 2px 12px rgba(242,150,189,0.1)" }}>
-                      <SimplePieChart data={GENRE_DATA} />
-                      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
-                        {GENRE_DATA.map((g) => (
-                          <div key={g.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <div style={{ width: 8, height: 8, borderRadius: 2, background: g.color, flexShrink: 0 }} />
-                            <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#8a6070", flex: 1, lineHeight: 1.3 }}>{g.name}</span>
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 12, color: g.color, fontWeight: 700 }}>{g.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </section>
-                  <section>
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#2C3E50", margin: "0 0 14px" }}>Top Authors</h2>
-                    <div style={{ background: "#FFFFFF", borderRadius: 14, padding: "20px", border: "1.5px solid #DDE8F5", display: "flex", flexDirection: "column", gap: 11 }}>
-                      {AUTHORS.map((a, i) => (
-                        <div key={a.name}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                            <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#c0a0b0", fontWeight: 700 }}>
-                              <span style={{ color: "#4a2030", marginRight: 6, fontSize: 10 }}>#{i + 1}</span>{a.name}
-                            </span>
-                            <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: a.color }}>{a.count}</span>
-                          </div>
-                          <div style={{ background: "#2a1020", borderRadius: 4, height: 5 }}>
-                            <div style={{ width: `${(a.count / 28) * 100}%`, background: `linear-gradient(90deg, ${a.color}99, ${a.color})`, borderRadius: 4, height: "100%" }} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-
-                <section>
-                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, color: "#2C3E50", margin: "0 0 14px" }}>Reading Insights</h2>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10 }}>
-                    {INSIGHTS.map((ins) => (
-                      <div key={ins.label} style={{ background: "#FFFFFF", borderRadius: 12, padding: "16px", border: "1.5px solid #FCCA59", boxShadow: "0 2px 8px rgba(252,202,89,0.08)" }}>
-                        <div style={{ fontSize: 22, marginBottom: 8 }}>{ins.emoji}</div>
-                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: "#5a3040", marginBottom: 5 }}>{ins.label}</div>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 700, color: "#2C3E50", lineHeight: 1.3, marginBottom: 3 }}>{ins.value}</div>
-                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#5A6B7C" }}>{ins.sub}</div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            </div>
-          );
-        }
-
-        function LiteraryThemes() {
-          const [expanded, setExpanded] = useState("romance");
-          return (
-            <div style={{ background: "#FAFCFE", fontFamily: "Georgia, serif", color: "#2C3E50" }}>
-              <div style={{ background: "#110818", borderBottom: "1px solid #2a1a3a", padding: "1rem 1.5rem", overflowX: "auto" }}>
-                <div style={{ maxWidth: 860, margin: "0 auto", display: "flex", gap: 6, justifyContent: "space-between" }}>
-                  {THEMES.map((t) => (
-                    <button key={t.id} onClick={() => setExpanded(expanded === t.id ? null : t.id)} style={{ flex: 1, minWidth: 60, padding: "8px 4px", borderRadius: 8, border: `1.5px solid ${expanded === t.id ? t.color : "#2a1a3a"}`, background: expanded === t.id ? `${t.color}22` : "transparent", color: expanded === t.id ? t.light : "#6a4a7a", cursor: "pointer", fontFamily: "Lato, sans-serif", fontSize: "clamp(9px, 1.5vw, 12px)", fontWeight: 700, textAlign: "center", transition: "all 0.2s" }}>
-                      <div style={{ fontSize: "clamp(16px, 3vw, 20px)", marginBottom: 3 }}>{t.emoji}</div>
-                      <div style={{ lineHeight: 1.2 }}>{t.count}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ maxWidth: 860, margin: "0 auto", padding: "1.5rem 1rem 3rem", display: "flex", flexDirection: "column", gap: 12 }}>
-                {THEMES.map((t) => {
-                  const isOpen = expanded === t.id;
-                  return (
-                    <div key={t.id} onClick={() => setExpanded(isOpen ? null : t.id)} style={{ background: isOpen ? t.bg : "#130810", borderRadius: 14, border: `1.5px solid ${isOpen ? t.color + "55" : "#2a1a3a"}`, overflow: "hidden", transition: "all 0.3s ease", boxShadow: isOpen ? `0 8px 32px ${t.color}20` : "none", cursor: "pointer" }}>
-                      <div style={{ padding: "18px 20px", display: "flex", alignItems: "center", gap: 14 }}>
-                        <div style={{ width: 44, height: 44, borderRadius: 10, background: `${t.color}22`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0, border: `1px solid ${t.color}33` }}>{t.emoji}</div>
-                        <div style={{ flex: 1 }}>
-                          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(14px, 3vw, 18px)", fontWeight: 700, color: "#f8f8f8", margin: "0 0 3px", lineHeight: 1.2 }}>{t.name}</h2>
-                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: t.light, fontWeight: 700, letterSpacing: 1 }}>{t.count} books</div>
-                        </div>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: t.color, flexShrink: 0, lineHeight: 1 }}>{t.count}</div>
-                        <div style={{ color: "#4a2a5a", fontSize: 16, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</div>
-                      </div>
-                      {isOpen && (
-                        <div style={{ padding: "0 20px 20px" }}>
-                          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 14, color: "#e8e0f0", lineHeight: 1.65, margin: "0 0 18px", paddingTop: 2, borderTop: `1px solid ${t.color}22` }}>"{t.vibe}"</p>
-                          <div style={{ marginBottom: 18 }}>
-                            <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c0b0d0", marginBottom: 10 }}>Representative Reads</div>
-                            <div style={{ display: "flex", gap: 6, alignItems: "flex-end", flexWrap: "wrap" }}>
-                              {t.standouts.map((book, i) => {
-                                const h = 60 + ((i * 17) % 50);
-                                const shades = ["aa", "cc", "ee", "bb", "dd", "99", "ff", "cc", "aa", "bb"];
-                                return (
-                                  <div key={book} title={book} style={{ width: 28, height: h, background: `${t.color}${shades[i % shades.length]}`, borderRadius: "3px 3px 2px 2px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 2px 6px rgba(0,0,0,0.4)", position: "relative", overflow: "hidden" }}>
-                                    <span style={{ fontFamily: "Lato, sans-serif", fontSize: 7, fontWeight: 700, color: "rgba(255,255,255,0.9)", writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)", lineHeight: 1.1, textAlign: "center", padding: "2px 0", letterSpacing: 0.5, maxHeight: h - 8, overflow: "hidden" }}>{book.length > 20 ? book.slice(0, 18) + "…" : book}</span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                          <div style={{ marginBottom: 14 }}>
-                            <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c0b0d0", marginBottom: 8 }}>Key Authors</div>
-                            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                              {t.keyAuthors.map((a) => (<span key={a} style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: t.light, background: `${t.color}18`, border: `1px solid ${t.color}44`, borderRadius: 20, padding: "3px 10px" }}>{a}</span>))}
-                            </div>
-                          </div>
-                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#d0c0e0", background: `${t.color}10`, borderRadius: 8, padding: "10px 14px", borderLeft: `3px solid ${t.color}55`, lineHeight: 1.6 }}>📝 {t.note}</div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        }
+        // De-duped: the raw list had ~30 repeats, which produced duplicate React keys
+        // in the grid below and inflated the displayed count. First occurrence wins.
+        const ALREADY_READ = Array.from(new Set(ALREADY_READ_RAW));
 
         function HistoricalList() {
           const [search, setSearch] = useState("");
@@ -570,27 +747,30 @@
 
         function TBRPile() {
           const [hoveredIdx, setHoveredIdx] = useState(null);
-          const [activeTheme, setActiveTheme] = useState("thriller");
+          const [activeTheme, setActiveTheme] = useState("romance");
           const [ratings, setRatings] = useState(() => {
-            const saved = localStorage.getItem('bookRatings');
-            return saved ? JSON.parse(saved) : {};
+            try {
+              const saved = localStorage.getItem('bookRatings');
+              return saved ? JSON.parse(saved) : {};
+            } catch { return {}; }
           });
 
           const saveRating = (bookId, rating) => {
             const newRatings = { ...ratings, [bookId]: rating };
             setRatings(newRatings);
-            localStorage.setItem('bookRatings', JSON.stringify(newRatings));
+            try { localStorage.setItem('bookRatings', JSON.stringify(newRatings)); } catch {}
           };
 
           const themeInfo = {
-            thriller: { name: "Psychological Thriller & Domestic Suspense", emoji: "🔪", color: "#267F53", count: 85 },
             romance: { name: "Romance & RomCom", emoji: "💕", color: "#F296BD", count: 155 },
+            thriller: { name: "Psychological Thriller & Domestic Suspense", emoji: "🔪", color: "#267F53", count: 85 },
+            romantasy: { name: "Romantasy", emoji: "🐉", color: "#F296BD", count: 0 },
+            horror: { name: "Horror", emoji: "🩸", color: "#267F53", count: 0 },
             womens: { name: "Women's Fiction & Beach Reads", emoji: "🌊", color: "#99B7F5", count: 75 },
             literary: { name: "Literary Fiction & Prestige Reads", emoji: "📖", color: "#F5793B", count: 30 },
             crime: { name: "Crime Fiction & Detective Mysteries", emoji: "🔍", color: "#267F53", count: 25 },
             nonfiction: { name: "Nonfiction, Memoir & Self-Help", emoji: "💡", color: "#FCCA59", count: 22 },
             mixed: { name: "Cross-Genre & Wildcards", emoji: "🎲", color: "#F296BD", count: 0 },
-            everygirl: { name: "The Everygirl — Summer 2025", emoji: "🌸", color: "#F5793B", count: 0 },
           };
 
           return (
@@ -605,7 +785,7 @@
                       <button key={key} onClick={() => setActiveTheme(key)} style={{ padding: "10px 16px", borderRadius: 20, border: `2px solid ${activeTheme === key ? theme.color : "#e0e0e0"}`, background: activeTheme === key ? `${theme.color}15` : "#fff", color: activeTheme === key ? theme.color : "#666", cursor: "pointer", fontFamily: "Lato, sans-serif", fontSize: 13, fontWeight: 700, transition: "all 0.2s", display: "flex", alignItems: "center", gap: 6 }}>
                         <span style={{ fontSize: 16 }}>{theme.emoji}</span>
                         <span>{theme.name.split(" & ")[0]}</span>
-                        {theme.count > 0 && <span style={{ fontSize: 11, opacity: 0.7 }}>({theme.count})</span>}
+                        <span style={{ fontSize: 11, opacity: 0.7 }}>({TBR_BY_THEME[key].length})</span>
                       </button>
                     ))}
                   </div>
@@ -620,6 +800,13 @@
                   </div>
                 </div>
 
+                {TBR_BY_THEME[activeTheme].length === 0 && (
+                  <div style={{ textAlign: "center", padding: "50px 20px", background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea" }}>
+                    <div style={{ fontSize: 44, marginBottom: 10 }}>🕳️</div>
+                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#9a7090", fontStyle: "italic", margin: 0 }}>Nothing in this pile yet.</p>
+                  </div>
+                )}
+
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "clamp(20px, 4vw, 36px) clamp(12px, 3vw, 24px)", alignItems: "start" }}>
                   {TBR_BY_THEME[activeTheme].map((book, i) => {
                     const rotation = (i * 1.3 - 2) % 3; // Random-ish rotation per book
@@ -632,16 +819,18 @@
                       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(12px, 2.5vw, 14px)", fontWeight: 700, color: "#1c0a14", lineHeight: 1.25, marginBottom: 3, marginTop: 10 }}>{book.title}</div>
                       <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#5A6B7C", marginBottom: 8 }}>{book.author}</div>
 
-                      {/* Star rating */}
+                      {/* Star rating — buttons so the whole glyph box is clickable */}
                       <div style={{ display: "flex", gap: 3, marginBottom: 5 }}>
                         {[1, 2, 3, 4, 5].map((star) => (
-                          <span
+                          <button
                             key={star}
-                            onClick={(e) => { e.stopPropagation(); saveRating(book.id, star); }}
-                            style={{ fontSize: 16, cursor: "pointer", color: (ratings[book.id] >= star) ? "#FCCA59" : "#e0e0e0", transition: "color 0.2s" }}
+                            type="button"
+                            aria-label={`${star} star${star > 1 ? "s" : ""}`}
+                            onClick={(e) => { e.stopPropagation(); saveRating(book.id, ratings[book.id] === star ? 0 : star); }}
+                            style={{ fontSize: 16, lineHeight: 1, padding: 0, border: "none", background: "transparent", cursor: "pointer", color: (ratings[book.id] >= star) ? "#FCCA59" : "#e0e0e0", transition: "color 0.2s" }}
                           >
                             ★
-                          </span>
+                          </button>
                         ))}
                       </div>
 
@@ -653,25 +842,20 @@
                   })}
                 </div>
                 <div style={{ marginTop: 40, padding: "20px 24px", background: `${themeInfo[activeTheme].color}15`, borderRadius: 12, borderLeft: `4px solid ${themeInfo[activeTheme].color}` }}>
-                  {activeTheme === "everygirl" ? (
-                    <>
-                      <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#4a2030", lineHeight: 1.65, margin: "0 0 8px" }}>
-                        <strong>🌸 Curated from The Everygirl</strong>
-                      </p>
-                      <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 13, color: "#5a3050", lineHeight: 1.6, margin: 0 }}>
-                        Pulled from <a href="https://theeverygirl.com/beach-reads/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>theeverygirl.com/beach-reads/</a> and <a href="https://theeverygirl.com/summer-new-books/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>theeverygirl.com/summer-new-books/</a> — Summer 2025 lists, de-duped against your reading history.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#4a2030", lineHeight: 1.65, margin: "0 0 8px" }}>
-                        <strong>📚 Curated from Beach Reads &amp; Bubbly · Good Housekeeping · BuzzFeed</strong>
-                      </p>
-                      <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 13, color: "#5a3050", lineHeight: 1.6, margin: 0 }}>
-                        Picks pulled from <a href="https://www.beachreadsandbubbly.com/reviews" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>beachreadsandbubbly.com</a> (4★+ only), <a href="https://www.goodhousekeeping.com/uk/lifestyle/editors-choice-book-reviews/a71587001/good-books-august-26-collection/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>GH August 2026 collection</a>, and <a href="https://www.buzzfeed.com/meganeliscomb/best-books-read-in-2026-so-far" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>BuzzFeed 2026 best-of</a> — all matched to your taste profile and filtered against your reading history.
-                      </p>
-                    </>
-                  )}
+                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#4a2030", lineHeight: 1.65, margin: "0 0 8px" }}>
+                    <strong>🌸 Curated from The Everygirl · Beach Reads &amp; Bubbly · Good Housekeeping · BuzzFeed</strong>
+                  </p>
+                  <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: 13, color: "#5a3050", lineHeight: 1.6, margin: 0 }}>
+                    2026 picks pulled from The Everygirl's{" "}
+                    <a href="https://theeverygirl.com/what-to-read-after-emily-henry-books/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>Read After Emily Henry</a>,{" "}
+                    <a href="https://theeverygirl.com/goodreeads-best-books-of-year/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>Goodreads Best Books</a>,{" "}
+                    <a href="https://theeverygirl.com/goodreads-best-thriller-and-horror-books-of-year/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>Best Thriller &amp; Horror</a>, and{" "}
+                    <a href="https://theeverygirl.com/goodreads-best-romance-and-romantasy-books-of-year/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>Best Romance &amp; Romantasy</a>{" "}
+                    lists — 13 titles you'd already read were filtered out. Earlier picks came from{" "}
+                    <a href="https://www.beachreadsandbubbly.com/reviews" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>beachreadsandbubbly.com</a> (4★+ only),{" "}
+                    <a href="https://www.goodhousekeeping.com/uk/lifestyle/editors-choice-book-reviews/a71587001/good-books-august-26-collection/" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>GH August 2026</a>, and{" "}
+                    <a href="https://www.buzzfeed.com/meganeliscomb/best-books-read-in-2026-so-far" target="_blank" rel="noopener" style={{ color: themeInfo[activeTheme].color, textDecoration: "underline" }}>BuzzFeed 2026 best-of</a>.
+                  </p>
                 </div>
               </div>
             </div>
@@ -684,62 +868,68 @@
 
         const BASE_TOTAL = 444;
 
-        const TIMELINE_DATA = [
-          { year: "Earlier", color: "#F296BD", books: [
-            "I Am Pilgrim", "Home", "Verity", "A Killer's Wife", "Whisper Network", "Lexicon", "The Summer House", "The Last Flight", "Pretty Little Wife", "Every Last Secret", "The Hollows", "In an Instant", "The Best of Friends", "When We Believed in Mermaids", "The Other Wife", "The Girl in Cabin 13", "The Mother-in-Law", "The Woman I Wanted to Be", "The Other Emily", "The Wreckage of My Presence", "The Girl That Vanished", "The Girl in the Manor", "The Girl Next Door", "Bring Me Back", "The Dilemma", "The Lies That Bind", "The Third Wife", "When She Returned", "The Secrets of Us", "Protecting Noah", "Missing Parts", "Appetite for Innocence", "Phantom Limb", "Summer of '69", "Black Ice", "Barefoot", "28 Weeks of Summer", "The Sixth Wedding", "The Midnight Library", "The Last Anniversary", "Summerland", "Silver Girl", "Win", "Blue Bistro", "Crimson Lake Road", "An Unreliable Truth", "The Neon Lawyer", "Mercy", "Blood Dahlia", "Murder 42", "The Vanished", "The Unseen", "It Ends with Us", "The Veiled", "Layla", "Paradise", "A Gambler's Jury", "The Shotgun Lawyer", "An Invisible Client", "White Angel Murder", "Walk in Darkness", "Sun City Homicide", "Arsonist", "Black Widow Murders", "Run Away", "Mania", "Park Road", "Purgatory", "The Murder of Janessa Henley", "The Bastille", "It Starts with Us", "When Breath Becomes Air", "Final Girl"
-          ]},
-          { year: "2022", color: "#99B7F5", books: [
-            "Regretting You", "Too Late", "People We Meet on Vacation", "One Year Gone", "Girl Gone Mad", "The Humans", "Three Wishes", "The Last Thing He Told Me", "Eight Hundred Grapes", "Hello Sunshine", "The Invisible Life of Addie LaRue", "Happy Days", "The Radleys", "Heart Bones", "Then Came You", "Winter Street", "Winter Stroll", "Winter Storms", "Winter Solstice", "Reminders of Him", "The Love Hypothesis", "The Wife Between Us", "Book Lovers", "Beach Read", "The Golden Couple", "Good in Bed", "Things We Never Got Over", "By a Thread", "The Hotel Nantucket", "November 9", "The Worst Best Man", "A Deal with the Devil", "The Devil and the Deep Blue Sea", "The Devil You Know", "Confess", "All Your Perfects", "Dirty Like Me", "Dirty Like Brody", "Dirty Like Us", "Dirty Like Jude", "Dirty Like Zane", "Hot Mess", "Sweet Temptation", "Lovely Madness", "Handsome Devil", "Rebel Heir", "Olive", "Hopeless", "Losing Hope", "Tempt Me", "Break Me", "Teach Me", "Surrender to Me", "Sweet Mercy", "Gabriel Fallen", "Dirty Empire", "Fallen Empire", "Like a Mother", "We Were Liars", "Slammed", "Point of Retreat", "Shadow and Bone", "Siege and Storm", "Ruin and Rising", "It Starts with Us", "When Breath Becomes Air", "Final Girl"
-          ]},
-          { year: "2023", color: "#267F53", books: [
-            "Maybe in Another Life", "Every Summer After", "Carrie Soto Is Back", "One True Loves", "After I Do", "The Fifth Trimester", "Red, White & Royal Blue", "Lessons in Chemistry", "Nora Goes Off Script", "The Proposal", "In Five Years", "One Italian Summer", "Twenty Years Later", "The Match", "The Edge of Falling", "The Guest List", "They Both Die at the End", "Malibu Rising", "Killers of a Certain Age", "I Will Find You", "Scandalized", "Happy Place", "The Last Housewife", "Romantic Comedy", "The Shift", "The Soulmate", "Look Closer", "In My Dreams I Hold a Knife", "Daddy Diaries", "Neighbor Favor", "Love on the Brain", "Stone Cold Fox", "The Change", "Meet Me at the Lake", "Life's Too Short", "Same Time Next Summer", "10% Happier", "Vera Wong", "Wish You Were Here", "The Happy Ever After Playlist", "It Happened One Summer", "Seven Year Slip", "Yours Truly", "The True Love Experiment", "The Celebrants", "Tomorrow and Tomorrow and Tomorrow", "Mrs. Nash's Ashes", "Things We Hide from the Light", "Things We Left Behind", "The Cage", "Practice Makes Perfect", "You with a View", "Big Swiss", "Nothing to See Here", "Hello Stranger", "The Wishing Game", "Forget Me Not", "The Five Star Weekend", "A Very Merry Bromance", "The Sweet Spot", "Tom Lake", "Thank You for Listening", "The Tourist Attraction", "Mistletoe and Mr. Right", "Enjoy the View", "Georgie All Along", "Jana Goes Wild", "Snowed In", "Dear Dolly", "One Day"
-          ]},
-          { year: "2024", color: "#F5793B", books: [
-            "The Dinner List", "Meet Me in Another Life", "The Thursday Murder Club", "The Verifiers", "The Very Secret Society of Irregular Witches", "Down the Drain", "Undercover Bromance", "Ghosts", "The Dead Romantics", "One Day in December", "Mad Honey", "The Lies I Tell", "Rosaline Palmer Takes the Cake", "Check & Mate", "The Flat Share", "The Burnout", "A Christmas Orphans Club", "Tweet Cute", "Love in Lockdown", "A Winter in New York", "Killing Moon", "Isn't It Bromantic", "My Sister the Serial Killer", "Bride", "Oona Out of Order", "Butcher & Blackbird", "First Lie Wins", "The Rachel Incident", "Listen for the Lie", "Maybe Once Maybe Twice", "Strange Sally Diamond", "The Good Daughter", "Funny Story", "Just for the Summer", "The Heiress", "Part of Your World", "The Guilt Trip", "Good Material", "Dream On", "Once More with Feeling", "Funny You Should Ask", "The Kind Worth Killing", "The Kind Worth Saving", "Leather & Lark", "In a Holidaze", "Drawn That Way", "How to End a Love Story", "Loathe to Love You", "Beautiful Bastard", "This Summer Will Be Different", "Ace of Spades", "Love and Other Words", "The Love That Split the World", "Long Bright River", "End of Story", "Roomies", "Just Haven't Met You Yet", "The Ministry of Time", "Things You Saved in a Fire", "Not in Love", "Happily Never After", "Hook Line and Sinker", "Summer Romance", "The Block Party", "The Last Time I Lied", "The Rule Book", "The Siren", "Fix Her Up", "Love Her or Lose Her", "The No Show", "Window Shopping", "Alex Approximately", "Too Good to Be True", "Greenwich Park", "Tools of Engagement", "Not Another Love Song", "Here One Moment", "The Simple Wild", "Float Plan", "The Rom-Commers", "Margo's Got Money Troubles", "Every Time I Go on Vacation Someone Dies", "Dating You / Hating You", "My Not So Perfect Life", "The Paradise Problem", "An Anonymous Girl", "The Sicilian Inheritance", "When We Were Silent", "The Life Impossible", "We Solve Murders", "The Design of Us", "The Night We Lost Him", "Very Bad Company", "The Undomestic Goddess", "The Spanish Love Deception", "Lula Dean's Little Library", "Swan Song", "A Talent for Murder", "The Ex Vows", "All Fours"
-          ]},
-          { year: "2025", color: "#F296BD", books: [
-            "The Dry", "Is She Really Going Out with Him", "Summer Fridays", "The Monkey's Raincoat", "The Psilocybin Handbook for Women", "Letters to a Serial Killer", "Let Them", "This Spells Love", "Once More from the Top", "Until Next Summer", "The Last Love Note", "The Drowning Woman", "The Christmas You Found Me", "Business Casual", "The Love of My Afterlife", "The Turn of the Key", "The American Roommate Experiment", "My Lovely Wife", "Show Don't Tell", "Four Weekends and a Funeral", "What Happened to Nina", "Maybe Next Time", "The Roommate Pact", "The Best Lies", "Expiration Dates", "Catch and Keep", "The Catch", "Emma of 83rd Street", "Hot Air", "Catalina", "All I Want Is You", "All the Other Mothers Hate Me", "Everyone in My Family Has Killed Someone", "The Most Wonderful Crime of the Year", "Hotter in the Hamptons", "All Rhodes Lead Here", "Beg Borrow or Steal", "Atmosphere", "An Honest Lie", "When I Think of You", "Big Fan", "Only One Survives", "Husbands and Lovers", "Deep End", "One Last Summer", "Love Lettering", "The Testaments", "The Other Side of Disappearing", "Love at First", "Luck of the Draw", "Best of Luck", "Sorry of My Life", "First Time Caller", "Great Big Beautiful Life", "How to Giggle", "Instamom", "Wild Side", "Without Merit", "Twice Shy", "Totally and Completely Fine", "In a New York Minute", "Maybe Someday", "Today Tonight Tomorrow", "Self Help", "The Ex Hex", "The Love Haters", "Elizabeth of East Hampton", "So We Meet Again", "Not Bad for a Girl", "Good Company", "Say You'll Remember Me", "Till Death Do Us Part", "The Kiss Curse", "The Wedding Witch", "Anne of Avenue A", "How to Read a Book", "Hot for Slayer", "Writers and Lovers", "Death at the White Heart", "Summer Skate", "A Holly Jolly Ever After", "Heart the Lover", "The Academy"
-          ]},
-          { year: "2026", color: "#FCCA59", books: [
-            "Snow Place Like LA", "A Jingle Bell Mingle", "The Five Types of Wealth", "The Whole-Brain Child", "Mona Acts Out", "Careless People", "The Storied Life of AJ Fikry", "Young Jane Young", "Elsewhere", "A Sociopath's Guide to a Successful Marriage", "Mouth to Mouth", "Happy Money", "Kill Night", "Two Can Play", "The Book Thief", "Startlement", "Co-Intelligence", "Beautyland", "Strangers", "Annie Knows Everything", "Catch Her If You Can", "One of Us Is Lying", "Once and Again", "The Meaning of Your Life", "One Last Stop", "The Wedding People", "To Bless the Space Between Us", "And Now Back to You", "Audition", "The Night We Met", "Fair Play", "The Things We Never Say", "Both Can Be True", "The First Gentleman", "Kick the Latch", "One of Us Is Next", "Awake", "Square Waves", "Set Piece", "Grape Juice", "One Perfect Storm", "It's a Love Story", "Scythe and Sparrow", "The Vacationers", "Found Time", "Comedic Timing", "The Hill", "Hardly Strangers", "Exit Lane", "The Villa"
-          ]},
-        ];
+        // NOTE: the old TIMELINE_DATA array was removed in v2.1 — nothing referenced it.
+        // Recover it from git history if you ever want a year-by-year timeline view.
 
+        // song.basis explains where the pairing came from, so the Playlist tab can be
+        // honest about which songs are actually in the book vs. vibe-matched:
+        //   "text"     → named or quoted inside the book
+        //   "playlist" → on the author's own published playlist
+        //   "title"    → the book is named for the song (or vice versa)
+        //   "official" → publisher/edition tie-in recording
+        //   "mood"     → my pick, matched to tone. Not in the book.
         const DEFAULT_RECENT = [
-          { id: "n7", title: "The Villa", author: "Rachel Hawkins", dateFinished: "2026-08-18", rating: 0, review: "", wine: "Provence Rosé", isbn: "9781250280015", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1651426717i/60784641.jpg" },
-          { id: "n6", title: "Exit Lane", author: "Erika Veurink", dateFinished: "2026-08-14", rating: 0, review: "", wine: "Minuty Rosé", isbn: "9798893310610", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1742733957i/228062219.jpg" },
-          { id: "n5", title: "Hardly Strangers", author: "AC Robinson", dateFinished: "2026-08-10", rating: 0, review: "", wine: "Rosé d'Anjou", isbn: "9798893310207", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1719009370i/213458857.jpg" },
-          { id: "n4", title: "The Hill", author: "Harriet Clark", dateFinished: "2026-08-06", rating: 0, review: "", wine: "AIX Rosé", isbn: "9781668073124", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1763281570i/231126807.jpg" },
-          { id: "n3", title: "Comedic Timing", author: "Upasana Baratheon", dateFinished: "2026-08-02", rating: 0, review: "", wine: "Loveblock Rosé", isbn: "9798893310276", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1730128903i/217951320.jpg" },
-          { id: "n2", title: "Found Time", author: "Caroline Goldstein", dateFinished: "2026-07-28", rating: 0, review: "", wine: "Gérard Bertrand Rosé", isbn: "9798893311297", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1762811487i/235992993.jpg" },
-          { id: "n1", title: "The Vacationers", author: "Emma Straub", dateFinished: "2026-07-24", rating: 0, review: "", wine: "Sancerre Rosé", isbn: "9781594632471", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1386629708i/18641982.jpg" },
-          { id: "r1", title: "Grape Juice", author: "Eliza Dumais", dateFinished: "2026-07-14", rating: 0, review: "", wine: "Côtes de Provence Rosé", isbn: "9798893310184", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1742734016i/228062212.jpg" },
-          { id: "r2", title: "It's a Love Story", author: "Annabel Monaghan", dateFinished: "2026-07-08", rating: 0, review: "", wine: "Whispering Angel", isbn: "9780593714348" },
-          { id: "r3", title: "Scythe and Sparrow", author: "Hannah Whitten", dateFinished: "2026-07-01", rating: 0, review: "", wine: "Château Galoupet Rosé", isbn: "9781638931812" },
+          { id: "n7", title: "The Villa", author: "Rachel Hawkins", dateFinished: "2026-08-18", rating: 0, review: "", coverUrl: "", wine: "Provence Rosé", song: { title: "Silver Springs", artist: "Fleetwood Mac", basis: "title" } },
+          { id: "n6", title: "Exit Lane", author: "Erika Veurink", dateFinished: "2026-08-14", rating: 0, review: "", coverUrl: "", wine: "Minuty Rosé", song: { title: "Nothing Compares 2 U", artist: "Prince", basis: "playlist" } },
+          { id: "n5", title: "Hardly Strangers", author: "AC Robinson", dateFinished: "2026-08-10", rating: 0, review: "", coverUrl: "", wine: "Rosé d'Anjou", song: { title: "Wild One", artist: "Thin Lizzy", basis: "playlist" } },
+          { id: "n4", title: "The Hill", author: "Harriet Clark", dateFinished: "2026-08-06", rating: 0, review: "", coverUrl: "", wine: "AIX Rosé", song: { title: "Which Side Are You On?", artist: "Pete Seeger", basis: "mood" } },
+          { id: "n3", title: "Comedic Timing", author: "Upasna Barath", dateFinished: "2026-08-02", rating: 0, review: "", coverUrl: "", wine: "Loveblock Rosé", song: { title: "Girls/Girls/Boys", artist: "Panic! At The Disco", basis: "mood" } },
+          { id: "n2", title: "Found Time", author: "Caroline Goldstein", dateFinished: "2026-07-28", rating: 0, review: "", coverUrl: "", wine: "Gérard Bertrand Rosé", song: { title: "Lover, You Should've Come Over", artist: "Jeff Buckley", basis: "text" } },
+          { id: "n1", title: "The Vacationers", author: "Emma Straub", dateFinished: "2026-07-24", rating: 0, review: "", coverUrl: "", wine: "Sancerre Rosé", song: { title: "Vacation", artist: "The Go-Go's", basis: "mood" } },
+          { id: "r1", title: "Grape Juice", author: "Eliza Dumais", dateFinished: "2026-07-14", rating: 0, review: "", coverUrl: "", wine: "Côtes de Provence Rosé", song: { title: "Je t'aime… moi non plus", artist: "Serge Gainsbourg & Jane Birkin", basis: "mood" } },
+          { id: "r2", title: "Set Piece", author: "Lana Schwartz", dateFinished: "2026-07-10", rating: 0, review: "", coverUrl: "", wine: "Whispering Angel Rosé", song: { title: "Young and Beautiful", artist: "Lana Del Rey", basis: "mood" } },
+          { id: "r3", title: "Square Waves", author: "Alexandra Romanoff", dateFinished: "2026-07-07", rating: 0, review: "", coverUrl: "", wine: "Hampton Water Rosé", song: { title: "Cassidy", artist: "Charlie Blake", basis: "official" } },
+          { id: "r4", title: "Awake", author: "Jen Haymaker", dateFinished: "2026-07-04", rating: 0, review: "", coverUrl: "", wine: "Miraval Rosé", song: { title: "Wide Awake", artist: "Katy Perry", basis: "mood" } },
+          { id: "r5", title: "One of Us Is Next", author: "Karen McManus", dateFinished: "2026-07-01", rating: 0, review: "", coverUrl: "", wine: "Dark Horse Rosé", song: { title: "Dare", artist: "Daya", basis: "playlist" } },
+          { id: "r6", title: "Kick the Latch", author: "Kathryn Scanlan", dateFinished: "2026-06-30", rating: 0, review: "", coverUrl: "", wine: "Bandol Rosé", song: { title: "The Race Is On", artist: "George Jones", basis: "mood" } },
+          { id: "d0a", title: "Scythe & Sparrow", author: "Brynne Weaver", dateFinished: "2026-06-29", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1714505398i/127616032.jpg", wine: "Clos des Vignes du Mayne Rosé", song: { title: "In a Week", artist: "Hozier feat. Karen Cowley", basis: "playlist" } },
+          { id: "d0b", title: "It's a Love Story", author: "Annabel Monaghan", dateFinished: "2026-06-22", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1728397501i/218153839.jpg", wine: "Fleur de Mer Rosé", song: { title: "Love Story", artist: "Taylor Swift", basis: "title" } },
+          { id: "d0c", title: "Our Perfect Storm", author: "Carley Fortune", dateFinished: "2026-06-15", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1756350403i/239703816.jpg", wine: "Miraval Rosé", song: { title: "Riptide", artist: "Vance Joy", basis: "mood" } },
+          { id: "d1", title: "Both Can Be True", author: "Jessica Guerrieri", dateFinished: "2026-06-01", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1776111412i/237353764.jpg", wine: "Domaine Ott Rosé", song: { title: "Both Sides Now", artist: "Joni Mitchell", basis: "mood" } },
+          { id: "d2", title: "The Things We Never Say", author: "Elizabeth Strout", dateFinished: "2026-05-25", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1771952095i/242082631.jpg", wine: "Sancerre Rosé", song: { title: "The Sound of Silence", artist: "Simon & Garfunkel", basis: "mood" } },
+          { id: "d3", title: "Fair Play", author: "Louise Hegarty", dateFinished: "2026-05-18", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1732028627i/216895124.jpg", wine: "Laurent Miquel Rosé", song: { title: "Auld Lang Syne", artist: "Guy Lombardo", basis: "mood" } },
+          { id: "d4", title: "The Night We Met", author: "Abby Jimenez", dateFinished: "2026-05-10", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1755786976i/231801371.jpg", wine: "Santa Margherita Rosé", song: { title: "The Night We Met", artist: "Lord Huron", basis: "title" } },
+          { id: "d5", title: "Audition", author: "Katie Kitamura", dateFinished: "2026-05-03", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1722126296i/216247518.jpg", wine: "Minuty M de Minuty Rosé", song: { title: "The Great Pretender", artist: "The Platters", basis: "mood" } },
+          { id: "d6", title: "And Now Back to You", author: "BK Borison", dateFinished: "2026-04-26", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1748482477i/217513554.jpg", wine: "Dark Horse Rosé", song: { title: "Back to You", artist: "Selena Gomez", basis: "title" } },
+          { id: "d7", title: "To Bless the Space Between Us", author: "John O'Donohue", dateFinished: "2026-04-19", rating: 0, review: "", coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1442613785i/1211497.jpg", wine: "Château d'Esclans Rosé", song: { title: "Dawning of the Day (Fáinne Geal an Lae)", artist: "Áine Minogue", basis: "official" } },
         ];
 
-        function BookCover({ title, author, src: directSrc, isbn }) {
-          const sources = React.useMemo(() => {
-            const list = [];
-            if (directSrc) list.push(directSrc);
-            if (isbn) {
-              const clean = isbn.replace(/-/g, "");
-              list.push(`https://covers.openlibrary.org/b/isbn/${clean}-M.jpg?default=false`);
-              list.push(`https://books.google.com/books/content?isbn=${clean}&printsec=frontcover&img=1&zoom=1&source=gbs_api`);
-            }
-            list.push(`https://covers.openlibrary.org/b/title/${encodeURIComponent(title)}-M.jpg?default=false`);
-            return list;
-          }, [directSrc, isbn, title]);
+        const BASIS_LABEL = {
+          text: { label: "in the book", color: "#267F53" },
+          playlist: { label: "author's playlist", color: "#267F53" },
+          title: { label: "namesake", color: "#99B7F5" },
+          official: { label: "official tie-in", color: "#99B7F5" },
+          mood: { label: "vibe match", color: "#9a8090" },
+        };
+
+        function BookCover({ title, author, coverUrl }) {
+          const openLibSrc = "https://covers.openlibrary.org/b/title/" + encodeURIComponent(title) + "-M.jpg?default=false";
+          const srcs = [coverUrl, openLibSrc].filter(Boolean);
           const [idx, setIdx] = React.useState(0);
           const [failed, setFailed] = React.useState(false);
+
+          const handleError = () => {
+            if (idx + 1 < srcs.length) setIdx(idx + 1);
+            else setFailed(true);
+          };
 
           return (
             <div style={{ width: 56, height: 84, flexShrink: 0, borderRadius: 4, overflow: "hidden", background: "linear-gradient(160deg, #f5d0e0, #d0c0f0)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 3px 10px rgba(0,0,0,0.15)", position: "relative" }}>
               {!failed ? (
                 <img
-                  src={sources[idx]}
+                  src={srcs[idx]}
                   alt={title}
-                  onError={() => { if (idx < sources.length - 1) { setIdx(idx + 1); } else { setFailed(true); } }}
+                  onError={handleError}
                   style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                 />
               ) : (
@@ -754,41 +944,102 @@
         function CoupeGlass({ filled, hovered }) {
           const active = filled || hovered;
           return (
-            <svg viewBox="0 0 32 38" width="20" height="24" style={{ display: "block", overflow: "visible" }}>
-              {active && <path d="M6,5 Q16,22 26,5 Z" fill="#F296BD" opacity="0.75" />}
+            <svg viewBox="0 0 32 38" width="22" height="26" style={{ display: "block", overflow: "visible" }}>
+              {/* liquid fill */}
+              {active && (
+                <path d="M6,5 Q16,22 26,5 Z" fill="#F296BD" opacity="0.75" />
+              )}
+              {/* rim line */}
               <line x1="5" y1="5" x2="27" y2="5" stroke={active ? "#b05070" : "#d0a0b8"} strokeWidth="2" strokeLinecap="round" />
+              {/* bowl curve */}
               <path d="M5,5 Q16,23 27,5" fill="none" stroke={active ? "#b05070" : "#d0a0b8"} strokeWidth="2" strokeLinecap="round" />
+              {/* stem */}
               <line x1="16" y1="23" x2="16" y2="31" stroke={active ? "#b05070" : "#d0a0b8"} strokeWidth="2" strokeLinecap="round" />
+              {/* base */}
               <line x1="9" y1="31" x2="23" y2="31" stroke={active ? "#b05070" : "#d0a0b8"} strokeWidth="2.5" strokeLinecap="round" />
             </svg>
           );
         }
 
+        // FIXED in v2.1 — the glasses were effectively unclickable before.
+        // Old version put onClick on an inline <span> wrapping a display:block <svg>.
+        // Inside an SVG only painted geometry is hit-testable, and this glass is drawn
+        // entirely from 2px strokes, so the only clickable target was those hairlines.
+        // Now: a real <button> box catches the click, and the glass is pointer-events:none.
         function StarPicker({ value, onChange }) {
           const [hovered, setHovered] = React.useState(null);
           return (
-            <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+            <div
+              style={{ display: "flex", gap: 4, alignItems: "center" }}
+              onMouseLeave={() => setHovered(null)}
+            >
               <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#9a7090", marginRight: 2 }}>Sips:</span>
-              {[1,2,3,4,5].map(sip => (
-                <span
-                  key={sip}
-                  onMouseEnter={() => setHovered(sip)}
-                  onMouseLeave={() => setHovered(null)}
-                  onClick={() => onChange(value === sip ? 0 : sip)}
-                  style={{ cursor: "pointer", opacity: (hovered != null ? sip <= hovered : sip <= value) ? 1 : 0.3, transition: "opacity 0.15s", lineHeight: 1 }}
-                ><CoupeGlass filled={sip <= value} hovered={hovered != null && sip <= hovered} /></span>
-              ))}
-              {value > 0 && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#b05070", marginLeft: 2 }}>{value}/5</span>}
+              {[1, 2, 3, 4, 5].map(sip => {
+                const isActive = hovered != null ? sip <= hovered : sip <= value;
+                return (
+                  <button
+                    key={sip}
+                    type="button"
+                    aria-label={`${sip} sip${sip > 1 ? "s" : ""}`}
+                    onMouseEnter={() => setHovered(sip)}
+                    onClick={() => onChange(value === sip ? 0 : sip)}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: 3,
+                      margin: 0,
+                      border: "none",
+                      background: "transparent",
+                      cursor: "pointer",
+                      opacity: isActive ? 1 : 0.3,
+                      transition: "opacity 0.15s",
+                      lineHeight: 1,
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                  >
+                    <span style={{ pointerEvents: "none", display: "block" }}>
+                      <CoupeGlass filled={sip <= value} hovered={hovered != null && sip <= hovered} />
+                    </span>
+                  </button>
+                );
+              })}
+              {value > 0 && (
+                <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#b05070", marginLeft: 2 }}>{value}/5</span>
+              )}
             </div>
           );
         }
 
+        const RECENT_STORAGE_KEY = "recentlyRead_v2";
+
+        // Shared loader so the Playlist tab and Recently Uncorked see the same books.
+        // capped=true reproduces the 10-book cap the Recently Uncorked list uses;
+        // the Playlist tab passes capped=false so every tagged song stays available.
+        function loadRecentBooks(capped) {
+          try {
+            const saved = JSON.parse(localStorage.getItem(RECENT_STORAGE_KEY));
+            if (!saved || !saved.length) return DEFAULT_RECENT;
+            const savedIds = new Set(saved.map(b => b.id));
+            const newDefaults = DEFAULT_RECENT.filter(d => !savedIds.has(d.id));
+            const merged = saved.map(b => {
+              const def = DEFAULT_RECENT.find(d => d.id === b.id);
+              if (!def) return b;
+              // Backfill fields added by later code releases (covers, wine, song tags)
+              return {
+                ...b,
+                coverUrl: b.coverUrl || def.coverUrl,
+                wine: b.wine || def.wine,
+                song: b.song || def.song,
+              };
+            });
+            const all = [...newDefaults, ...merged];
+            return capped ? all.slice(0, 10) : all;
+          } catch { return DEFAULT_RECENT; }
+        }
+
         function RecentlyRead({ onBookAdded }) {
-          const storageKey = "recentlyRead_v1";
-          const loadBooks = () => {
-            try { const saved = JSON.parse(localStorage.getItem(storageKey)); return saved && saved.length ? saved : DEFAULT_RECENT; } catch { return DEFAULT_RECENT; }
-          };
-          const [books, setBooks] = React.useState(loadBooks);
+          const [books, setBooks] = React.useState(() => loadRecentBooks(true));
           const [editingId, setEditingId] = React.useState(null);
           const [draft, setDraft] = React.useState(null);
           const [blogOpen, setBlogOpen] = React.useState(null);
@@ -797,7 +1048,7 @@
 
           const save = (updated) => {
             setBooks(updated);
-            localStorage.setItem(storageKey, JSON.stringify(updated));
+            try { localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updated)); } catch {}
           };
 
           const removeBook = (id) => save(books.filter(b => b.id !== id));
@@ -836,8 +1087,8 @@
 
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
                   <div>
-                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", margin: 0 }}>Recently Read</h2>
-                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", margin: "4px 0 0" }}>Your last 10 books — rate them, review them, remember them</p>
+                    <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", margin: 0 }}>Recently Uncorked</h2>
+                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", margin: "4px 0 0" }}>Your last 10 books — rate them, review them, pour a glass</p>
                   </div>
                   {!addingNew && (
                     <button onClick={() => setAddingNew(true)} style={{ padding: "10px 20px", background: "#F296BD", color: "#fff", border: "none", borderRadius: 8, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
@@ -888,7 +1139,7 @@
                       <div key={book.id} style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", overflow: "hidden", boxShadow: "0 2px 10px rgba(242,150,189,0.07)" }}>
                         <div style={{ padding: "18px 20px" }}>
                           <div style={{ display: "flex", alignItems: "flex-start", gap: 14, flexWrap: "wrap" }}>
-                            <BookCover title={book.title} author={book.author} isbn={book.isbn} src={book.coverUrl} />
+                            <BookCover title={book.title} author={book.author} coverUrl={book.coverUrl} />
                             <div style={{ flex: 1, minWidth: 200 }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                                 <div style={{ width: 22, height: 22, borderRadius: "50%", background: "#F296BD22", border: "1.5px solid #F296BD55", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Lato, sans-serif", fontSize: 10, fontWeight: 700, color: "#F296BD", flexShrink: 0 }}>{idx + 1}</div>
@@ -911,14 +1162,32 @@
                                   <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#2C3E50", marginBottom: 3 }}>{book.title || <span style={{ color: "#ccc", fontStyle: "italic" }}>Untitled</span>}</div>
                                   {book.author && <div style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", marginBottom: 6 }}>{book.author}</div>}
                                   <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-                                    <div style={{ display: "flex", gap: 3, alignItems: "center" }}>
-                                      <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#9a7090", marginRight: 2 }}>Sips:</span>
-                                      {[1,2,3,4,5].map(s => <span key={s} style={{ opacity: s <= book.rating ? 1 : 0.25 }}><CoupeGlass filled={s <= book.rating} /></span>)}
-                                    </div>
+                                    <StarPicker value={book.rating} onChange={r => save(books.map(b => b.id === book.id ? { ...b, rating: r } : b))} />
                                     {book.dateFinished && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#aaa", letterSpacing: 0.5 }}>finished {new Date(book.dateFinished + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
                                     {book.review && <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#F296BD", letterSpacing: 0.5 }}>has review</span>}
                                   </div>
-                                  {book.wine && <div style={{ marginTop: 5 }}><span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: "#fdf0f5", border: "1px solid #f0d0e0", borderRadius: 20, padding: "3px 10px", fontFamily: "Lato, sans-serif", fontSize: 11, color: "#9a5070", fontWeight: 700 }}>🍷 {book.wine}</span></div>}
+                                  {(book.wine || book.song) && (
+                                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
+                                      {book.wine && (
+                                        <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "#F296BD12", color: "#7a1040", border: "1px solid #F296BD44", display: "flex", alignItems: "center", gap: 4 }}>
+                                          🍾 {book.wine}
+                                        </span>
+                                      )}
+                                      {book.song && (
+                                        <a
+                                          href={`https://open.spotify.com/search/${encodeURIComponent(book.song.artist + " " + book.song.title)}`}
+                                          target="_blank"
+                                          rel="noopener"
+                                          style={{ fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "#99B7F512", color: "#1a3a70", border: "1px solid #99B7F544", display: "inline-flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                                        >
+                                          🎵 "{book.song.title}" — {book.song.artist}
+                                          {book.song.basis && BASIS_LABEL[book.song.basis] && (
+                                            <span style={{ fontWeight: 400, fontSize: 10, color: BASIS_LABEL[book.song.basis].color, opacity: 0.85 }}>· {BASIS_LABEL[book.song.basis].label}</span>
+                                          )}
+                                        </a>
+                                      )}
+                                    </div>
+                                  )}
                                 </>
                               )}
                             </div>
@@ -962,7 +1231,6 @@
           const [text, setText] = React.useState(book.review || "");
           const [preview, setPreview] = React.useState(false);
           const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-
           return (
             <div style={{ borderTop: "1.5px solid #f0e0ea", background: "#fffbfe", padding: "20px" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
@@ -976,159 +1244,457 @@
                 </div>
                 <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
                   <span style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#bbb" }}>{wordCount} words</span>
-                  <button onClick={() => setPreview(!preview)} style={{ padding: "5px 12px", background: preview ? "#F5793B" : "transparent", color: preview ? "#fff" : "#F5793B", border: "1.5px solid #F5793B", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>
+                  <button onClick={() => setPreview(!preview)} style={{ padding: "5px 12px", background: preview ? "#F5793B" : "transparent", color: preview ? "#fff" : "#F5793B", border: "1.5px solid #F5793B", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                     {preview ? "Edit" : "Preview"}
                   </button>
+                  <button onClick={onClose} style={{ padding: "5px 10px", background: "transparent", color: "#bbb", border: "1.5px solid #e8d0e0", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>✕</button>
                 </div>
               </div>
-
               {preview ? (
-                <div style={{ minHeight: 140, padding: "14px 16px", background: "#fff", border: "1.5px solid #f0e0ea", borderRadius: 8, fontFamily: "Georgia, serif", fontSize: 14, color: "#2C3E50", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
-                  {text || <span style={{ color: "#ccc", fontStyle: "italic" }}>Nothing written yet...</span>}
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 14, lineHeight: 1.8, color: "#2C3E50", background: "#fff", borderRadius: 8, padding: "16px 20px", border: "1.5px solid #f0e0ea", minHeight: 120 }}>
+                  {text || <span style={{ color: "#ccc", fontStyle: "italic" }}>Nothing to preview yet...</span>}
                 </div>
               ) : (
                 <textarea
                   value={text}
                   onChange={e => setText(e.target.value)}
-                  placeholder={"What did you think? Write as much or as little as you want — a quick reaction, a full review, or just the line that stuck with you."}
-                  style={{ width: "100%", minHeight: 140, padding: "12px 14px", fontFamily: "Georgia, serif", fontSize: 14, color: "#2C3E50", lineHeight: 1.75, border: "1.5px solid #f0e0ea", borderRadius: 8, outline: "none", resize: "vertical", boxSizing: "border-box", background: "#fff" }}
+                  placeholder="Write your thoughts on this book..."
+                  style={{ width: "100%", minHeight: 120, fontFamily: "Georgia, serif", fontSize: 14, lineHeight: 1.7, color: "#2C3E50", border: "1.5px solid #e8d0e0", borderRadius: 8, padding: "12px 14px", resize: "vertical", outline: "none", boxSizing: "border-box", background: "#fff" }}
                 />
               )}
-
-              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-                <button onClick={() => onSave(text)} style={{ padding: "8px 20px", background: "#F5793B", color: "#fff", border: "none", borderRadius: 7, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>Save Review</button>
-                {text && <button onClick={() => onSave("")} style={{ padding: "8px 14px", background: "transparent", color: "#d08090", border: "1.5px solid #f0d0d8", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 12, cursor: "pointer" }}>Clear</button>}
-                <button onClick={onClose} style={{ padding: "8px 14px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 12, cursor: "pointer" }}>Cancel</button>
+              <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                <button onClick={() => onSave(text)} style={{ padding: "8px 18px", background: "#F296BD", color: "#fff", border: "none", borderRadius: 7, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>
+                  Save Review
+                </button>
+                <button onClick={onClose} style={{ padding: "8px 14px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 7, fontFamily: "Lato, sans-serif", fontSize: 13, cursor: "pointer" }}>Cancel</button>
               </div>
             </div>
           );
         }
 
-        // ─── TIMELINE ────────────────────────────────────────────────────────────────
+        const TBR_BY_THEME = {
+          romance: [
+            { id: "r1", title: "One Golden Summer", author: "Carley Fortune", isbn: "9780593641187", src: "", hook: "Returns to Barry's Bay — Charlie's story. Carley Fortune's signature yearning and beautiful setting." },
+            { id: "r2", title: "Back After This", author: "Linda Holmes", isbn: "9780593498262", src: "", hook: "A woman does 20 public blind dates, then has an encounter she can't stop thinking about. Smart and warm." },
+            { id: "r3", title: "Friends to Lovers", author: "Sally Blakely", isbn: "", src: "", hook: "The beach read romance of the year — friends navigating the wedding circuit until one summer changes everything." },
+            { id: "r4", title: "Total Dreamboat", author: "Katelyn Doyle", isbn: "9780593868027", src: "", hook: "Banter-heavy romcom with a sun-drenched setting. The ultimate vacation read." },
+            { id: "r5", title: "These Summer Storms", author: "Sarah MacLean", isbn: "9780063225633", src: "", hook: "Sarah MacLean's first contemporary — family drama meets romance in an idyllic summertime setting." },
+            { id: "r6", title: "Abby Offsides", author: "C.M. Nascosta", isbn: "", src: "", hook: "Sports romance that hooked from the first page — Katie gave it 4 stars." },
+            { id: "eg-r1", title: "The Someday Garden", author: "Ashley Poston", isbn: "", src: "", hook: "🌸 A grieving horticulturist finds a magical garden hiding a man trapped by enchantment." },
+            { id: "eg-r2", title: "Dolly All the Time", author: "Annabel Monaghan", isbn: "", src: "", hook: "🌸 A single mom returns home and fake-dates a wealthy workaholic heir." },
+            { id: "eg-r3", title: "Can't Get Enough", author: "Kennedy Ryan", isbn: "", src: "", hook: "🌸 An unapologetically ambitious businesswoman meets the soulmate determined to make her dreams happen." },
+            { id: "eg-r4", title: "Promise Me Sunshine", author: "Cara Bastone", isbn: "", src: "", hook: "🌸 Grieving her best friend, a woman meets a grump who swears he'll revive her." },
+            { id: "eg-r5", title: "Cover Story", author: "Mhairi McFarlane", isbn: "", src: "", hook: "🌸 Two rival journalists fake a relationship to land the biggest story of their careers." },
+            { id: "eg-r6", title: "You, Again", author: "Kate Goldbeck", isbn: "", src: "", hook: "🌸 Instant enemies Ari and Josh reunite post-breakups and accidentally become genuine friends." },
+            { id: "eg-r7", title: "The Roommate Risk", author: "Talia Hibbert", isbn: "", src: "", hook: "🌸 A whirlwind party girl moves in with her uptight best friend — chaos, then feelings." },
+            { id: "eg-r8", title: "The Bodyguard", author: "Katherine Center", isbn: "", src: "", hook: "🌸 A female bodyguard poses as a movie star's girlfriend to protect him." },
+            { id: "eg-r9", title: "Where We End & Begin", author: "Jane Igharo", isbn: "", src: "", hook: "🌸 Star-crossed lovers get a second chance when reunited at a wedding in Nigeria." },
+            { id: "eg-r10", title: "You Deserve Each Other", author: "Sarah Hogle", isbn: "", src: "", hook: "🌸 An engaged couple wages an all-out prank war and accidentally falls back in love." },
+            { id: "eg-r11", title: "Problematic Summer Romance", author: "Ali Hazelwood", isbn: "", src: "", hook: "🌸 Older biotech exec, struggling grad student, brother's best friend — every cliché, then plot twists." },
+            { id: "eg-r12", title: "Lease on Love", author: "Falon Ballard", isbn: "", src: "", hook: "🌸 A real-estate arrangement between polar-opposite roommates turns a brownstone into something like home." },
+            { id: "eg-r13", title: "Morbidly Yours", author: "Ivy Fairbanks", isbn: "", src: "", hook: "🌸 A demisexual Irish mortician must marry by 35; the Texan widow next door might help." },
+            { id: "eg-r14", title: "Mr. Wrong Number", author: "Lynn Painter", isbn: "", src: "", hook: "🌸 A steamy text to a wrong number spirals into an anonymous, laugh-out-loud relationship." },
+            { id: "eg-r15", title: "Left of Forever", author: "Tarah DeWitt", isbn: "", src: "", hook: "🌸 Teen parents turned exes take one last road trip to salvage their marriage." },
+            { id: "eg-r16", title: "If It Makes You Happy", author: "Julie Olivia", isbn: "", src: "", hook: "🌸 A cozy 1997 slow burn in autumnal small-town Vermont about happiness on your terms." },
+            { id: "eg-r17", title: "Into the Blue", author: "Emma Brodie", isbn: "", src: "", hook: "🌸 A video-store clerk and an acting-dynasty heir reunite years later on the same production." },
+            { id: "eg-r18", title: "In Her Own League", author: "Liz Tomforde", isbn: "", src: "", hook: "🌸 MLB's first female owner and her veteran coach turn heated banter into forbidden chemistry." },
+            { id: "eg-r19", title: "One & Only", author: "Maurene Goo", isbn: "", src: "", hook: "🌸 A past-life matchmaker's fling with a younger man collapses when she meets his boss." },
+          ],
+          romantasy: [
+            { id: "eg-f1", title: "Rites of the Starling", author: "Devney Perry", isbn: "", src: "", hook: "🌸 Hunted and kidnapped, Odessa must decide whether to claim the crown she never wanted." },
+            { id: "eg-f2", title: "The Ballad of Falling Dragons", author: "Sarah A. Parker", isbn: "", src: "", hook: "🌸 A king out of time, surging enemies, and a secret buried in Raeve's forgotten past." },
+            { id: "eg-f3", title: "Fury Bound", author: "Sable Sorensen", isbn: "", src: "", hook: "🌸 A new queen, her bonded direwolf, and the dangerous Alpha she thought hated her." },
+            { id: "eg-f4", title: "A Vow in Vengeance", author: "Jaclyn Rodriguez", isbn: "", src: "", hook: "🌸 Rune enters the Immortals' cutthroat tarot-magic college to find her family and burn everything." },
+            { id: "eg-f5", title: "Graceless Heart", author: "Isabel Ibañez", isbn: "", src: "", hook: "🌸 A sculptress hides forbidden magic in Renaissance Florence, claimed by an immortal family's heir." },
+            { id: "eg-f6", title: "Seek the Traitor's Son", author: "Veronica Roth", isbn: "", src: "", hook: "🌸 A prophecy pits a soldier against a ruthless general, with a foretold love between them." },
+          ],
+          thriller: [
+            { id: "t1", title: "Famous Last Words", author: "Gillian McAllister", isbn: "9780593474570", src: "", hook: "One of those up-past-your-bedtime reads — well-paced with a twist you won't see coming." },
+            { id: "t2", title: "Killer Potential", author: "Hannah Deitch", isbn: "9780593536353", src: "", hook: "Literary-leaning thriller with dark comedy. Smart, thrilling, devoured in two sittings." },
+            { id: "t3", title: "Everyone Is Lying to You", author: "Jo Piazza", isbn: "9780593799123", src: "", hook: "Murder mystery set in the world of social media influencers and tradwives. From the Sicilian Inheritance author." },
+            { id: "t4", title: "Salt Water", author: "Katy Hays", isbn: "9780385549578", src: "", hook: "Set in Capri — atmospheric suspense with drama layered beautifully beneath the surface." },
+            { id: "t5", title: "The Really Dead Wives of New Jersey", author: "", isbn: "", src: "", hook: "The title alone earns a spot on the list." },
+            { id: "eg-t1", title: "Yesteryear", author: "Claire Burke", isbn: "", src: "", hook: "🌸 A tradwife influencer with 8 million followers wakes up trapped in an actual pre-industrial life." },
+            { id: "eg-t2", title: "Dear Debbie", author: "Freida McFadden", isbn: "", src: "", hook: "🌸 A fired advice columnist finally takes her own counsel and gets revenge on everyone." },
+            { id: "eg-t3", title: "My Husband's Wife", author: "Alice Feeney", isbn: "", src: "", hook: "🌸 Eden comes home to find another woman in her house, insisting she's the wife." },
+            { id: "eg-t4", title: "Anatomy of an Alibi", author: "Ashley Elston", isbn: "", src: "", hook: "🌸 Two women swap places to expose one husband's secrets — then he's found murdered." },
+            { id: "eg-t5", title: "This Story Might Save Your Life", author: "Tiffany Crum", isbn: "", src: "", hook: "🌸 Survival-podcast co-host vanishes; her best friend and cohost becomes the prime suspect." },
+            { id: "eg-t6", title: "Little One", author: "Olivia Muenter", isbn: "", src: "", hook: "🌸 A journalist's email drags a woman back to the Florida \"cult\" farm she fled." },
+            { id: "eg-t7", title: "A Good Person", author: "Kirsten King", isbn: "", src: "", hook: "🌸 She hexed her situationship; now he's dead and she's the prime suspect." },
+            { id: "eg-t8", title: "It Could Have Been Her", author: "Lisa Jewell", isbn: "", src: "", hook: "🌸 A stray terrier leads Jane to a London house tied to her own trauma." },
+          ],
+          horror: [
+            { id: "eg-h1", title: "The Caretaker", author: "Marcus Kliewer", isbn: "", src: "", hook: "🌸 A three-day house-sitting gig on the Oregon coast turns into a waking nightmare." },
+            { id: "eg-h2", title: "Japanese Gothic", author: "Kylie Lee Baker", isbn: "", src: "", hook: "🌸 2026 and 1877 collide in a haunted Japanese house — one narrator is a ghost." },
+            { id: "eg-h3", title: "Trad Wife", author: "Saratoga Schaefer", isbn: "", src: "", hook: "🌸 A tradwife influencer wishes for a baby at a decrepit well; something answers." },
+            { id: "eg-h4", title: "Molka", author: "Monika Kim", isbn: "", src: "", hook: "🌸 A Seoul hidden-camera scandal shatters one woman's fairy tale and unleashes her reckoning." },
+            { id: "eg-h5", title: "Fabulous Bodies", author: "Chuck Tingle", isbn: "", src: "", hook: "🌸 A grave-robbing fashion influencer steals a dead rockstar's body — then he wakes up." },
+          ],
+          womens: [
+            { id: "w1", title: "Beach House Rules", author: "Kristy Woodson Harvey", isbn: "9781662511042", src: "", hook: "Husband arrested for white-collar crime; wife and daughter taken in by a gossipy coastal community. Hilderbrand-adjacent." },
+            { id: "w2", title: "When You Loved Me", author: "Beatriz Williams", isbn: "", src: "", hook: "Beatriz Williams masters the dual timeline. A story that marries present-day with the past beautifully." },
+            { id: "w3", title: "Sunburned", author: "Katherine St. John", isbn: "", src: "", hook: "Same author as books you've already loved — new pen name, same exact vibes." },
+            { id: "eg-w1", title: "The Missed Connection", author: "Tia Williams", isbn: "", src: "", hook: "🌸 A woman hunts for her handsome seatmate from a European flight, finding more instead." },
+            { id: "eg-w2", title: "The Burning Side", author: "Sarah Damoff", isbn: "", src: "", hook: "🌸 A house fire exposes every crack already forming in April and Leo's marriage." },
+          ],
+          literary: [
+            { id: "l1", title: "Whistler", author: "Ann Patchett", isbn: "9780063325111", src: "", hook: "Ann Patchett does it again. Katie's 5-star fiction pick of the summer — and an Everygirl best-of-2026 pick." },
+            { id: "l2", title: "The Unselected Journals of Emma M. Lion", author: "Beth Brower", isbn: "", src: "", hook: "Eight volumes of Victorian journal entries — profoundly delightful. Katie's other 5-star pick." },
+            { id: "eg-l1", title: "The Calamity Club", author: "Kathryn Stockett", isbn: "", src: "", hook: "🌸 Depression-era Mississippi: an orphan and two desperate women hatch an audacious plan." },
+            { id: "eg-l2", title: "Kin", author: "Tayari Jones", isbn: "", src: "", hook: "🌸 Two motherless Louisiana best friends are fated to live starkly, painfully different lives." },
+            { id: "eg-l3", title: "Lady Tremaine", author: "Rachel Hochhauser", isbn: "", src: "", hook: "🌸 A twice-widowed noblewoman schemes for royal-ball invitations and uncovers a sordid palace secret." },
+            { id: "eg-l4", title: "The Midnight Train", author: "Matt Haig", isbn: "", src: "", hook: "🌸 A train can return you to your best days — but reliving them risks everything." },
+            { id: "eg-l5", title: "Keeper of Lost Children", author: "Sadeqa Johnson", isbn: "", src: "", hook: "🌸 One woman's mission to home mixed-race children in Occupied Germany reshapes countless lives." },
+            { id: "eg-l6", title: "Land", author: "Maggie O'Farrell", isbn: "", src: "", hook: "🌸 1865 Ireland: a boy of ten must finish mapping a peninsula as his father unravels." },
+          ],
+          crime: [
+            { id: "c1", title: "Famous Last Words", author: "Gillian McAllister", isbn: "9780593474570", src: "", hook: "Also fits here — Gillian McAllister at her most propulsive." },
+            { id: "eg-c1", title: "The Keeper", author: "Tana French", isbn: "", src: "", hook: "🌸 A girl turns up dead in an Irish village where old grudges run generations deep. Your most underdeveloped genre — start here." },
+          ],
+          nonfiction: [
+            { id: "eg-n1", title: "Famesick", author: "Lena Dunham", isbn: "", src: "", hook: "🌸 Dunham on chronic illness, ambition, and running a hit show inside a wrecked body." },
+          ],
+          mixed: [
+            { id: "m1", title: "ultranatural", author: "Candice Wuehle", isbn: "", src: "", hook: "An indie fiction stretch from your usual reads — could be a great palate cleanser." },
+            { id: "m2", title: "New Skin", author: "Sarah Wang", isbn: "", src: "", hook: "Screenshot find — indie literary pick to verify and explore." },
+            { id: "eg-m1", title: "A Parade of Horribles", author: "Matt Dinniman", isbn: "", src: "", hook: "🌸 Dungeon Crawler Carl book eight: deadly races, glitching systems, and an ominous eleventh floor." },
+          ],
+        };
 
-        function Timeline() {
-          const [expanded, setExpanded] = React.useState("2026");
-          return (
-            <div style={{ background: "#FEFDFB", minHeight: "80vh", fontFamily: "Georgia, serif" }}>
-              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
-                <div style={{ marginBottom: 28 }}>
-                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", marginBottom: 4 }}>Reading Timeline</h2>
-                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a" }}>Every book, organized by year — click a year to expand</p>
-                </div>
+        // ─── PLAYLIST ─────────────────────────────────────────────────────────────────
 
-                <div style={{ position: "relative" }}>
-                  <div style={{ position: "absolute", left: 18, top: 0, bottom: 0, width: 2, background: "linear-gradient(180deg, #F296BD, #99B7F5, #267F53, #F5793B, #F296BD, #FCCA59)", opacity: 0.3, borderRadius: 2 }} />
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {TIMELINE_DATA.slice().reverse().map((yd) => {
-                      const isOpen = expanded === yd.year;
-                      return (
-                        <div key={yd.year} style={{ paddingLeft: 48, position: "relative" }}>
-                          <div style={{ position: "absolute", left: 8, top: 16, width: 20, height: 20, borderRadius: "50%", background: yd.color, border: "3px solid #fff", boxShadow: "0 0 0 2px " + yd.color + "55", zIndex: 1 }} />
-                          <div
-                            onClick={() => setExpanded(isOpen ? null : yd.year)}
-                            style={{ background: "#fff", borderRadius: 12, border: "1.5px solid " + (isOpen ? yd.color : "#f0e0ea"), cursor: "pointer", transition: "all 0.2s", boxShadow: isOpen ? "0 4px 20px " + yd.color + "20" : "none" }}
-                          >
-                            <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 14 }}>
-                              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: yd.color, minWidth: 60 }}>{yd.year}</div>
-                              <div style={{ flex: 1 }}>
-                                <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#9a7090" }}>{yd.books.length} books</div>
-                                {!isOpen && <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#bbb", marginTop: 2 }}>{yd.books.slice(0, 4).join(", ")}{yd.books.length > 4 ? "..." : ""}</div>}
-                              </div>
-                              <div style={{ width: 80, height: 6, borderRadius: 3, background: "#f5eaf0", overflow: "hidden" }}>
-                                <div style={{ width: (yd.books.length / 100) * 100 + "%", background: yd.color, height: "100%", borderRadius: 3, maxWidth: "100%" }} />
-                              </div>
-                              <div style={{ color: "#c0a0b0", fontSize: 14, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</div>
-                            </div>
-
-                            {isOpen && (
-                              <div style={{ borderTop: "1px solid " + yd.color + "22", padding: "16px 20px 20px" }}>
-                                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                                  {yd.books.map((book, i) => (
-                                    <span key={i} style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#4a2030", background: yd.color + "15", border: "1px solid " + yd.color + "33", borderRadius: 20, padding: "4px 12px", lineHeight: 1.4 }}>
-                                      {book}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
+        function Playlist() {
+          const SELECTION_KEY = "playlistSelection_v1";
+          const tagged = React.useMemo(
+            () => loadRecentBooks(false).filter(b => b.song && b.song.title),
+            []
           );
-        }
 
-        // ─── ROOT APP ────────────────────────────────────────────────────────────────
-
-        const TABS = [
-          { id: "stats", label: "📊 Overview", subtitle: "Charts & Data" },
-          { id: "themes", label: "🎭 By Theme", subtitle: "7 Genres" },
-          { id: "history", label: "✅ Books Read", subtitle: "444 Complete" },
-          { id: "tbr", label: "📚 TBR Pile", subtitle: "20 + 20 Picks" },
-          { id: "recent", label: "⭐ Recently Read", subtitle: "Ratings & Reviews" },
-          { id: "timeline", label: "📅 Timeline", subtitle: "By Year" },
-        ];
-
-        function App() {
-          const [activeTab, setActiveTab] = useState("stats");
-          const [extraBooks, setExtraBooks] = React.useState(() => {
-            try { return parseInt(localStorage.getItem("extraBooksAdded_v1") || "0"); } catch { return 0; }
+          const [selected, setSelected] = React.useState(() => {
+            try {
+              const saved = JSON.parse(localStorage.getItem(SELECTION_KEY));
+              if (Array.isArray(saved)) return new Set(saved);
+            } catch {}
+            return new Set(tagged.map(b => b.id)); // default: everything selected
           });
-          const totalBooks = BASE_TOTAL + extraBooks;
-          const handleBookAdded = () => {
-            const next = extraBooks + 1;
-            setExtraBooks(next);
-            localStorage.setItem("extraBooksAdded_v1", String(next));
+          const [copied, setCopied] = React.useState(false);
+
+          const persist = (next) => {
+            setSelected(next);
+            try { localStorage.setItem(SELECTION_KEY, JSON.stringify([...next])); } catch {}
+          };
+
+          const toggle = (id) => {
+            const next = new Set(selected);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            persist(next);
+          };
+
+          const selectedBooks = tagged.filter(b => selected.has(b.id));
+          const trackList = selectedBooks.map(b => `${b.song.artist} - ${b.song.title}`).join("\n");
+
+          const copy = async () => {
+            try {
+              await navigator.clipboard.writeText(trackList);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2200);
+            } catch {
+              // Clipboard blocked — the textarea below is the fallback
+              const ta = document.getElementById("playlist-fallback");
+              if (ta) { ta.focus(); ta.select(); }
+            }
           };
 
           return (
-            <div style={{ fontFamily: "Georgia, serif" }}>
-              <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Lato:wght@300;400;700&display=swap');
-                * { box-sizing: border-box; margin: 0; padding: 0; }
-                body { font-family: Georgia, serif; }
-              `}</style>
+            <div style={{ background: "#FEFDFB", minHeight: "80vh", fontFamily: "Georgia, serif" }}>
+              <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
 
-              <div style={{ background: "linear-gradient(135deg, #fef5fb 0%, #fff8f5 25%, #fffef8 50%, #f5fbff 75%, #f8f5ff 100%)", padding: "0.75rem 1rem 0", position: "relative", overflow: "hidden" }}>
-                <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "radial-gradient(circle, rgba(242,150,189,0.15), transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ position: "absolute", bottom: -40, left: -40, width: 140, height: 140, borderRadius: "50%", background: "radial-gradient(circle, rgba(153,183,245,0.12), transparent 70%)", pointerEvents: "none" }} />
-                <div style={{ position: "absolute", top: 20, left: 20, fontSize: 28, opacity: 0.2, color: "#F296BD" }}>✨</div>
-                <div style={{ position: "absolute", bottom: 10, right: 60, fontSize: 20, opacity: 0.2, color: "#99B7F5" }}>📖</div>
-                <div style={{ position: "absolute", top: 35, right: 100, fontSize: 16, opacity: 0.15, color: "#F5793B" }}>💕</div>
-                <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center" }}>
-                  <h1 style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "clamp(24px, 5vw, 36px)", fontWeight: 600, color: "#F296BD", marginBottom: "0.5rem", lineHeight: 1.2, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-                    <span style={{ fontSize: "clamp(20px, 4vw, 28px)", color: "#F5793B" }}>✷</span>
-                    <span>Prose &amp; Rosé</span>
-                    <span style={{ fontSize: "clamp(20px, 4vw, 28px)", color: "#F5793B" }}>✷</span>
-                  </h1>
-                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: "clamp(13px, 2.5vw, 16px)", fontStyle: "italic", color: "#267F53", marginBottom: 6, fontWeight: 400 }}>Looking at life with rosé colored reading glasses</p>
-                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: "clamp(10px, 2vw, 12px)", letterSpacing: 1.5, color: "#99B7F5", marginBottom: 8, fontWeight: 400 }}>{totalBooks} books &amp; counting</p>
+                <div style={{ marginBottom: 8 }}>
+                  <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, color: "#2C3E50", margin: 0 }}>The Playlist</h2>
+                  <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#7a8a9a", margin: "4px 0 0" }}>
+                    One song per book. Pick the ones you want, then copy them into Spotify.
+                  </p>
+                </div>
 
-                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap", overflowX: "auto" }}>
-                    {TABS.map((tab) => {
-                      const isActive = activeTab === tab.id;
-                      return (
-                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ padding: "10px 20px", borderRadius: "10px 10px 0 0", border: "none", background: isActive ? (["tbr","recent"].includes(tab.id) ? "#f5f0e8" : "#0c0810") : "transparent", color: isActive ? (["tbr","recent"].includes(tab.id) ? "#1c0a14" : "#f0e8f4") : "#7a5080", cursor: "pointer", fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: "clamp(11px, 2vw, 14px)", letterSpacing: 0.5, transition: "all 0.2s", display: "flex", flexDirection: "column", alignItems: "center", gap: 2, flexShrink: 0 }}>
-                          <span>{tab.label}</span>
-                          <span style={{ fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", opacity: 0.6, fontWeight: 400 }}>{tab.subtitle}</span>
-                        </button>
-                      );
-                    })}
+                <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", margin: "18px 0 16px" }}>
+                  <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: "#b05070" }}>
+                    {selectedBooks.length} of {tagged.length} selected
+                  </span>
+                  <button onClick={() => persist(new Set(tagged.map(b => b.id)))} style={{ padding: "5px 12px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>Select all</button>
+                  <button onClick={() => persist(new Set())} style={{ padding: "5px 12px", background: "transparent", color: "#9a7090", border: "1.5px solid #e8d0e0", borderRadius: 6, fontFamily: "Lato, sans-serif", fontSize: 11, cursor: "pointer" }}>Clear</button>
+                  <div style={{ flex: 1 }} />
+                  <button
+                    onClick={copy}
+                    disabled={selectedBooks.length === 0}
+                    style={{ padding: "9px 18px", background: selectedBooks.length ? "#1DB954" : "#d8d8d8", color: "#fff", border: "none", borderRadius: 20, fontFamily: "Lato, sans-serif", fontWeight: 700, fontSize: 13, cursor: selectedBooks.length ? "pointer" : "default" }}
+                  >
+                    {copied ? "✓ Copied" : "Copy for Spotify"}
+                  </button>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {tagged.map(book => {
+                    const on = selected.has(book.id);
+                    const basis = book.song.basis && BASIS_LABEL[book.song.basis];
+                    return (
+                      <div
+                        key={book.id}
+                        style={{ display: "flex", alignItems: "center", gap: 12, background: "#fff", border: `1.5px solid ${on ? "#F296BD66" : "#f0e0ea"}`, borderRadius: 10, padding: "12px 14px", opacity: on ? 1 : 0.55, transition: "opacity 0.15s, border-color 0.15s" }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() => toggle(book.id)}
+                          aria-label={`Include ${book.song.title}`}
+                          style={{ width: 17, height: 17, accentColor: "#F296BD", cursor: "pointer", flexShrink: 0 }}
+                        />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 700, color: "#2C3E50", lineHeight: 1.3 }}>
+                            {book.song.title}
+                          </div>
+                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#7a8a9a", marginTop: 2 }}>
+                            {book.song.artist}
+                            {basis && <span style={{ color: basis.color, marginLeft: 6 }}>· {basis.label}</span>}
+                          </div>
+                          <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#b0a0ac", marginTop: 3 }}>
+                            📖 {book.title}
+                          </div>
+                        </div>
+                        <a
+                          href={`https://open.spotify.com/search/${encodeURIComponent(book.song.artist + " " + book.song.title)}`}
+                          target="_blank"
+                          rel="noopener"
+                          style={{ flexShrink: 0, padding: "6px 12px", borderRadius: 20, background: "#1DB95412", color: "#0f7a37", border: "1px solid #1DB95455", fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}
+                        >
+                          ▶ Spotify
+                        </a>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {tagged.length === 0 && (
+                  <div style={{ textAlign: "center", padding: "60px 20px", background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea" }}>
+                    <div style={{ fontSize: 44, marginBottom: 10 }}>🎵</div>
+                    <p style={{ fontFamily: "'Playfair Display', serif", fontSize: 17, color: "#9a7090", fontStyle: "italic", margin: 0 }}>No songs tagged yet.</p>
+                  </div>
+                )}
+
+                {selectedBooks.length > 0 && (
+                  <div style={{ marginTop: 28, background: "#fff", border: "1.5px solid #f0e0ea", borderRadius: 12, padding: "18px 20px" }}>
+                    <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "#9a7090", marginBottom: 10 }}>Your list</div>
+                    <textarea
+                      id="playlist-fallback"
+                      readOnly
+                      value={trackList}
+                      rows={Math.min(selectedBooks.length + 1, 14)}
+                      style={{ width: "100%", fontFamily: "Lato, monospace", fontSize: 12, lineHeight: 1.7, color: "#2C3E50", border: "1.5px solid #f0e0ea", borderRadius: 8, padding: "10px 12px", background: "#fffbfe", resize: "vertical", boxSizing: "border-box" }}
+                    />
+                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#6a3050", lineHeight: 1.7, margin: "14px 0 0" }}>
+                      <strong>To build this in Spotify:</strong> create a new playlist → click <em>Add songs</em> → paste one line at a time
+                      into the search box. Spotify has no bulk-paste import, so the ▶ buttons above are the fastest route:
+                      each one opens that track's search in Spotify, where you can add it in one click.
+                    </p>
+                    <p style={{ fontFamily: "Lato, sans-serif", fontSize: 11, color: "#a09098", lineHeight: 1.6, margin: "10px 0 0" }}>
+                      Your selection is remembered in this browser. "Vibe match" songs aren't in the books — they're
+                      tone pairings, so swap them freely.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // ─── DASHBOARD ────────────────────────────────────────────────────────────────
+
+        function Dashboard() {
+          const maxCount = Math.max(...YEAR_DATA.map(y => y.count));
+          const totalGenre = GENRE_DATA.reduce((a, b) => a + b.value, 0);
+          const maxAuthor = AUTHORS[0].count;
+
+          return (
+            <div style={{ background: "#FEFDFB", minHeight: "80vh" }}>
+              <div style={{ maxWidth: 960, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
+
+                {/* Insights */}
+                <div style={{ marginBottom: 36 }}>
+                  <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#9a7090", marginBottom: 14 }}>Reading Insights</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
+                    {INSIGHTS.map((ins, i) => (
+                      <div key={i} style={{ background: "#fff", borderRadius: 12, border: "1.5px solid #f0e0ea", padding: "16px 18px", boxShadow: "0 2px 8px rgba(242,150,189,0.06)" }}>
+                        <div style={{ fontSize: 28, marginBottom: 8 }}>{ins.emoji}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 1.5, textTransform: "uppercase", color: "#9a7090", marginBottom: 4 }}>{ins.label}</div>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 700, color: "#2C3E50", marginBottom: 2, lineHeight: 1.3 }}>{ins.value}</div>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#9a8090" }}>{ins.sub}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </div>
 
-              {activeTab === "stats" && <VisualDashboard />}
-              {activeTab === "themes" && <LiteraryThemes />}
-              {activeTab === "history" && <HistoricalList />}
-              {activeTab === "tbr" && <TBRPile />}
-              {activeTab === "recent" && <RecentlyRead onBookAdded={handleBookAdded} />}
-              {activeTab === "timeline" && <Timeline />}
+                {/* Books by year */}
+                <div style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", padding: "22px 24px", marginBottom: 20, boxShadow: "0 2px 8px rgba(242,150,189,0.06)" }}>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: "#2C3E50", marginBottom: 4 }}>Books Per Year</div>
+                  <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#9a7090", marginBottom: 20 }}>{YEAR_DATA.reduce((a,b)=>a+b.count,0)} total books tracked</div>
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 140 }}>
+                    {YEAR_DATA.map(y => (
+                      <div key={y.year} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 11, fontWeight: 700, color: y.color }}>{y.count}</div>
+                        <div style={{ width: "100%", background: y.color, borderRadius: "4px 4px 2px 2px", height: Math.round((y.count / maxCount) * 110) }} />
+                        <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, color: "#9a7090", letterSpacing: 0.5 }}>{y.year}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+                  {/* Genre breakdown */}
+                  <div style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", padding: "22px 24px", boxShadow: "0 2px 8px rgba(242,150,189,0.06)" }}>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: "#2C3E50", marginBottom: 16 }}>By Genre</div>
+                    {GENRE_DATA.map(g => (
+                      <div key={g.name} style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                          <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#2C3E50" }}>{g.name}</span>
+                          <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: g.color }}>{g.value}</span>
+                        </div>
+                        <div style={{ height: 6, background: "#f5eff5", borderRadius: 3, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.round(g.value/totalGenre*100)}%`, background: g.color, borderRadius: 3 }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Top authors */}
+                  <div style={{ background: "#fff", borderRadius: 14, border: "1.5px solid #f0e0ea", padding: "22px 24px", boxShadow: "0 2px 8px rgba(242,150,189,0.06)" }}>
+                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, color: "#2C3E50", marginBottom: 16 }}>Top Authors</div>
+                    {AUTHORS.map(a => (
+                      <div key={a.name} style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                          <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#2C3E50" }}>{a.name}</span>
+                          <span style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: a.color }}>{a.count} books</span>
+                        </div>
+                        <div style={{ height: 6, background: "#f5eff5", borderRadius: 3, overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.round(a.count/maxAuthor*100)}%`, background: a.color, borderRadius: 3 }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          );
+        }
+
+        // ─── GENRE THEMES ─────────────────────────────────────────────────────────────
+
+        function GenreThemes() {
+          const [active, setActive] = React.useState("romance");
+          const t = THEMES.find(x => x.id === active);
+          const shades = ["ff","ee","dd","cc","bb","aa","99","88","77"];
+
+          return (
+            <div style={{ background: "#FEFDFB", minHeight: "80vh" }}>
+              <div style={{ maxWidth: 960, margin: "0 auto", padding: "2rem 1rem 3rem" }}>
+
+                {/* Theme picker */}
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginBottom: 28 }}>
+                  {THEMES.map(th => (
+                    <button key={th.id} onClick={() => setActive(th.id)} style={{ padding: "9px 16px", borderRadius: 20, border: `2px solid ${active === th.id ? th.color : "#e8d0e0"}`, background: active === th.id ? `${th.color}18` : "#fff", color: active === th.id ? th.color : "#7a8a9a", fontFamily: "Lato, sans-serif", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s" }}>
+                      <span>{th.emoji}</span> <span>{th.name.split(" & ")[0]}</span> <span style={{ opacity: 0.6, fontSize: 11 }}>({th.count})</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active theme card */}
+                <div style={{ background: t.bg, borderRadius: 16, padding: "28px 28px 32px", marginBottom: 20 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                    <span style={{ fontSize: 32 }}>{t.emoji}</span>
+                    <div>
+                      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: t.light }}>{t.name}</div>
+                      <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: `${t.color}cc`, letterSpacing: 1, textTransform: "uppercase" }}>{t.count} books read</div>
+                    </div>
+                  </div>
+                  <p style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 14, color: "#d0c0d8", lineHeight: 1.7, marginBottom: 20 }}>{t.vibe}</p>
+
+                  {/* Standout book spines */}
+                  <div style={{ marginBottom: 18 }}>
+                    <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c0b0d0", marginBottom: 10 }}>Standout Reads</div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {t.standouts.map((book, i) => {
+                        const h = 60 + (i % 3) * 12;
+                        return (
+                          <div key={book} title={book} style={{ width: 28, height: h, background: `${t.color}${shades[i % shades.length]}`, borderRadius: "3px 3px 2px 2px", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "2px 2px 6px rgba(0,0,0,0.4)", position: "relative", overflow: "hidden" }}>
+                            <span style={{ fontFamily: "Lato, sans-serif", fontSize: 7, fontWeight: 700, color: "rgba(255,255,255,0.9)", writingMode: "vertical-rl", textOrientation: "mixed", transform: "rotate(180deg)", lineHeight: 1.1, textAlign: "center", padding: "2px 0", letterSpacing: 0.5, maxHeight: h - 8, overflow: "hidden" }}>{book.length > 20 ? book.slice(0,18)+"…" : book}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Key authors */}
+                  <div style={{ marginBottom: 14 }}>
+                    <div style={{ fontFamily: "Lato, sans-serif", fontSize: 10, letterSpacing: 2, textTransform: "uppercase", color: "#c0b0d0", marginBottom: 8 }}>Key Authors</div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                      {t.keyAuthors.map(a => <span key={a} style={{ fontFamily: "Lato, sans-serif", fontSize: 12, fontWeight: 700, color: t.light, background: `${t.color}18`, border: `1px solid ${t.color}44`, borderRadius: 20, padding: "3px 10px" }}>{a}</span>)}
+                    </div>
+                  </div>
+
+                  <div style={{ fontFamily: "Lato, sans-serif", fontSize: 12, color: "#d0c0e0", background: `${t.color}10`, borderRadius: 8, padding: "10px 14px", borderLeft: `3px solid ${t.color}55`, lineHeight: 1.6 }}>📝 {t.note}</div>
+                </div>
+
+              </div>
+            </div>
+          );
+        }
+
+
+        // ─── APP ─────────────────────────────────────────────────────────────────────
+
+        function App() {
+          const [tab, setTab] = React.useState("recent");
+
+          const tabs = [
+            { id: "dashboard", label: "📊 Dashboard" },
+            { id: "themes",    label: "💕 Genres" },
+            { id: "recent",    label: "🍷 Recently Uncorked" },
+            { id: "playlist",  label: "🎵 Playlist" },
+            { id: "history",   label: "📚 All Books" },
+            { id: "tbr",       label: "✨ TBR Pile" },
+          ];
+
+          const navStyle = {
+            display: "flex", gap: 0, background: "#fff",
+            borderBottom: "2px solid #f0e0ea", padding: "0 16px",
+            overflowX: "auto", flexShrink: 0,
+          };
+          const tabStyle = (id) => ({
+            padding: "14px 18px", fontFamily: "Lato, sans-serif", fontSize: 13, fontWeight: 700,
+            color: tab === id ? "#F296BD" : "#7a8a9a",
+            borderBottom: tab === id ? "3px solid #F296BD" : "3px solid transparent",
+            background: "transparent", border: "none",
+            cursor: "pointer", whiteSpace: "nowrap", transition: "color 0.2s",
+          });
+
+          return (
+            <div style={{ minHeight: "100vh", background: "#FEFDFB", display: "flex", flexDirection: "column" }}>
+              <div style={{ background: "#fff", borderBottom: "2px solid #f0e0ea", padding: "24px 20px 18px", textAlign: "center" }}>
+                <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(26px, 6vw, 40px)", color: "#2C3E50", margin: "0 0 4px", fontStyle: "italic" }}>Prose &amp; Rosé</h1>
+                <p style={{ fontFamily: "Lato, sans-serif", fontSize: 13, color: "#9a7080", margin: 0 }}>444 books &amp; counting 🍷</p>
+              </div>
+              <nav style={navStyle}>
+                {tabs.map(t => (
+                  <button key={t.id} style={tabStyle(t.id)} onClick={() => setTab(t.id)}>{t.label}</button>
+                ))}
+              </nav>
+              <div style={{ flex: 1, overflow: "auto" }}>
+                {tab === "dashboard" && <Dashboard />}
+                {tab === "themes" && <GenreThemes />}
+                {tab === "recent" && <RecentlyRead onBookAdded={() => {}} />}
+                {tab === "playlist" && <Playlist />}
+                {tab === "history" && <HistoricalList />}
+                {tab === "tbr" && <TBRPile />}
+              </div>
             </div>
           );
         }
