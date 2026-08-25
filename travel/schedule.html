@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -175,6 +175,7 @@
   .person-pill.wren { background: #ec4899; border-color: #ec4899; }
   .person-pill.chelsea { background: #c4b5fd; border-color: #c4b5fd; }
   .person-pill.vivian { background: #eab308; border-color: #eab308; }
+  .person-pill.megan { background: #f97316; border-color: #f97316; }
 .person-pill.all { background: var(--accent); border-color: var(--accent); color: white; }
   .person-pill:hover { background: var(--accent-soft); }
   .ribbon-row {
@@ -690,6 +691,39 @@
       ranges: [{ start: "2026-06-05", end: "2026-08-07" }],
       exceptions: ["2026-07-03"],
       note: "Fridays, Jun 5 – Aug 7, 2026"
+    },
+    {
+      id: "megan-monday",
+      title: "👶 Megan (Sitter)",
+      color: "#f97316",
+      location: "",
+      daysOfWeek: [1],
+      time: "12:30 – 5:30 PM",
+      owner: "megan",
+      ranges: [{ start: "2026-09-01", end: null }],
+      note: "Mondays, starting Sep 2026 – no end date"
+    },
+    {
+      id: "megan-tuesday",
+      title: "👶 Megan (Sitter)",
+      color: "#f97316",
+      location: "",
+      daysOfWeek: [2],
+      time: "3:30 – 5:00 PM",
+      owner: "megan",
+      ranges: [{ start: "2026-09-01", end: null }],
+      note: "Tuesdays, starting Sep 2026 – no end date"
+    },
+    {
+      id: "megan-thursday",
+      title: "👶 Megan (Sitter)",
+      color: "#f97316",
+      location: "",
+      daysOfWeek: [4],
+      time: "3:30 – 5:00 PM",
+      owner: "megan",
+      ranges: [{ start: "2026-09-01", end: null }],
+      note: "Thursdays, starting Sep 2026 – no end date"
     }
   ];
 
@@ -697,7 +731,8 @@
     { id: "matt", name: "Matt", color: "#3b82f6" },
     { id: "wren", name: "Wren", color: "#ec4899" },
     { id: "chelsea", name: "Chelsea", color: "#c4b5fd" },
-    { id: "vivian", name: "Vivian", color: "#eab308" }
+    { id: "vivian", name: "Vivian", color: "#eab308" },
+    { id: "megan", name: "Megan", color: "#f97316" }
   ];
 
   let selectedPerson = "all";
@@ -736,9 +771,10 @@
     { person: "matt", start: "2026-08-01", end: "2026-08-02", note: "Lakewood Cup" },
     { person: "matt", start: "2026-08-10", end: "2026-08-11", note: "Herr" },
     { person: "steve", start: "2026-08-07", end: "2026-08-10", note: "Steve visiting" },
-    { person: "matt",    start: "2026-09-04", end: "2026-09-07", note: "Aspen Jazz Festival" },
-    { person: "chelsea", start: "2026-09-04", end: "2026-09-07", note: "Aspen Jazz Festival" },
-    { person: "matt",    start: "2026-09-21", end: "2026-09-28", note: "Ohio" },
+    // Pre-Thanksgiving trip to AZ — Nov 20 weekend
+    { person: "matt",    start: "2026-11-20", end: "2026-11-22", note: "Pre-Thanksgiving trip to AZ" },
+    { person: "chelsea", start: "2026-11-20", end: "2026-11-22", note: "Pre-Thanksgiving trip to AZ" },
+    { person: "wren",    start: "2026-11-20", end: "2026-11-22", note: "Pre-Thanksgiving trip to AZ" },
     // Wren – 2026–2027 MSD school year (official calendar, updated 1/7/26)
     { person: "wren", start: "2026-10-15", end: "2026-10-16", note: "Conferences – No School" },
     { person: "wren", start: "2026-10-29", end: "2026-10-30", note: "Fall Break – No School" },
@@ -776,16 +812,20 @@
     // Wren – 2026–27 MSD school year (official calendar, updated 1/7/26)
     { title: "🧺 Back to School Family Picnic",      color: "#ec4899", date: "2026-08-16", time: "5:00 – 7:00 PM", owner: "wren", location: "Lakeside Amusement Park", note: "Pack your dinner and a blanket · Join MSD families for a casual picnic" },
     { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-28", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
-    { title: "🏫 MSD 101 – New Families Orientation", color: "#ec4899", date: "2026-08-29", time: "9:00 AM – 1:00 PM", owner: "wren", location: "Montessori School of Denver", note: "All new families required to attend · Adults only (alternate childcare required) · 8:45 AM Check-In (coffee & snacks) · 9:00 Welcomes & Introductions · 10:00 MSD Experiences & Program Visits · 12:00 Wrap Up & Lunch" },
+    { title: "🏫 MSD 101 – New Families Orientation", color: "#ec4899", date: "2026-08-29", time: "9:00 AM – 1:00 PM", owner: "wren", location: "Montessori School of Denver", note: "All new families required to attend · Adults only (alternate childcare required) · 8:45 AM Check-In (coffee & snacks) · 9:00 Welcomes & Introductions · 10:00 MSD Experiences & Program Visits · 12:00 Wrap Up & Lunch · Jolie babysitting" },
     { title: "👨‍👩‍👧 Family Visit Day",                 color: "#ec4899", date: "2026-08-31", owner: "wren", note: "New and returning families meet teachers and spend time in the classroom · Details and registration coming" },
     { title: "🎒 First Full Day of School (K–MS)",  color: "#ec4899", date: "2026-09-01", owner: "wren", note: "Toddler Phase-in begins · 2nd Year Primary ½-day" },
     { title: "📚 2nd Year Primary – regular hours", color: "#ec4899", date: "2026-09-02", owner: "wren" },
     { title: "📚 1st Year Primary – ½-day",         color: "#ec4899", date: "2026-09-03", owner: "wren" },
     { title: "📚 1st Year Primary – regular hours", color: "#ec4899", date: "2026-09-04", owner: "wren" },
     { title: "🇺🇸 Labor Day – No School",            color: "#ec4899", date: "2026-09-07", owner: "wren" },
-    { title: "🌙 Back to School Night",             color: "#ec4899", date: "2026-09-10", time: "6:00 – 8:00 PM", owner: "wren", note: "Adults only" },
+    { title: "🌙 Back to School Night",             color: "#ec4899", date: "2026-09-10", time: "6:00 – 8:00 PM", owner: "wren", note: "Adults only · Megan babysitting" },
+    { title: "🗳️ Parent Choice Night",              color: "#ec4899", date: "2026-09-24", time: "6:00 – 7:30 PM", owner: "wren" },
     { title: "🚫 Staff Day – No School",            color: "#ec4899", date: "2026-09-25", owner: "wren" },
+    { title: "🎂 Wren's Birthday",                  color: "#ec4899", date: "2026-10-08", owner: "wren", note: "With the Giraffes if available" },
+    { title: "🌴 Florida",                          color: "#7c3aed", date: "2026-10-16", note: "Trip to Florida · Wren has conferences Oct 15–16 (no school)" },
     { title: "👴 GrandFriends Day (½-day)",         color: "#ec4899", date: "2026-11-20", owner: "wren" },
+    { title: "🌵 Pre-Thanksgiving trip to AZ",      color: "#7c3aed", date: "2026-11-20", note: "Nov 20 weekend · Arizona" },
     { title: "💝 Colorado Gives Day",               color: "#ec4899", date: "2026-12-08", owner: "wren" },
     { title: "🇺🇸 MLK Jr Day – No School",           color: "#ec4899", date: "2027-01-18", owner: "wren" },
     { title: "🚫 No School (TODD/PRI/K)",           color: "#ec4899", date: "2027-02-05", owner: "wren" },
@@ -1399,4 +1439,3 @@
 
 </body>
 </html>
-
