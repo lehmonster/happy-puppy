@@ -700,8 +700,9 @@
       daysOfWeek: [1],
       time: "12:30 – 5:30 PM",
       owner: "megan",
-      ranges: [{ start: "2026-09-01", end: null }],
-      note: "Mondays, starting Sep 2026 – no end date"
+      ranges: [{ start: "2026-09-14", end: null }],
+      exceptions: ["2026-10-05", "2026-10-12"],
+      note: "Mondays, full schedule starts Sep 14 · pickup, groceries, meal prep, laundry, sit during class 4–4:45 · no Megan Oct 5 & 12 (Iceland)"
     },
     {
       id: "megan-tuesday",
@@ -711,8 +712,9 @@
       daysOfWeek: [2],
       time: "3:30 – 5:00 PM",
       owner: "megan",
-      ranges: [{ start: "2026-09-01", end: null }],
-      note: "Tuesdays, starting Sep 2026 – no end date"
+      ranges: [{ start: "2026-09-14", end: null }],
+      exceptions: ["2026-10-06", "2026-10-13"],
+      note: "Tuesdays, full schedule starts Sep 15 · pickup, supervision, snack · can extend to 5:30 if needed · no Megan Oct 6 & 13 (Iceland)"
     },
     {
       id: "megan-thursday",
@@ -722,8 +724,9 @@
       daysOfWeek: [4],
       time: "3:30 – 5:00 PM",
       owner: "megan",
-      ranges: [{ start: "2026-09-01", end: null }],
-      note: "Thursdays, starting Sep 2026 – no end date"
+      ranges: [{ start: "2026-09-10", end: null }],
+      exceptions: ["2026-09-10", "2026-09-17", "2026-09-24", "2026-10-01", "2026-10-08", "2026-10-15"],
+      note: "Thursdays, first pickup Sep 10 · pickup, supervision, snack · Sep 10 / 17 / 24 run extended hours (see that day) · no Megan Oct 1, 8 & 15 (Iceland)"
     }
   ];
 
@@ -771,6 +774,17 @@
     { person: "matt", start: "2026-08-01", end: "2026-08-02", note: "Lakewood Cup" },
     { person: "matt", start: "2026-08-10", end: "2026-08-11", note: "Herr" },
     { person: "steve", start: "2026-08-07", end: "2026-08-10", note: "Steve visiting" },
+    // Chelsea – work travel
+    { person: "chelsea", start: "2026-09-15", end: "2026-09-17", note: "San Jose (work trip)" },
+    // Matt – fall 2026 (from wall calendar)
+    { person: "matt", start: "2026-09-01", end: "2026-09-03", note: "Charlotte" },
+    { person: "matt", start: "2026-09-24", end: "2026-09-27", note: "CLE (end date 27?)" },
+    { person: "matt", start: "2026-10-01", end: "2026-10-02", note: "CLE" },
+    { person: "matt", start: "2026-10-03", end: "2026-10-04", note: "Fall Classic" },
+    { person: "matt", start: "2026-10-13", end: "2026-10-14", note: "NYC with RP" },
+    { person: "matt", start: "2026-10-18", end: "2026-10-21", note: "Miami – ABS" },
+    // Megan – out of town
+    { person: "megan", start: "2026-10-01", end: "2026-10-18", note: "Iceland – Megan unavailable" },
     // Pre-Thanksgiving trip to AZ — Nov 20 weekend
     { person: "matt",    start: "2026-11-20", end: "2026-11-22", note: "Pre-Thanksgiving trip to AZ" },
     { person: "chelsea", start: "2026-11-20", end: "2026-11-22", note: "Pre-Thanksgiving trip to AZ" },
@@ -838,6 +852,20 @@
     // Chelsea
     { title: "🎾 Tennis", color: "#c4b5fd", date: "2026-04-28", time: "4:00 PM",  owner: "chelsea" },
     { title: "🎾 Tennis", color: "#c4b5fd", date: "2026-05-24", time: "11:00 AM", owner: "chelsea" },
+    { title: "✈️ Fly to San Jose",  color: "#c4b5fd", date: "2026-09-15", owner: "chelsea", note: "Work trip · Sep 15–17" },
+    { title: "✈️ Home from San Jose", color: "#c4b5fd", date: "2026-09-17", time: "4:55 PM", owner: "chelsea", note: "Flight lands 4:55 PM · home by ~6:00" },
+    { title: "🎾 Tennis",           color: "#c4b5fd", date: "2026-09-21", time: "5:00 PM", owner: "chelsea", location: "Gates Tennis Center", note: "3300 E Bayaud Ave, Denver, CO 80209" },
+    // Matt – fall 2026 single-day items (from wall calendar)
+    { title: "✈️ Out of town",      color: "#3b82f6", date: "2026-09-10", owner: "matt", note: "Matt away for Back to School Night" },
+    { title: "✈️ Jax (?)",          color: "#3b82f6", date: "2026-09-13", owner: "matt", note: "Handwriting unclear on wall calendar — confirm" },
+    { title: "🌴 SFL Day (?)",      color: "#3b82f6", date: "2026-09-17", owner: "matt", note: "Handwriting unclear on wall calendar — confirm" },
+    { title: "👔 Exec Counsel",     color: "#3b82f6", date: "2026-09-22", owner: "matt" },
+    { title: "🍽️ Gorman Lunch",     color: "#3b82f6", date: "2026-09-24", owner: "matt" },
+    // Megan / Wren – September coverage (from House Manager thread)
+    { title: "👶 Megan (Sitter)",   color: "#f97316", date: "2026-09-10", time: "3:30 – 8:00 PM", owner: "megan", note: "Extended · Back to School Night 6–8 PM, Matt out of town · first pickup day" },
+    { title: "🏠 Wren overnight – Grandma & Grandpa", color: "#ec4899", date: "2026-09-16", owner: "wren", note: "Chelsea's parents keep Wren overnight while Chelsea is in San Jose" },
+    { title: "👶 Megan (Sitter)",   color: "#f97316", date: "2026-09-17", time: "3:30 – 6:00 PM", owner: "megan", note: "Extended · Chelsea's flight lands 4:55 PM, home by ~6" },
+    { title: "👶 Megan (Sitter)",   color: "#f97316", date: "2026-09-24", time: "3:30 – 7:30 PM", owner: "megan", note: "Extended · Parent Choice Night 6–7:30 · straight-through vs. leave-and-return still TBD" },
     // Everyone (no owner)
     { title: "🪼 Silly Jellyfish Brunch", color: "#f97316", date: "2026-05-27", time: "8:45 – 9:45 AM", location: "Rick's" },
     // Italy / Positano — Matt & Chelsea (Jul 18–22)
