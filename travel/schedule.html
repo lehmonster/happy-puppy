@@ -713,7 +713,7 @@
       time: "12:30 – 5:30 PM",
       owner: "megan",
       ranges: [{ start: "2026-09-14", end: null }],
-      exceptions: ["2026-10-05", "2026-10-12", "2026-11-23"],
+      exceptions: ["2026-10-05", "2026-10-12", "2026-10-19", "2026-11-23"],
       note: "Mondays, full schedule starts Sep 14 · pickup, groceries, meal prep, laundry, sit during class 4–4:45 · no Megan Oct 5 & 12 (Iceland)"
     },
     {
@@ -725,7 +725,7 @@
       time: "3:30 – 5:00 PM",
       owner: "megan",
       ranges: [{ start: "2026-09-14", end: null }],
-      exceptions: ["2026-09-15", "2026-10-06", "2026-10-13", "2026-11-24"],
+      exceptions: ["2026-09-15", "2026-10-06", "2026-10-13", "2026-10-20", "2026-11-24"],
       note: "Tuesdays, full schedule starts Sep 15 · pickup, supervision, snack · can extend to 5:30 if needed · no Megan Oct 6 & 13 (Iceland)"
     },
     {
@@ -794,6 +794,12 @@
     { person: "matt", start: "2026-10-03", end: "2026-10-04", note: "Fall Classic (golf)" },
     { person: "matt", start: "2026-10-13", end: "2026-10-14", note: "NYC with RP" },
     { person: "matt", start: "2026-10-18", end: "2026-10-21", note: "Miami – ABS" },
+    // Florida — Chelsea & Wren fly Oct 19 (3:57 PM) – Oct 21 (lands 1:53 PM); Matt travels separately
+    { person: "chelsea", start: "2026-10-19", end: "2026-10-21", note: "Florida" },
+    { person: "wren",    start: "2026-10-19", end: "2026-10-21", note: "Florida" },
+    // Alice & Bob visiting
+    { person: "alice",   start: "2026-10-09", end: "2026-10-12", note: "Alice visiting" },
+    { person: "bob",     start: "2026-10-09", end: "2026-10-12", note: "Bob visiting" },
     // Megan – out of town
     { person: "megan", start: "2026-10-01", end: "2026-10-18", note: "Iceland – Megan unavailable" },
     // Arizona — Nov 21–25 (back from AZ Wed Nov 25)
@@ -866,12 +872,11 @@
     { title: "🎾 Tennis", color: "#c4b5fd", date: "2026-05-24", time: "11:00 AM", owner: "chelsea" },
     { title: "✈️ Fly to San Jose",  color: "#c4b5fd", date: "2026-09-15", time: "4:30 PM", owner: "chelsea", note: "Work trip · Sep 15–17 · 4:30 PM flight" },
     { title: "✈️ Home from San Jose", color: "#c4b5fd", date: "2026-09-17", time: "4:55 PM", owner: "chelsea", note: "Flight lands 4:55 PM · home by ~6:00" },
-    { title: "🎾 Tennis",           color: "#c4b5fd", date: "2026-09-21", time: "5:00 PM", owner: "chelsea", location: "Gates Tennis Center", note: "3300 E Bayaud Ave, Denver, CO 80209" },
     // Matt – fall 2026 single-day items (from wall calendar)
     { title: "✈️ Out of town",      color: "#3b82f6", date: "2026-09-10", owner: "matt", note: "Matt away for Back to School Night" },
     { title: "🌴 SFL Day (?)",      color: "#3b82f6", date: "2026-09-17", owner: "matt", note: "Handwriting unclear on wall calendar — confirm" },
-    { title: "👔 Exec Counsel",     color: "#3b82f6", date: "2026-09-22", owner: "matt" },
-    { title: "🍽️ Gorman Lunch",     color: "#3b82f6", date: "2026-09-24", owner: "matt" },
+    { title: "👔 Exec Counsel",     color: "#3b82f6", date: "2026-09-22", owner: "matt", location: "Cleveland" },
+    { title: "🍽️ Gorman Lunch",     color: "#3b82f6", date: "2026-09-24", owner: "matt", location: "Cleveland" },
     // Megan / Wren – September coverage (from House Manager thread)
     { title: "👶 Megan (Sitter)",   color: "#f97316", date: "2026-09-10", time: "3:30 – 8:00 PM", owner: "megan", note: "Extended · Back to School Night 6–8 PM, Matt out of town · first pickup day" },
     { title: "🏠 Wren overnight – Grandma & Grandpa", color: "#ec4899", date: "2026-09-16", owner: "wren", note: "J+S pickup · grandparents keep Wren overnight while Chelsea is in San Jose" },
@@ -887,7 +892,7 @@
     { title: "🤝 Sammy meeting",               color: "#c4b5fd", date: "2026-09-22", time: "5:00 PM", owner: "chelsea", location: "Wash Park" },
     { title: "📚 Book Club",                   color: "#c4b5fd", date: "2026-09-23", time: "5:30 PM", owner: "chelsea", location: "O's" },
     { title: "🌶️ Chili Cookoff (FTV)",         color: "#c4b5fd", date: "2026-09-24", owner: "chelsea" },
-    { title: "🎓 Kindergarten info – Wren",    color: "#ec4899", date: "2026-09-25", time: "9:00 AM", owner: "wren" },
+    { title: "🩺 Doctor appointment – Wren",   color: "#ec4899", date: "2026-10-02", owner: "wren", note: "Morning · moved from Sep 25 · exact time TBC" },
     { title: "🧪 QA Outing",                   color: "#c4b5fd", date: "2026-09-25", time: "12:00 – 2:00 PM", owner: "chelsea" },
     { title: "🎂 Brandon's Birthday Party",    color: "#f97316", date: "2026-09-26" },
     { title: "🎂 Fox Birthday",                color: "#f97316", date: "2026-09-26", time: "4:00 PM" },
@@ -895,7 +900,6 @@
     { title: "🎊 Reunion",                     color: "#f97316", date: "2026-09-26", time: "6:00 PM" },
     // October 2026 — from Chelsea's planner
     { title: "🎽 Spirit Day",                  color: "#ec4899", date: "2026-10-02", owner: "wren" },
-    { title: "👋 Alice & Bob arrive",          color: "#f97316", date: "2026-10-09" },
     { title: "🏞️ MSD meetup – Robinson Park",  color: "#ec4899", date: "2026-10-10", time: "10:00 AM", owner: "wren", location: "Robinson Park" },
     { title: "📸 Student Picture Day",         color: "#ec4899", date: "2026-10-12", owner: "wren" },
     { title: "🍽️ Casa Bonita Birthday Dinner", color: "#f97316", date: "2026-10-16", time: "4:00 PM", location: "Casa Bonita", note: "Birthday dinner celebration" },
