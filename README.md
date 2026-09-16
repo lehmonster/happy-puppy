@@ -20,10 +20,16 @@ Visit: **[lehmonster.github.io/happy-puppy](https://lehmonster.github.io/happy-p
 │   ├── packing-pinterest.html
 │   ├── packing-list.html
 │   └── schedule.html
-└── tools/                  🛠️ Utility dashboards
-    ├── reading-dashboard-full.html
-    ├── gift-genius.html
-    └── reading-dashboard.jsx
+├── prose-and-rose/         📚 Reading dashboard (live)
+│   ├── index.html          Redirect → new-index.html
+│   ├── new-index.html      The dashboard
+│   └── cover-urls.md       Cover-art reference notes
+├── tools/                  🛠️ Utility dashboards
+│   ├── gift-genius.html
+│   ├── volunteer-tracker.html
+│   ├── fridge-chef.html
+│   └── spanish-trainer.html / italian-trainer.html
+└── archive/                🗄️ Superseded dashboard versions (see archive/README.md)
 ```
 
 ## Games (for Kids)
@@ -44,5 +50,7 @@ Trip planning utilities:
 ## Other Tools
 
 Personal dashboards and utilities:
-- **Reading Dashboard** - Book tracking and analytics
+- **Prose & Rosé** - Reading dashboard: 447 books across 6 years, genre and theme analytics,
+  TBR pile, Recently Read with wine + song pairings. Older versions live in `archive/`.
 - **Gift Genius** - Gift idea tracker (password-protected)
+- **Volunteer Tracker**, **Fridge Chef**, **Spanish / Italian Trainer**
